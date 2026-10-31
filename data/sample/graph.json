@@ -1,0 +1,294 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {},
+  "nodes": [
+    {
+      "type": "Meeting",
+      "label": "Еженедельный статус — Атлас",
+      "meeting_id": "m_001",
+      "date": "2026-02-03",
+      "participants": [
+        "Айгерим Нурланова",
+        "Руслан Ким",
+        "Дана Сейтова"
+      ],
+      "id": "meeting:m_001"
+    },
+    {
+      "type": "Person",
+      "label": "Айгерим Нурланова",
+      "id": "person:Айгерим Нурланова"
+    },
+    {
+      "type": "Person",
+      "label": "Руслан Ким",
+      "id": "person:Руслан Ким"
+    },
+    {
+      "type": "Person",
+      "label": "Дана Сейтова",
+      "id": "person:Дана Сейтова"
+    },
+    {
+      "type": "Project",
+      "label": "Атлас",
+      "id": "project:Атлас"
+    },
+    {
+      "type": "Project",
+      "label": "Горизонт",
+      "id": "project:Горизонт"
+    },
+    {
+      "type": "Decision",
+      "label": "Релиз Атласа переносится на 20 апреля",
+      "confidence": 0.92,
+      "made_by": "Руслан Ким",
+      "project": "Атлас",
+      "meeting_id": "m_001",
+      "date": "2026-02-03",
+      "ts": "00:04:12",
+      "quote": "перенесём релиз на двадцатое апреля",
+      "statement": "Релиз Атласа переносится на 20 апреля",
+      "status": "superseded",
+      "in_conflict": false,
+      "id": "d_m001_01"
+    },
+    {
+      "type": "Task",
+      "label": "Подготовить скрипт миграции базы данных",
+      "owner": "Айгерим Нурланова",
+      "due": "2026-02-10",
+      "status": "open",
+      "project": "Атлас",
+      "meeting_id": "m_001",
+      "date": "2026-02-03",
+      "ts": "00:06:40",
+      "quote": "подготовь скрипт миграции базы данных до десятого февраля",
+      "statement": "Подготовить скрипт миграции базы данных",
+      "id": "t_m001_01"
+    },
+    {
+      "type": "OpenQuestion",
+      "label": "Кто выделит второго бэкендера на Горизонт",
+      "project": "Горизонт",
+      "meeting_id": "m_001",
+      "date": "2026-02-03",
+      "ts": "00:12:30",
+      "quote": "нам нужен второй бэкендер, но пока непонятно, кто его выделит",
+      "statement": "Кто выделит второго бэкендера на Горизонт",
+      "id": "q_m001_01"
+    },
+    {
+      "type": "Meeting",
+      "label": "Синк по Атласу и Горизонту",
+      "meeting_id": "m_002",
+      "date": "2026-02-10",
+      "participants": [
+        "Айгерим Нурланова",
+        "Руслан Ким",
+        "Дана Сейтова"
+      ],
+      "id": "meeting:m_002"
+    },
+    {
+      "type": "Decision",
+      "label": "Релиз Атласа переносится на 5 мая",
+      "confidence": 0.95,
+      "made_by": "Руслан Ким",
+      "project": "Атлас",
+      "meeting_id": "m_002",
+      "date": "2026-02-10",
+      "ts": "00:01:05",
+      "quote": "Переносим релиз Атласа на пятое мая",
+      "statement": "Релиз Атласа переносится на 5 мая",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m002_01"
+    },
+    {
+      "type": "Decision",
+      "label": "Айгерим становится вторым бэкендером Горизонта с 1 марта",
+      "confidence": 0.9,
+      "made_by": "Руслан Ким",
+      "project": "Горизонт",
+      "meeting_id": "m_002",
+      "date": "2026-02-10",
+      "ts": "00:05:10",
+      "quote": "Айгерим будет вторым бэкендером с первого марта",
+      "statement": "Айгерим становится вторым бэкендером Горизонта с 1 марта",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m002_02"
+    },
+    {
+      "type": "Task",
+      "label": "Скрипт миграции сдан, задача закрыта",
+      "owner": "Айгерим Нурланова",
+      "due": null,
+      "status": "done",
+      "project": "Атлас",
+      "meeting_id": "m_002",
+      "date": "2026-02-10",
+      "ts": "00:09:15",
+      "quote": "Скрипт миграции Айгерим сдала, закрываем эту задачу",
+      "statement": "Скрипт миграции сдан, задача закрыта",
+      "id": "t_m002_01"
+    }
+  ],
+  "edges": [
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_001",
+      "target": "project:Атлас",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_001",
+      "target": "project:Горизонт",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Айгерим Нурланова",
+      "target": "meeting:m_001",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Айгерим Нурланова",
+      "target": "meeting:m_002",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Руслан Ким",
+      "target": "meeting:m_001",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Руслан Ким",
+      "target": "meeting:m_002",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Дана Сейтова",
+      "target": "meeting:m_001",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Дана Сейтова",
+      "target": "meeting:m_002",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m001_01",
+      "target": "project:Атлас",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m001_01",
+      "target": "meeting:m_001",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m001_01",
+      "target": "project:Атлас",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m001_01",
+      "target": "meeting:m_001",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "ASSIGNED_TO",
+      "source": "t_m001_01",
+      "target": "person:Айгерим Нурланова",
+      "key": "ASSIGNED_TO"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "q_m001_01",
+      "target": "project:Горизонт",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "q_m001_01",
+      "target": "meeting:m_001",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_002",
+      "target": "project:Атлас",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_002",
+      "target": "project:Горизонт",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m002_01",
+      "target": "project:Атлас",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m002_01",
+      "target": "meeting:m_002",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "SUPERSEDES",
+      "confidence": 0.95,
+      "rationale": "Срок релиза Атласа перенесён с 20 апреля на 5 мая: то же решение о сроке с новым содержанием.",
+      "source": "d_m002_01",
+      "target": "d_m001_01",
+      "key": "SUPERSEDES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m002_02",
+      "target": "project:Горизонт",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m002_02",
+      "target": "meeting:m_002",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m002_01",
+      "target": "project:Атлас",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m002_01",
+      "target": "meeting:m_002",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "ASSIGNED_TO",
+      "source": "t_m002_01",
+      "target": "person:Айгерим Нурланова",
+      "key": "ASSIGNED_TO"
+    }
+  ]
+}

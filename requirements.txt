@@ -1,5 +1,5 @@
 pydantic>=2.5
-networkx>=3.2
+networkx>=3.4
 openai>=1.40
 numpy>=1.26
 streamlit>=1.38
