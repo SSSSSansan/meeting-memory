@@ -1,6 +1,7 @@
 """Проверка результатов извлечения (раздел 4.5 контекста).
 
-    python -m scripts.validate_extraction
+    python -m scripts.validate_extraction              # data/extracted
+    python -m scripts.validate_extraction data/extracted_llm
 
 Проверяет для каждого data/extracted/*.json:
   1. JSON соответствует схеме (pydantic).
@@ -66,9 +67,10 @@ def validate_one(path: Path) -> tuple[list[str], int, int]:
 
 
 def main() -> int:
-    files = sorted(EXTRACTED.glob("*.json"))
+    folder = Path(sys.argv[1]) if len(sys.argv) > 1 else EXTRACTED
+    files = sorted(folder.glob("*.json"))
     if not files:
-        print("Нет файлов в data/extracted/")
+        print(f"Нет файлов в {folder}")
         return 1
     all_errors: list[str] = []
     total = bad = 0

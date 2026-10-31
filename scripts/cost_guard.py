@@ -1,6 +1,8 @@
 """Жёсткий лимит расходов. Падает с исключением при превышении BUDGET_USD.
 
-Счётчик лежит в runs/budget.json. Сбросить: python -m scripts.cost_guard --reset
+Счётчик лежит в runs/budget.json.
+    python -m scripts.cost_guard           # показать потраченное и лимит
+    python -m scripts.cost_guard --reset   # обнулить счётчик
 """
 from __future__ import annotations
 
@@ -8,6 +10,8 @@ import json
 import os
 import sys
 from pathlib import Path
+
+import src.llm_client  # noqa: F401  — при импорте читает .env, чтобы BUDGET_USD брался оттуда
 
 ROOT = Path(__file__).resolve().parent.parent
 BUDGET_FILE = ROOT / "runs" / "budget.json"
@@ -45,7 +49,8 @@ def record_spend(usd: float) -> None:
 
 if __name__ == "__main__":
     if "--reset" in sys.argv:
+        BUDGET_FILE.parent.mkdir(exist_ok=True)
         BUDGET_FILE.write_text(json.dumps({"spent_usd": 0.0}), encoding="utf-8")
         print("Счётчик сброшен.")
     else:
-        print(f"Потрачено ${_read()['spent_usd']:.4f} из ${_limit():.2f}")
+        print(f"Потрачено ${_read()['spent_usd']:.6f} из ${_limit():.2f}")
