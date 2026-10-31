@@ -1,0 +1,7 @@
+pydantic>=2.5
+networkx>=3.2
+openai>=1.40
+numpy>=1.26
+streamlit>=1.38
+pytest>=8.0
+# Для baseline RAG добавьте при необходимости: qdrant-client, rank_bm25, sentence-transformers

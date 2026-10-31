@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.DS_Store
+runs/*
+!runs/.gitkeep
+results/*
+!results/.gitkeep
+data/graph/*
+!data/graph/.gitkeep
+*.egg-info/
+.ipynb_checkpoints/
