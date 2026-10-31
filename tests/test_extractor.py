@@ -74,3 +74,16 @@ def test_due_out_of_range_dropped():
     assert ex._check_due("2030-01-01", "2026-02-03") is None
     assert ex._check_due("2026-01-01", "2026-02-03") is None
     assert ex._check_due("2026-02-10", "2026-02-03") == "2026-02-10"
+
+
+def test_repeated_decision_is_merged(monkeypatch):
+    data = json.loads(json.dumps(GOOD))
+    data["decisions"].append({"project": "Атлас", "statement": "Подтверждаем 20 апреля",
+                              "confidence": 0.8, "repeats_earlier": True, "ts": "00:04:40",
+                              "quote": "двадцатое апреля реалистично"})
+    calls = []
+    monkeypatch.setattr(ex, "complete", _fake([json.dumps(data)], calls))
+    monkeypatch.setattr(ex, "_write_report", lambda s: None)
+    stats = ex.ExtractStats(meeting_id="m_001")
+    e = ex.extract(_t(), stats=stats)
+    assert len(e.decisions) == 1 and stats.merged_repeats == 1

@@ -37,6 +37,7 @@ class ExtractStats:
     items_raw: int = 0
     bad_quotes_first_attempt: int = 0
     dropped_final: int = 0
+    merged_repeats: int = 0
     attempts: int = 0
     prompt_tokens: int = 0
     completion_tokens: int = 0
@@ -171,6 +172,9 @@ def extract(transcript: Transcript, *, stats: Optional[ExtractStats] = None) -> 
 
     decisions, tasks, questions = [], [], []
     for it in (i for i in data.get("decisions") or [] if isinstance(i, dict)):
+        if it.get("repeats_earlier") is True and decisions:
+            stats.merged_repeats += 1  # подтверждение уже записанного решения — не новое решение
+            continue
         if keep(it):
             try:
                 conf = max(0.0, min(1.0, float(it.get("confidence", 0.5))))

@@ -45,7 +45,7 @@ def main() -> int:
         total_cost += stats.cost_usd
         print(f"{t.meeting_id}: решений={len(ext.decisions)} задач={len(ext.tasks)} "
               f"вопросов={len(ext.open_questions)} | выдуманных цитат с 1-й попытки="
-              f"{stats.bad_quotes_first_attempt}/{stats.items_raw}, отброшено={stats.dropped_final} | "
+              f"{stats.bad_quotes_first_attempt}/{stats.items_raw}, отброшено={stats.dropped_final}, слито повторов={stats.merged_repeats} | "
               f"токены {stats.prompt_tokens}+{stats.completion_tokens}, ${stats.cost_usd:.5f}")
     print(f"\nСтоимость прогона: ${total_cost:.5f}. Результат: {out_dir}")
     return 0
