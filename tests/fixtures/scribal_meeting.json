@@ -1,0 +1,4 @@
+{"public_id": "36e120c8-d1c2-4f83-93c8-914fa33ff20d", "title": "Доработка презентации и подготовка демо",
+ "language": "ru", "speaker_names": null, "status": "READY",
+ "participants": [{"user": {"full_name": "Демо Пользователь", "email": "demo.user@example.com"}, "added_at": "2026-10-21T15:02:11+05:00"}],
+ "started_at": "2026-10-21T15:02:11+05:00"}

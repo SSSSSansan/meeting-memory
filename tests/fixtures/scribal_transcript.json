@@ -1,0 +1,7 @@
+{"text": "полный текст", "language": "ru", "detected_language": "rus",
+ "segments": [
+  {"start": 0.42, "end": 6.81, "speaker": "SPEAKER_00", "text": "По проекту X договорились закрыть до конца октября.",
+   "words": [{"word": "По", "start": 0.42, "end": 0.55, "score": 0.97}]},
+  {"start": 3725.0, "end": 3730.2, "speaker": "SPEAKER_01", "text": "  ", "words": []},
+  {"start": 3731.5, "end": 3735.0, "speaker": "SPEAKER_01", "text": "Жақсы, келістік.", "words": []}
+ ]}

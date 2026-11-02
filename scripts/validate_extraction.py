@@ -23,14 +23,11 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from src.schemas import Extraction, Transcript
+from src.utils.text import normalize as _norm
 
 ROOT = Path(__file__).resolve().parent.parent
 TRANSCRIPTS = ROOT / "data" / "transcripts"
 EXTRACTED = ROOT / "data" / "extracted"
-
-
-def _norm(s: str) -> str:
-    return re.sub(r"\s+", " ", s.lower()).strip()
 
 
 def quote_in_transcript(quote: str, transcript: Transcript) -> bool:

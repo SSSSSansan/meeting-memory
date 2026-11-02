@@ -16,6 +16,11 @@ class Segment(BaseModel):
     ts: str = Field(pattern=r"^\d{2}:\d{2}:\d{2}$", description="HH:MM:SS от начала встречи")
     speaker: str
     text: str
+    # Необязательные поля из Scribal (адаптер src/ingest/scribal_adapter.py)
+    start_s: Optional[float] = None
+    end_s: Optional[float] = None
+    speaker_raw: Optional[str] = None  # исходная метка SPEAKER_00
+    lang: Optional[str] = None
 
 
 class Transcript(BaseModel):
@@ -24,9 +29,55 @@ class Transcript(BaseModel):
     date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
     participants: list[str]
     segments: list[Segment]
+    language: Optional[str] = None
+    source: Optional[Literal["synthetic", "own_asr", "scribal"]] = None
+    started_at: Optional[str] = None
 
     def full_text(self) -> str:
         return "\n".join(s.text for s in self.segments)
+
+
+# ---------- Сырой формат Scribal (вход адаптера) ----------
+
+class ScribalWord(BaseModel):
+    word: str
+    start: float
+    end: float
+    score: Optional[float] = None
+
+
+class ScribalSegment(BaseModel):
+    start: float
+    end: float
+    speaker: Optional[str] = None
+    text: str
+    words: list[ScribalWord] = []
+
+
+class ScribalTranscript(BaseModel):
+    """Файл transcript.json по presigned-ссылке из GET /meetings/{id}/transcript."""
+    text: str = ""
+    language: Optional[str] = None
+    detected_language: Optional[str] = None
+    segments: list[ScribalSegment]
+
+
+class ScribalUser(BaseModel):
+    full_name: str = ""
+
+
+class ScribalParticipant(BaseModel):
+    user: ScribalUser
+
+
+class ScribalMeeting(BaseModel):
+    """Ответ GET /api/v1/meetings/{public_id} (нужные нам поля)."""
+    public_id: str = ""
+    title: str = ""
+    language: Optional[str] = None
+    started_at: str
+    speaker_names: Optional[dict[str, str]] = None  # в примере куратора null
+    participants: list[ScribalParticipant] = []
 
 
 # ---------- 4.2 Результат извлечения ----------
