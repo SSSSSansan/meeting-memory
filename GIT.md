@@ -15,6 +15,8 @@
 Scope = `data | extract | resolve | graph | retrieval | answer | app | eval | llm | ingest | pipeline | docs | contract | chore`.
 Один коммит — одна мысль. Не коммитим `.env`, `runs/cache/`, `runs/*.jsonl`, реальные выгрузки Scribal, presigned URL.
 
+**Авторство:** в коммитах, PR и описаниях не указываем ИИ-ассистентов как соавторов (никаких `Co-Authored-By`, «Generated with…» и т.п.). Автор — только человек. Коммиты и пуши делает человек, ассистент лишь предлагает команды.
+
 ## Pull Request
 
 1. Размер PR не ограничен: можно делать фичи крупными кусками. В заголовке — задачный ID из `TEAM.md`: `[B4] resolve: entity clustering`.
