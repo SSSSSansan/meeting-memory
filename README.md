@@ -37,6 +37,5 @@ python -m scripts.validate_extraction
 
 ## Работа в git
 
-- Ветка на человека: `feat/role-a-data`, `feat/role-b-graph`, `feat/role-c-retrieval`.
-- В `main` через pull request, коммиты маленькие и частые.
-- `src/schemas.py` и `data/gold/what_is_a_decision.md` правятся только отдельным PR с одобрением всех.
+Правила — в [`GIT.md`](GIT.md): ветка `<a|b|c>/<описание>`, PR в `main`, в заголовке PR помечаем критичные файлы.
+Остальные файлы для команды: [`TEAM.md`](TEAM.md) (задачи), [`CLAUDE.md`](CLAUDE.md), [`SKILLS.md`](SKILLS.md), [`TESTING.md`](TESTING.md), [`memory.md`](memory.md).

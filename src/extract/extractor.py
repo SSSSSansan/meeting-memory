@@ -20,6 +20,7 @@ from typing import Optional
 
 from src.extract.prompts import SYSTEM_PROMPT, WEEKDAYS, retry_prompt, user_prompt
 from src.llm_client import complete
+from src.utils.text import normalize as _norm
 from src.schemas import (Decision, Extraction, OpenQuestion, Source, Task,
                          TaskStatus, Transcript)
 
@@ -43,10 +44,6 @@ class ExtractStats:
     completion_tokens: int = 0
     cost_usd: float = 0.0
     latency_ms: int = 0
-
-
-def _norm(s: str) -> str:
-    return re.sub(r"\s+", " ", s.lower()).strip()
 
 
 def format_transcript(t: Transcript) -> str:
