@@ -1,0 +1,63 @@
+version: 1
+
+# Параметры слоя шума. Настроены по статистике одной настоящей расшифровки
+# (один докладчик, без меток говорящих, около 4300 слов). Скрипт читает этот файл
+# и записывает использованные значения в журнал data/gold/noise_logs/.
+global_seed: 42
+
+# слова-междометия: удаляются только они (сравнение без регистра и без пунктуации по краям)
+fillers: [эээ, ээ, эм, ммм, мм]
+
+# метка шума в конце текста блока или сегмента
+noise_tag: "[шум]"
+
+# потеря казахских букв (гипотеза: в образце казахского нет)
+kk_letter_map: {ә: а, ғ: г, қ: к, ң: н, ө: о, ұ: у, ү: у, һ: х, і: и}
+
+# латиница по звучанию; ключ без учёта регистра, суффикс через дефис сохраняется
+transliteration_table:
+  RAG: рэг
+  fine-tuning: файнтюнинг
+  open-source: опенсорс
+  Excel: эксель
+  push: пуш
+  API: апи
+
+levels:
+  clean:
+    filler_remove_prob: 0
+    ellipsis_mode: "none"
+    entity_variant_prob: 0
+    kk_letter_loss_prob: 0
+    transliteration_prob: 0
+    sentence_end_drop_prob: 0
+    sentence_start_capitalize_prob: 0  # как есть, не менять
+    noise_tag_prob: 0
+    speaker_mislabel_prob: 0
+    block_words: null
+  medium:
+    filler_remove_prob: 0.95
+    ellipsis_mode: "drop"
+    entity_variant_prob: 0.25
+    kk_letter_loss_prob: 0.15
+    transliteration_prob: 0.3
+    sentence_end_drop_prob: 0.15
+    sentence_start_capitalize_prob: 0.9
+    noise_tag_prob: 0.01
+    speaker_mislabel_prob: 0.03
+    # только unlabeled; логнормальное распределение, sigma в логарифме
+    block_words: {median: 21, sigma: 1.24, min: 1, max: 250}
+  strong:
+    filler_remove_prob: 0.95
+    ellipsis_mode: "drop"
+    entity_variant_prob: 0.5
+    kk_letter_loss_prob: 0.5
+    transliteration_prob: 0.6
+    sentence_end_drop_prob: 0.35
+    sentence_start_capitalize_prob: 0.6
+    noise_tag_prob: 0.04
+    speaker_mislabel_prob: 0.1
+    block_words: {median: 21, sigma: 1.24, min: 1, max: 250}
+
+# остаток короче этого числа слов присоединяется к предыдущему блоку
+block_min_tail_words: 5
