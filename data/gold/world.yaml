@@ -1,0 +1,122 @@
+version: 1
+
+# Сюжет синтетического набора. Источник для эталона, вопросов и сценариев демо.
+# id события: ev_mNNN_NN (номер встречи, порядковый номер события на ней).
+# Типы событий: decision, task, open_question, status_update, recap, non_decision.
+
+language_profiles:
+  ru: русский, редкие казахские слова
+  mixed: русская речь с заметными казахскими фразами и вставками
+  kk: преимущественно казахский, русские и английские рабочие термины
+
+people:
+  - {id: amina, name: Амина, role: Product manager, role_aliases: [PM, продакт], written_variants: [Амина, Amina, Эмина]}
+  - {id: nuraly, name: Нұралы, role: Tech lead, role_aliases: [лид, тимлид, team lead], written_variants: [Нұралы, Нуралы, Нурали, Nuraly]}
+  - {id: nikolay, name: Николай, role: Backend developer, role_aliases: [бэкендер, backend], written_variants: [Николай, Коля, Nikolay, Nikolai]}
+  - {id: abdurakhman, name: Абдурахман, role: Fullstack developer, role_aliases: [фулстек, фронтендер, frontend], written_variants: [Абдурахман, Абду, Abdu, Abdurahman]}
+  - {id: sandugash, name: Сандуғаш, role: ML engineer, role_aliases: [data scientist, AI engineer, датасайентист], written_variants: [Сандуғаш, Сандугаш, Санду, Sandugash]}
+  - {id: daniyar, name: Данияр, role: Head of business development, role_aliases: [бизнес-девелопмент, бизнес, продажи], written_variants: [Данияр, Daniyar]}
+  - {id: client_squad, name: null, role: Представитель клиента Squad, role_aliases: [клиент], written_variants: [], note: гость; имя придумаем при написании встреч}
+
+projects:
+  - {id: zhol, name: Zhol, description: мобильное приложение (маршруты и доставка), written_variants: [Zhol, Жол, Джол]}
+  - {id: squad, name: Squad, description: B2B-сервис для клиентов, written_variants: [Squad, Сквад, Сквод]}
+  - {id: qamqor, name: Qamqor, description: сервис поддержки клиентов с ML-ботом, written_variants: [Qamqor, Қамқор, Камкор, Kamkor]}
+  - {id: boost, name: Boost, description: внутренняя панель метрик Zhol и Squad для бизнес-команды, written_variants: [Boost, Буст]}
+
+meetings:
+  - {id: m_001, date: 2026-08-03, title: "Zhol: старт спринта", main_project: zhol, projects_discussed: [zhol], participants: [amina, nuraly, nikolay, abdurakhman], language_profile: ru, target_minutes: 20, scenarios: [evolution_deadline, noise]}
+  - {id: m_002, date: 2026-08-05, title: "Qamqor: планирование", main_project: qamqor, projects_discussed: [qamqor], participants: [amina, nuraly, sandugash], language_profile: mixed, target_minutes: 15, scenarios: [language_mix, noise]}
+  - {id: m_003, date: 2026-08-10, title: "Squad: встреча с клиентом", main_project: squad, projects_discussed: [squad], participants: [amina, daniyar, nuraly, client_squad], language_profile: ru, target_minutes: 20, scenarios: [forgotten_promise, absentia_assignment, noise]}
+  - {id: m_004, date: 2026-08-17, title: "Zhol: еженедельный", main_project: zhol, projects_discussed: [zhol, boost], participants: [amina, nuraly, nikolay, abdurakhman], language_profile: ru, target_minutes: 20, scenarios: [cross_project, noise]}
+  - {id: m_005, date: 2026-08-19, title: "Амина и Нұралы: один на один", main_project: null, projects_discussed: [boost], participants: [amina, nuraly], language_profile: kk, target_minutes: 10, scenarios: [language_kk, thinking_aloud]}
+  - {id: m_006, date: 2026-08-24, title: "Zhol: еженедельный", main_project: zhol, projects_discussed: [zhol], participants: [amina, nuraly, nikolay, abdurakhman], language_profile: ru, target_minutes: 15, scenarios: [evolution_deadline, self_correction]}
+  - {id: m_007, date: 2026-08-31, title: "Squad: планирование", main_project: squad, projects_discussed: [squad], participants: [amina, nuraly, nikolay, daniyar], language_profile: mixed, target_minutes: 15, scenarios: [contradiction_load, forgotten_promise, language_mix]}
+  - {id: m_008, date: 2026-09-02, title: "Zhol: срочный созвон", main_project: zhol, projects_discussed: [zhol], participants: [amina, nuraly, nikolay, abdurakhman], language_profile: ru, target_minutes: 12, scenarios: [contradiction_load, cancelled_decision]}
+  - {id: m_009, date: 2026-09-07, title: "Qamqor: статус", main_project: qamqor, projects_discussed: [qamqor, squad], participants: [amina, nuraly, sandugash], language_profile: ru, target_minutes: 15, scenarios: [cross_project, dependency, absentia_assignment]}
+  - {id: m_010, date: 2026-09-14, title: "Boost: демо для бизнеса", main_project: boost, projects_discussed: [boost], participants: [amina, daniyar, abdurakhman, sandugash], language_profile: ru, target_minutes: 20, scenarios: [noise]}
+  - {id: m_011, date: 2026-09-21, title: "Zhol: еженедельный", main_project: zhol, projects_discussed: [zhol], participants: [amina, nuraly, nikolay, abdurakhman], language_profile: ru, target_minutes: 15, scenarios: [evolution_deadline]}
+  - {id: m_012, date: 2026-09-28, title: "Qamqor: тесты", main_project: qamqor, projects_discussed: [qamqor], participants: [nuraly, sandugash, abdurakhman], language_profile: kk, target_minutes: 10, scenarios: [language_kk]}
+  - {id: m_013, date: 2026-10-05, title: "Squad: разбор с клиентом", main_project: squad, projects_discussed: [squad], participants: [amina, daniyar, nuraly, client_squad], language_profile: ru, target_minutes: 20, scenarios: [replaced_decision]}
+  - {id: m_014, date: 2026-10-12, title: "Общая встреча по всем проектам", main_project: null, projects_discussed: [zhol, squad, qamqor, boost], participants: [amina, nuraly, nikolay, abdurakhman, sandugash, daniyar], language_profile: mixed, target_minutes: 25, scenarios: [cross_project, recap, thinking_aloud, language_mix, noise]}
+  - {id: m_015, date: 2026-10-26, title: "Итоговая встреча перед релизом Zhol", main_project: zhol, projects_discussed: [zhol, squad], participants: [amina, nuraly, nikolay, abdurakhman, sandugash, daniyar], language_profile: ru, target_minutes: 20, scenarios: [forgotten_promise, recap]}
+
+events:
+  # m_001
+  - {id: ev_m001_01, meeting: m_001, type: decision, project: zhol, statement: "Релиз Zhol назначен на 15 сентября 2026", made_by: amina}
+  - {id: ev_m001_02, meeting: m_001, type: decision, project: zhol, statement: "Push-уведомления входят в первую версию Zhol", made_by: amina}
+  - {id: ev_m001_03, meeting: m_001, type: task, project: zhol, statement: "Сделать миграцию БД", owner: nikolay, due: 2026-08-14}
+  # m_002
+  - {id: ev_m002_01, meeting: m_002, type: decision, project: qamqor, statement: "Для Qamqor берём готовую модель, свою не дообучаем", made_by: amina, note: "предложила Сандуғаш, Амина согласилась"}
+  - {id: ev_m002_02, meeting: m_002, type: task, project: qamqor, statement: "Сделать прототип Qamqor", owner: sandugash, due: 2026-08-26}
+  - {id: ev_m002_03, meeting: m_002, type: open_question, project: qamqor, statement: "Кто делает интерфейс бота"}
+  # m_003
+  - {id: ev_m003_01, meeting: m_003, type: decision, project: squad, statement: "Экспорт в Excel откладываем на вторую версию Squad", made_by: amina}
+  - {id: ev_m003_02, meeting: m_003, type: decision, project: squad, statement: "Первую версию Squad выпускаем до 30 октября 2026", made_by: amina}
+  - {id: ev_m003_03, meeting: m_003, type: task, project: squad, statement: "Подготовить документацию API Squad", owner: nikolay, due: 2026-08-21, note: "назначена заочно, Николая на встрече нет; дальше нигде не звучит до m_015"}
+  - {id: ev_m003_04, meeting: m_003, type: task, project: squad, statement: "Отправить клиенту коммерческое предложение", owner: daniyar, due: 2026-08-14}
+  # m_004
+  - {id: ev_m004_01, meeting: m_004, type: decision, project: boost, statement: "Делаем панель метрик Boost", made_by: amina, note: "около 10 минут встречи про Boost"}
+  - {id: ev_m004_02, meeting: m_004, type: decision, project: boost, statement: "Интеграцию Boost ведёт Абдурахман", made_by: amina}
+  - {id: ev_m004_03, meeting: m_004, type: status_update, project: zhol, statement: "Миграция БД выполнена", reported_by: nikolay}
+  # m_005
+  - {id: ev_m005_01, meeting: m_005, type: non_decision, kind: thinking_aloud, project: null, statement: "Нұралы вслух думает, не взять ли ещё одного бэкендера; решения нет", said_by: nuraly}
+  - {id: ev_m005_02, meeting: m_005, type: decision, project: boost, statement: "Boost сначала делаем для Zhol, для Squad позже", made_by: amina}
+  # m_006
+  - {id: ev_m006_01, meeting: m_006, type: decision, project: zhol, statement: "Релиз Zhol переносится на 6 октября 2026", made_by: amina, self_correction: {first_said: "5 октября", final: "6 октября"}}
+  - {id: ev_m006_02, meeting: m_006, type: task, project: zhol, statement: "Сделать экран статистики", owner: abdurakhman, due: 2026-09-04}
+  # m_007
+  - {id: ev_m007_01, meeting: m_007, type: decision, project: squad, statement: "Николай полностью работает на Squad с 14 по 18 сентября 2026", made_by: amina}
+  - {id: ev_m007_02, meeting: m_007, type: status_update, project: squad, statement: "Коммерческое предложение клиенту отправлено", reported_by: daniyar}
+  # m_008
+  - {id: ev_m008_01, meeting: m_008, type: decision, project: zhol, statement: "Николай занимается хотфиксом Zhol с 14 по 18 сентября 2026", made_by: amina, note: "конфликт с ev_m007_01; на встрече никто не замечает"}
+  - {id: ev_m008_02, meeting: m_008, type: decision, project: zhol, statement: "Push-уведомления в Zhol отменяются, замены нет", made_by: amina, note: "по итогам пилота"}
+  # m_009
+  - {id: ev_m009_01, meeting: m_009, type: decision, project: qamqor, statement: "Интерфейс бота Qamqor делает Абдурахман", made_by: amina, note: "назначен заочно, Абдурахмана на встрече нет"}
+  - {id: ev_m009_02, meeting: m_009, type: status_update, project: qamqor, statement: "Прототип Qamqor готов", reported_by: sandugash, note: "позже срока 26 августа"}
+  - {id: ev_m009_03, meeting: m_009, type: decision, project: squad, statement: "Подключение бота Qamqor к Squad возможно только на готовой модели без дообучения", made_by: nuraly, note: "около 10 минут про Squad"}
+  # m_010
+  - {id: ev_m010_01, meeting: m_010, type: decision, project: boost, statement: "В Boost добавляем метрики продаж", made_by: amina, note: просил Данияр}
+  - {id: ev_m010_02, meeting: m_010, type: task, project: boost, statement: "Сделать блок метрик продаж в Boost", owner: abdurakhman, due: null}
+  # m_011
+  - {id: ev_m011_01, meeting: m_011, type: decision, project: zhol, statement: "Релиз Zhol переносится на 10 ноября 2026", made_by: amina}
+  - {id: ev_m011_02, meeting: m_011, type: status_update, project: zhol, statement: "Экран статистики готов", reported_by: abdurakhman, note: "позже срока 4 сентября"}
+  # m_012
+  - {id: ev_m012_01, meeting: m_012, type: decision, project: qamqor, statement: "Бот сначала работает на казахском и русском, английский позже", made_by: nuraly, note: предложила Сандуғаш}
+  - {id: ev_m012_02, meeting: m_012, type: task, project: qamqor, statement: "Собрать тестовую выборку для Qamqor", owner: sandugash, due: 2026-10-09}
+  # m_013
+  - {id: ev_m013_01, meeting: m_013, type: decision, project: squad, statement: "Экспорт в Excel возвращается в первую версию Squad", made_by: amina, note: требование клиента}
+  - {id: ev_m013_02, meeting: m_013, type: decision, project: squad, statement: "Первая версия Squad выходит 20 ноября 2026", made_by: amina}
+  # m_014
+  - {id: ev_m014_01, meeting: m_014, type: recap, project: zhol, statement: "Напоминание: релиз Zhol 10 ноября", said_by: amina, recaps: ev_m011_01}
+  - {id: ev_m014_02, meeting: m_014, type: recap, project: squad, statement: "Напоминание: первая версия Squad 20 ноября", said_by: daniyar, recaps: ev_m013_02}
+  - {id: ev_m014_03, meeting: m_014, type: open_question, project: zhol, statement: "Кто проводит QA перед релизом Zhol"}
+  - {id: ev_m014_04, meeting: m_014, type: non_decision, kind: thinking_aloud, project: zhol, statement: "Нұралы вслух думает, не перенести ли релиз Zhol на декабрь; никто не согласился", said_by: nuraly}
+  - {id: ev_m014_05, meeting: m_014, type: decision, project: zhol, statement: "Еженедельный созвон по Zhol переносится на вторник с 20 октября 2026", made_by: amina}
+  - {id: ev_m014_06, meeting: m_014, type: status_update, project: qamqor, statement: "Тестовая выборка собрана", reported_by: sandugash}
+  # m_015
+  - {id: ev_m015_01, meeting: m_015, type: recap, project: zhol, statement: "Подтверждено: релиз Zhol 10 ноября", said_by: amina, recaps: ev_m011_01}
+  - {id: ev_m015_02, meeting: m_015, type: task, project: squad, statement: "Подготовить документацию API Squad (повторно)", owner: nikolay, due: 2026-11-06, reissues: ev_m003_03, note: "Николай признаёт, что не сделал"}
+  - {id: ev_m015_03, meeting: m_015, type: decision, project: zhol, statement: "С 2 ноября 2026 новые функции в Zhol не добавляем", made_by: amina}
+  - {id: ev_m015_04, meeting: m_015, type: open_question, project: zhol, statement: "Кто проводит QA перед релизом Zhol", repeats: ev_m014_03}
+
+# Связи между решениями. Направление: от более позднего к более раннему.
+links:
+  - {from: ev_m006_01, to: ev_m001_01, type: supersedes, scenario: evolution_deadline, rationale: "Срок релиза Zhol сдвинут с 15 сентября на 6 октября"}
+  - {from: ev_m011_01, to: ev_m006_01, type: supersedes, scenario: evolution_deadline, rationale: "Срок релиза Zhol сдвинут с 6 октября на 10 ноября"}
+  - {from: ev_m013_01, to: ev_m003_01, type: supersedes, scenario: replaced_decision, rationale: "Excel-экспорт перенесён из второй версии обратно в первую"}
+  - {from: ev_m013_02, to: ev_m003_02, type: supersedes, scenario: replaced_decision, rationale: "Срок первой версии Squad сдвинут с 30 октября на 20 ноября"}
+  - {from: ev_m008_02, to: ev_m001_02, type: supersedes, scenario: cancelled_decision, cancelled_without_replacement: true, rationale: "Push-уведомления убраны из Zhol без замены"}
+  - {from: ev_m008_01, to: ev_m007_01, type: contradicts, scenario: contradiction_load, rationale: "Николай назначен на два проекта на одну и ту же неделю"}
+  - {from: ev_m009_03, to: ev_m002_01, type: depends_on, scenario: dependency, rationale: "Подключение к Squad выполнимо только при условии готовой модели без дообучения"}
+  - {from: ev_m005_02, to: ev_m004_01, type: refines, scenario: cross_project, rationale: "Уточняет, для какого продукта Boost делается первым"}
+  - {from: ev_m010_01, to: ev_m004_01, type: refines, scenario: cross_project, rationale: "Добавляет метрики продаж в панель Boost"}
+
+# Закрытия: что закрыто каким событием (в граф как связь не входит, нужно для эталона «что открыто»).
+closures:
+  - {from: ev_m004_03, closes: ev_m001_03}
+  - {from: ev_m007_02, closes: ev_m003_04}
+  - {from: ev_m009_01, closes: ev_m002_03}
+  - {from: ev_m009_02, closes: ev_m002_02}
+  - {from: ev_m011_02, closes: ev_m006_02}
+  - {from: ev_m014_06, closes: ev_m012_02}

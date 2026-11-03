@@ -2,6 +2,7 @@ pydantic>=2.5
 networkx>=3.4
 openai>=1.40
 numpy>=1.26
+pyyaml>=6.0
 streamlit>=1.38
 pytest>=8.0
 # Для baseline RAG добавьте при необходимости: qdrant-client, rank_bm25, sentence-transformers
