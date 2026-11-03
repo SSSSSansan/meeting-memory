@@ -14,6 +14,12 @@
 Служебный текст колонтитулов отличить от речи по форме нельзя: он остаётся
 в блоках, а число повторяющихся длинных строк показано в format_check.
 
+Для длительностей, скорости речи и длинных блоков блок без текста и метка, которая
+меньше самой большой принятой больше чем на 5 секунд, исключаются и попадают в anomalies
+(строка, значение метки, вид). Метка, равная предыдущей, не ошибка: длительность 0 просто
+не идёт в скорость. Скорость дана «без очистки» и «с очисткой». Ограничение: метка с текстом,
+ушедшая вперёд, не распознаётся; следующие за ней метки будут помечены как идущие назад.
+
 Порядок ключей фиксирован, числа округлены, повторный запуск даёт тот же файл.
 Код возврата 1, если в файле не нашлось ни одной метки времени или он не UTF-8.
 """
@@ -26,6 +32,7 @@ import sys
 import unicodedata
 from collections import Counter
 from dataclasses import dataclass, field
+from itertools import pairwise
 from pathlib import Path
 
 TS_RE = re.compile(r"^\s*(?:(\d{1,2}):(\d{2}):(\d{2})|(\d{1,3}):(\d{2}))\s*$")
@@ -53,6 +60,8 @@ CLOSERS = "\"'»”’)"
 DASHES = "-–—‐‑"
 KK_LETTERS = set("әғқңөұүһі")
 SHORT_BLOCK_SECONDS = 20
+BACKWARDS_TOLERANCE_S = 5  # метка назад больше чем на это — аномалия; меньше — шум округления
+LONG_BLOCK_SECONDS = (60, 120)
 FILLER_WORDS = ["эээ", "эм", "ммм", "ну", "так", "вот", "короче", "типа", "значит",
                 "условно", "скажем", "да"]
 FILLER_PHRASES = ["как бы", "как говорится", "в общем", "то есть"]
@@ -69,6 +78,7 @@ class Block:
     line_no: int
     start: int
     lines: list[str] = field(default_factory=list)
+    label: str = ""
     starts_with_blank: bool = False
     internal_blank: bool = False
     _pending_blank: bool = False
@@ -125,7 +135,7 @@ def parse(text: str) -> Parsed:
                 start = int(m.group(4)) * 60 + int(m.group(5))
             if not prev_blank:
                 ts_not_after_blank += 1
-            current = Block(no, start)
+            current = Block(no, start, label=line.strip())
             blocks.append(current)
             ts_lines += 1
             prev_blank, prev_was_ts = False, True
@@ -231,6 +241,39 @@ def tag_position(view: View, m: re.Match, lead: int, body: str) -> str:
     return "middle"
 
 
+def clean_timeline(blocks: list[Block]) -> tuple[list[int], list[tuple[int, str]]]:
+    """Какие блоки годятся для длительностей, скорости и длинных блоков.
+
+    Исключаются блок без текста и метка, которая меньше самой большой принятой
+    больше чем на BACKWARDS_TOLERANCE_S. Равная предыдущей метка допустима: её
+    длительность 0 просто не попадает в скорость (см. positive_gaps).
+    """
+    accepted: list[int] = []
+    excluded: list[tuple[int, str]] = []
+    highest: int | None = None
+    for i, b in enumerate(blocks):
+        if not b.lines:
+            excluded.append((i, "empty_block"))
+        elif highest is not None and b.start < highest - BACKWARDS_TOLERANCE_S:
+            excluded.append((i, "timestamp_backwards"))
+        else:
+            accepted.append(i)
+            highest = b.start if highest is None else max(highest, b.start)
+    return accepted, excluded
+
+
+def positive_gaps(blocks: list[Block], idx: list[int]) -> tuple[list[tuple[int, int]], int]:
+    """Пары (индекс блока, его длительность) по соседним меткам из idx; пропущено нулевых и отрицательных."""
+    pairs, skipped = [], 0
+    for a, b in pairwise(idx):
+        g = blocks[b].start - blocks[a].start
+        if g > 0:
+            pairs.append((a, g))
+        else:
+            skipped += 1
+    return pairs, skipped
+
+
 def analyze(parsed: Parsed, min_tag_count: int = 3) -> dict:
     blocks = parsed.blocks
     views = [make_view(b) for b in blocks]
@@ -241,7 +284,9 @@ def analyze(parsed: Parsed, min_tag_count: int = 3) -> dict:
 
     starts = [b.start for b in blocks]
     gaps = [starts[i + 1] - starts[i] for i in range(n - 1)]
-    positive = [(i, g) for i, g in enumerate(gaps) if g > 0]
+    accepted, excluded = clean_timeline(blocks)
+    positive, zero_skipped = positive_gaps(blocks, accepted)
+    positive_raw, _ = positive_gaps(blocks, list(range(n)))
 
     out: dict = {}
     out["format_check"] = {
@@ -258,11 +303,18 @@ def analyze(parsed: Parsed, min_tag_count: int = 3) -> dict:
         "occurrences_of_repeated_long_lines": sum(parsed.repeated_long_lines.values()),
         "non_increasing_timestamps": sum(1 for g in gaps if g <= 0),
     }
-    out["anomalies"] = [
-        {"line": a.line_no, "length": a.length, "kind": a.kind} for a in parsed.anomalies
+    anomalies = [
+        {"line": a.line_no, "length": a.length, "kind": a.kind, "label": None, "label_s": None}
+        for a in parsed.anomalies
     ]
+    anomalies += [
+        {"line": blocks[i].line_no, "length": len(blocks[i].label), "kind": kind,
+         "label": blocks[i].label, "label_s": blocks[i].start}
+        for i, kind in excluded
+    ]
+    out["anomalies"] = sorted(anomalies, key=lambda a: a["line"])
 
-    total_seconds = starts[-1] - starts[0] if n else 0
+    total_seconds = starts[accepted[-1]] - starts[accepted[0]] if accepted else 0
     out["blocks"] = {
         "total": n,
         "empty": sum(1 for b in blocks if not b.lines),
@@ -276,14 +328,26 @@ def analyze(parsed: Parsed, min_tag_count: int = 3) -> dict:
         "total_words": total_words,
     }
 
-    known = [(views[i], g) for i, g in positive]
-    rate_blocks = [(v, g) for v, g in known if v.n_words and g <= SHORT_BLOCK_SECONDS]
+    def overall_rate(pairs: list[tuple[int, int]]) -> float | None:
+        seconds = sum(g for _, g in pairs)
+        return r3(sum(views[i].n_words for i, _ in pairs) / seconds) if seconds else None
+
+    rate_blocks = [(views[i], g) for i, g in positive
+                   if views[i].n_words and g <= SHORT_BLOCK_SECONDS]
     out["speech_rate"] = {
-        "words_per_second_overall": r3(
-            sum(v.n_words for v, _ in known) / sum(g for _, g in known) if known else None),
+        "words_per_second_overall_raw": overall_rate(positive_raw),
+        "words_per_second_overall_cleaned": overall_rate(positive),
         "short_blocks_max_seconds": SHORT_BLOCK_SECONDS,
         "short_blocks_words_per_second": dist([v.n_words / g for v, g in rate_blocks],
                                               P10_MEDIAN_P90),
+    }
+    out["timing_cleanup"] = {
+        "excluded_blocks": len(excluded),
+        "excluded_empty_blocks": sum(1 for _, k in excluded if k == "empty_block"),
+        "excluded_backwards_labels": sum(1 for _, k in excluded if k == "timestamp_backwards"),
+        "backwards_tolerance_s": BACKWARDS_TOLERANCE_S,
+        "zero_or_negative_gaps_skipped": zero_skipped,
+        "max_block_duration_seconds_cleaned": max((g for _, g in positive), default=None),
     }
 
     not_terminated = starts_lower = ends_dash = continues = 0
@@ -407,8 +471,8 @@ def analyze(parsed: Parsed, min_tag_count: int = 3) -> dict:
     out["kazakh"] = {"words_with_kazakh_letters": kk,
                      "words_with_kazakh_letters_pct": pct(kk, total_words)}
 
-    out["pauses"] = {"gaps_over_10_s": sum(1 for g in gaps if g > 10),
-                     "gaps_over_30_s": sum(1 for g in gaps if g > 30)}
+    out["long_blocks"] = {f"longer_than_{t}_s": sum(1 for _, g in positive if g > t)
+                          for t in LONG_BLOCK_SECONDS}
 
     out["normalization"] = {
         "blocks_with_double_spaces": sum(
@@ -438,8 +502,15 @@ def summary(stats: dict) -> str:
     add(f"Слов в блоке: min {w['min']}, медиана {w['median']}, p90 {w['p90']}, max {w['max']}; "
         f"блоков из 1-3 слов {b['share_of_1_3_word_blocks_pct']}%")
     sr = s["short_blocks_words_per_second"]
-    add(f"Скорость, слов/с: всего {s['words_per_second_overall']}; блоки ≤{SHORT_BLOCK_SECONDS} с: "
+    tc = stats["timing_cleanup"]
+    add(f"Скорость, слов/с: без очистки {s['words_per_second_overall_raw']}, с очисткой "
+        f"{s['words_per_second_overall_cleaned']}; блоки ≤{SHORT_BLOCK_SECONDS} с: "
         f"p10 {sr['p10']}, медиана {sr['median']}, p90 {sr['p90']}")
+    add(f"Исключено блоков из расчёта времени: {tc['excluded_blocks']} (без текста "
+        f"{tc['excluded_empty_blocks']}, метка назад >{tc['backwards_tolerance_s']} с "
+        f"{tc['excluded_backwards_labels']}); нулевых/отрицательных промежутков пропущено "
+        f"{tc['zero_or_negative_gaps_skipped']}; максимум блока с очисткой "
+        f"{tc['max_block_duration_seconds_cleaned']} с")
     add(f"Обрывы: без конечной пунктуации {k['blocks_not_ending_with_terminal_pct']}%, "
         f"со строчной буквы {k['blocks_starting_lowercase_pct']}%, на дефис/тире "
         f"{k['blocks_ending_with_dash_or_hyphen']}, продолжаются в следующем "
@@ -459,13 +530,18 @@ def summary(stats: dict) -> str:
         f"числительных словами {ln['numerals_as_words']}")
     add(f"Казахские буквы: {kz['words_with_kazakh_letters']} слов "
         f"({kz['words_with_kazakh_letters_pct']}%)")
-    add(f"Паузы: >10 с {stats['pauses']['gaps_over_10_s']}, >30 с {stats['pauses']['gaps_over_30_s']}")
+    lb = stats["long_blocks"]
+    add(f"Блоков длиннее 60 с: {lb['longer_than_60_s']}, длиннее 120 с: {lb['longer_than_120_s']}")
     add(f"Нормализация: двойные пробелы {nm['blocks_with_double_spaces']}, "
         f"переносы внутри {nm['blocks_with_line_breaks_inside']}, "
         f"пробел перед знаком {nm['blocks_with_space_before_punctuation']}")
     if stats["anomalies"]:
-        lines.append("Аномальные строки (номер, длина, вид):")
-        lines += [f"  {a['line']}, {a['length']}, {a['kind']}" for a in stats["anomalies"]]
+        lines.append("Аномалии (строка, длина, вид[, метка]):")
+        lines += [
+            f"  {a['line']}, {a['length']}, {a['kind']}"
+            + (f", метка {a['label']} ({a['label_s']} с)" if a["label"] else "")
+            for a in stats["anomalies"]
+        ]
     return "\n".join(lines)
 
 
