@@ -18,7 +18,8 @@
       "sigma": 1.24,
       "min": 1,
       "max": 250
-    }
+    },
+    "boundary_snap_prob": 0.6
   },
   "seeds": {
     "fillers": 7838319371497744330,
@@ -30,6 +31,7 @@
     "sentence_start": 13844633112611728071,
     "mislabel": 12239237553753839385,
     "blocks": 14265838453580138558,
+    "block_snap": 17847921578011337355,
     "noise_tag": 9586369058066692963
   },
   "dropped_source_segments": [],
@@ -3353,6 +3355,17 @@
       }
     },
     {
+      "operation": "transliteration",
+      "segment": 36,
+      "token": 16,
+      "was": "killer",
+      "now": "киллер",
+      "source": {
+        "segment": 36,
+        "token": 16
+      }
+    },
+    {
       "operation": "sentence_start_capitalize",
       "segment": 36,
       "token": 22,
@@ -3405,6 +3418,28 @@
       "source": {
         "segment": 37,
         "token": 25
+      }
+    },
+    {
+      "operation": "transliteration",
+      "segment": 37,
+      "token": 26,
+      "was": "Bad",
+      "now": "бэд",
+      "source": {
+        "segment": 37,
+        "token": 26
+      }
+    },
+    {
+      "operation": "transliteration",
+      "segment": 37,
+      "token": 27,
+      "was": "Gateway",
+      "now": "гейтвей",
+      "source": {
+        "segment": 37,
+        "token": 27
       }
     },
     {
@@ -6950,6 +6985,7 @@
     "noise_tag": 8,
     "sentence_end_drop": 103,
     "sentence_start_capitalize": 214,
-    "speaker_mislabel": 4
+    "speaker_mislabel": 4,
+    "transliteration": 3
   }
 }

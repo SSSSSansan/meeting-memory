@@ -18,7 +18,8 @@
       "sigma": 1.24,
       "min": 1,
       "max": 250
-    }
+    },
+    "boundary_snap_prob": 0.9
   },
   "seeds": {
     "fillers": 16257681941208654576,
@@ -30,6 +31,7 @@
     "sentence_start": 4262315186205270755,
     "mislabel": 6021843995164909128,
     "blocks": 8551714020573377003,
+    "block_snap": 16888486667984842411,
     "noise_tag": 9591851492146120135
   },
   "dropped_source_segments": [],
@@ -1530,6 +1532,17 @@
       }
     },
     {
+      "operation": "transliteration",
+      "segment": 10,
+      "token": 14,
+      "was": "Mixtral",
+      "now": "миксраль",
+      "source": {
+        "segment": 10,
+        "token": 14
+      }
+    },
+    {
       "operation": "kk_letter_loss",
       "segment": 10,
       "token": 24,
@@ -1652,17 +1665,6 @@
       "source": {
         "segment": 17,
         "token": 0
-      }
-    },
-    {
-      "operation": "transliteration",
-      "segment": 17,
-      "token": 1,
-      "was": "fine-tuning",
-      "now": "файнтюнинг",
-      "source": {
-        "segment": 17,
-        "token": 1
       }
     },
     {
@@ -1973,6 +1975,17 @@
       "source": {
         "segment": 39,
         "token": 1
+      }
+    },
+    {
+      "operation": "transliteration",
+      "segment": 41,
+      "token": 2,
+      "was": "ML-мен",
+      "now": "эмэль-мен",
+      "source": {
+        "segment": 41,
+        "token": 2
       }
     },
     {
@@ -2530,6 +2543,6 @@
     "noise_tag": 1,
     "sentence_end_drop": 30,
     "sentence_start_capitalize": 12,
-    "transliteration": 1
+    "transliteration": 2
   }
 }

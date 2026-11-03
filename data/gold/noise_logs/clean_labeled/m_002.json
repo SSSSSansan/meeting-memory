@@ -13,7 +13,8 @@
     "sentence_start_capitalize_prob": 0,
     "noise_tag_prob": 0,
     "speaker_mislabel_prob": 0,
-    "block_words": null
+    "block_words": null,
+    "boundary_snap_prob": 0
   },
   "seeds": {
     "fillers": 1311547128628579159,
@@ -25,6 +26,7 @@
     "sentence_start": 6869833094489856815,
     "mislabel": 15144951082836185889,
     "blocks": 3305929524749668548,
+    "block_snap": 3738546339478540059,
     "noise_tag": 7967178682061085955
   },
   "dropped_source_segments": [],

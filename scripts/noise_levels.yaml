@@ -22,6 +22,15 @@ transliteration_table:
   Excel: эксель
   push: пуш
   API: апи
+  Frame: фрейм
+  Gateway: гейтвей
+  killer: киллер
+  Bad: бэд
+  UI: юай
+  ML: эмэль
+  LLaMA: лама
+  Mixtral: миксраль
+  # WD-40, OOM и ChromaDB намеренно не заменяются
 
 levels:
   clean:
@@ -35,6 +44,7 @@ levels:
     noise_tag_prob: 0
     speaker_mislabel_prob: 0
     block_words: null
+    boundary_snap_prob: 0  # у clean не используется
   medium:
     filler_remove_prob: 0.95
     ellipsis_mode: "drop"
@@ -47,6 +57,10 @@ levels:
     speaker_mislabel_prob: 0.03
     # только unlabeled; логнормальное распределение, sigma в логарифме
     block_words: {median: 21, sigma: 1.24, min: 1, max: 250}
+    # вероятность привязать разрез блока к концу предложения или реплики. Выбрано из 0.5, 0.7
+    # и 0.9 по одному образцу (один докладчик, без меток говорящих, 4300 слов): у 0.9 доля блоков
+    # без . ? ! … в конце (37.0%) ближе всего к образцу (38.5%). Остальные параметры не подгонялись.
+    boundary_snap_prob: 0.9
   strong:
     filler_remove_prob: 0.95
     ellipsis_mode: "drop"
@@ -58,6 +72,7 @@ levels:
     noise_tag_prob: 0.04
     speaker_mislabel_prob: 0.1
     block_words: {median: 21, sigma: 1.24, min: 1, max: 250}
+    boundary_snap_prob: 0.6  # значение medium минус 0.3
 
 # остаток короче этого числа слов присоединяется к предыдущему блоку
 block_min_tail_words: 5

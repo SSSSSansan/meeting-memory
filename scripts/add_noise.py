@@ -20,7 +20,16 @@ data/noisy/<level>_<variant>/m_NNN.transcript.json и m_NNN.meeting.json (meetin
   6 конечные знаки предложений и заглавные буквы   7 ошибки меток (только labeled)
   8 блоки по словам (только unlabeled, medium и strong)   9 тег шума в конце блока
 
+Блоки (операция 8): размер n берётся из логнормального распределения. С вероятностью
+boundary_snap_prob разрез сдвигается к ближайшему токену, кончающему предложение или реплику
+(окно ±max(3, round(0.3·n)), при равенстве берётся более дальний). Границы определяются по
+чистому тексту и едут вместе с токеном; при удалении слова граница переходит на предыдущий
+оставшийся токен. Привязка использует отдельный генератор, поэтому при вероятности 0
+результат тот же, что у нарезки без привязки. В журнале у каждого блока поля snapped и
+boundary (sentence_end, reply_end, mid_sentence) и счётчики block_boundaries.
+
 Решения там, где задание допускает толкования:
+  * граница «конец предложения» ищется после снятия закрывающих кавычек и скобок;
   * слова, распознанные как упоминания сущностей (заменённые или нет), не затрагиваются
     операциями 4 и 5, чтобы форма сущности оставалась в списке написаний;
   * многоточие в начале токена переносится на предыдущее слово (в начале реплики пропадает),
@@ -60,10 +69,10 @@ VARIANTS = ["labeled", "unlabeled"]
 LEVEL_KEYS = [
     "filler_remove_prob", "ellipsis_mode", "entity_variant_prob", "kk_letter_loss_prob",
     "transliteration_prob", "sentence_end_drop_prob", "sentence_start_capitalize_prob",
-    "noise_tag_prob", "speaker_mislabel_prob", "block_words",
+    "noise_tag_prob", "speaker_mislabel_prob", "block_words", "boundary_snap_prob",
 ]
 OPS = ["fillers", "ellipsis", "entities", "kk_loss", "translit", "sentence_end",
-       "sentence_start", "mislabel", "blocks", "noise_tag"]
+       "sentence_start", "mislabel", "blocks", "block_snap", "noise_tag"]
 
 SPLIT_RE = re.compile(r"^(\W*)(.*?)(\W*)$", re.DOTALL)
 ELL = r"(?:\.{3,}|…)"
@@ -112,6 +121,18 @@ class Tok:
     idx: int
     entity: dict | None = None
     events: list[dict] = field(default_factory=list)
+    # границы считаются по чистому тексту до всех операций и едут вместе с токеном
+    sent_end: bool = False   # токен кончает предложение (. ? ! …)
+    reply_end: bool = False  # последний токен реплики
+
+    @property
+    def boundary(self) -> bool:
+        return self.sent_end or self.reply_end
+
+    def inherit_boundary(self, removed: Tok) -> None:
+        """Удалённый токен передаёт границу предыдущему оставшемуся."""
+        self.sent_end |= removed.sent_end
+        self.reply_end |= removed.reply_end
 
     def change(self, op: str, new: str, **extra: object) -> None:
         if new != self.text:
@@ -142,6 +163,7 @@ class Out:
     speaker: str | None
     tag: str | None = None
     mislabel: dict | None = None
+    snapped: bool | None = None  # только для блоков: разрез привязан к границе
 
     @property
     def text(self) -> str:
@@ -206,8 +228,10 @@ def op_fillers(segs: list[Seg], rng: random.Random, prob: float, fillers: set[st
             if core.lower() in fillers and rng.random() < prob:
                 removed.append({"operation": "fillers", "was": tok.text, "now": "",
                                 "source": tok.source})
-                if trail and kept and ends_alnum(kept[-1].text):
-                    kept[-1].change("fillers", kept[-1].text + trail)
+                if kept:
+                    kept[-1].inherit_boundary(tok)
+                    if trail and ends_alnum(kept[-1].text):
+                        kept[-1].change("fillers", kept[-1].text + trail)
                 continue
             kept.append(tok)
         seg.toks = kept
@@ -230,8 +254,10 @@ def op_ellipsis(segs: list[Seg], rng: random.Random, removed: list[dict],
                 rep = pick(i == last)
                 removed.append({"operation": "ellipsis", "was": text, "now": "",
                                 "source": tok.source})
-                if rep and kept and ends_alnum(kept[-1].text):
-                    kept[-1].change("ellipsis", kept[-1].text + rep)
+                if kept:
+                    kept[-1].inherit_boundary(tok)
+                    if rep and ends_alnum(kept[-1].text):
+                        kept[-1].change("ellipsis", kept[-1].text + rep)
                 continue
             new = text
             lead = LEAD_ELL_RE.match(new)
@@ -353,18 +379,55 @@ def op_mislabel(segs: list[Seg], rng: random.Random, prob: float, labels: list[s
                 seg.speaker = new
 
 
-def make_blocks(tokens: list[Tok], rng: random.Random, spec: dict, min_tail: int) -> list[list[Tok]]:
+def snap_window(size: int) -> int:
+    return max(3, round(0.3 * size))
+
+
+def snap_position(boundary: list[bool], size: int) -> int | None:
+    """Размер блока, при котором разрез ложится на границу, ближайшую к size.
+
+    boundary[k] — токен k оставшегося потока кончает предложение или реплику. Окно
+    [size - d, size + d]; при равном расстоянии берётся более дальний от начала."""
+    d = snap_window(size)
+    best: tuple[tuple[int, int], int] | None = None
+    for j in range(max(1, size - d), min(len(boundary), size + d) + 1):
+        if boundary[j - 1]:
+            key = (abs(j - size), -j)
+            if best is None or key < best[0]:
+                best = (key, j)
+    return None if best is None else best[1]
+
+
+def make_blocks(tokens: list[Tok], rng: random.Random, spec: dict, min_tail: int,
+                snap_rng: random.Random | None = None,
+                snap_prob: float = 0.0) -> list[tuple[list[Tok], bool]]:
+    """Режет поток токенов на блоки; второй элемент пары — разрез привязан к границе.
+
+    При snap_prob == 0 генератор привязки не трогается: результат тот же, что без привязки."""
     mu, sigma = math.log(spec["median"]), spec["sigma"]
-    blocks: list[list[Tok]] = []
+    blocks: list[tuple[list[Tok], bool]] = []
     i, n = 0, len(tokens)
     while i < n:
         size = min(max(round(math.exp(rng.gauss(mu, sigma))), spec["min"]), spec["max"])
+        snapped = False
+        if snap_prob > 0 and snap_rng is not None and snap_rng.random() < snap_prob:
+            reach = size + snap_window(size)
+            j = snap_position([t.boundary for t in tokens[i:i + reach]], size)
+            if j is not None:
+                snapped = j <= spec["max"]  # за максимумом режем на максимуме, это уже не привязка
+                size = min(j, spec["max"])
         rest = n - i - size
         if rest < min_tail:  # остаток (в том числе нулевой) уходит в этот же блок
             size = n - i
-        blocks.append(tokens[i:i + size])
+        blocks.append((tokens[i:i + size], snapped))
         i += size
     return blocks
+
+
+def boundary_kind(tok: Tok) -> str:
+    if tok.reply_end:
+        return "reply_end"
+    return "sentence_end" if tok.sent_end else "mid_sentence"
 
 
 # ---------- один прогон: встреча × уровень × вариант ----------
@@ -375,7 +438,8 @@ def segs_from_raw(raw_segments: list[dict]) -> list[Seg]:
         words = s["text"].split()
         n = len(words)
         span = s["end"] - s["start"]
-        toks = [Tok(w, s["start"] + span * i / n, s["start"] + span * (i + 1) / n, si, i)
+        toks = [Tok(w, s["start"] + span * i / n, s["start"] + span * (i + 1) / n, si, i,
+                    sent_end=w.rstrip(CLOSERS)[-1:] in tuple(".?!…"), reply_end=i == n - 1)
                 for i, w in enumerate(words)]
         segs.append(Seg(si, s["speaker"], s["start"], s["end"], toks))
     return segs
@@ -433,8 +497,10 @@ def process(meeting: str, level: str, variant: str, raw: dict, cfg: dict, index:
     else:
         stream = [t for s in live for t in s.toks]
         blocks = make_blocks(stream, rngs["blocks"], params["block_words"],
-                             cfg["block_min_tail_words"])
-        outs = [Out(b, round(b[0].start, 2), round(b[-1].end, 2), None) for b in blocks]
+                             cfg["block_min_tail_words"], rngs["block_snap"],
+                             params["boundary_snap_prob"])
+        outs = [Out(b, round(b[0].start, 2), round(b[-1].end, 2), None, snapped=snapped)
+                for b, snapped in blocks]
     if params["noise_tag_prob"] > 0:
         for o in outs:
             o.tag = cfg["noise_tag"] if rngs["noise_tag"].random() < params["noise_tag_prob"] else None
@@ -501,16 +567,23 @@ def build_log(meeting: str, level: str, variant: str, params: dict, seed: int,
               removed: list[dict], dropped: list[int],
               skipped: Counter) -> tuple[dict, Counter]:
     segments_log, mentions, replacements = [], [], []
+    boundaries: Counter = Counter()
     for oi, o in enumerate(outs):
         sources: dict[int, int] = {}
         for t in o.toks:
             sources[t.seg] = sources.get(t.seg, 0) + 1
-        segments_log.append({
+        entry = {
             "index": oi, "start": o.start, "end": o.end, "words": len(o.toks),
             "sources": [{"segment": si, "speaker": raw["segments"][si]["speaker"],
                          "person": mapping.get(raw["segments"][si]["speaker"]), "words": n}
                         for si, n in sources.items()],
-        })
+        }
+        if o.snapped is not None:  # блок: чем кончается и привязан ли разрез к границе
+            kind = boundary_kind(o.toks[-1])
+            entry["snapped"], entry["boundary"] = o.snapped, kind
+            boundaries[kind] += 1
+            boundaries["snapped"] += o.snapped
+        segments_log.append(entry)
         for ti, t in enumerate(o.toks):
             if t.entity is not None:
                 final = final_form(t)
@@ -547,6 +620,9 @@ def build_log(meeting: str, level: str, variant: str, params: dict, seed: int,
         "segments": segments_log, "entity_mentions": mentions, "replacements": replacements,
         "counters": dict(sorted(counters.items())),
     }
+    if boundaries:
+        log["block_boundaries"] = {k: boundaries[k] for k in
+                                   ("sentence_end", "reply_end", "mid_sentence", "snapped")}
     return log, counters
 
 
@@ -677,8 +753,16 @@ def run(a: argparse.Namespace) -> int:
         totals[name] = total
         print(stats_line("ИТОГО", total))
         print("  замены: " + (", ".join(f"{k}={v}" for k, v in sorted(ops.items())) or "нет"))
+        bounds: Counter = Counter()
+        for combo in per_meeting.values():
+            bounds.update(combo.log.get("block_boundaries", {}))
+        if bounds:
+            print(f"  границы блоков: по концу предложения {bounds['sentence_end']}, "
+                  f"по концу реплики {bounds['reply_end']}, посреди предложения "
+                  f"{bounds['mid_sentence']}; привязано {bounds['snapped']} из {total['segments']}")
         print()
-    print("== medium_unlabeled против настоящего образца (ничего не подгонялось) ==")
+    print("== medium_unlabeled против настоящего образца "
+          "(boundary_snap_prob выбран по этому образцу, остальное не подгонялось) ==")
     t = totals["medium_unlabeled"]
     rows = [
         ("блок: медиана, слов", REAL_SAMPLE["len"][1], t["len"][1]),

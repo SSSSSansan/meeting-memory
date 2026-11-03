@@ -18,7 +18,8 @@
       "sigma": 1.24,
       "min": 1,
       "max": 250
-    }
+    },
+    "boundary_snap_prob": 0.6
   },
   "seeds": {
     "fillers": 15506653985467980754,
@@ -30,6 +31,7 @@
     "sentence_start": 13580397192937351283,
     "mislabel": 18225669622115861827,
     "blocks": 9623740660504517766,
+    "block_snap": 14507523967419084955,
     "noise_tag": 10847494231474433726
   },
   "dropped_source_segments": [],
@@ -1886,6 +1888,17 @@
       }
     },
     {
+      "operation": "transliteration",
+      "segment": 16,
+      "token": 5,
+      "was": "fine-tuning",
+      "now": "файнтюнинг",
+      "source": {
+        "segment": 16,
+        "token": 5
+      }
+    },
+    {
       "operation": "sentence_end_drop",
       "segment": 16,
       "token": 6,
@@ -2585,6 +2598,28 @@
       "source": {
         "segment": 40,
         "token": 16
+      }
+    },
+    {
+      "operation": "transliteration",
+      "segment": 41,
+      "token": 2,
+      "was": "ML-мен",
+      "now": "эмэль-мен",
+      "source": {
+        "segment": 41,
+        "token": 2
+      }
+    },
+    {
+      "operation": "transliteration",
+      "segment": 41,
+      "token": 4,
+      "was": "UI",
+      "now": "юай",
+      "source": {
+        "segment": 41,
+        "token": 4
       }
     },
     {
@@ -4134,6 +4169,6 @@
     "noise_tag": 5,
     "sentence_end_drop": 68,
     "sentence_start_capitalize": 9,
-    "transliteration": 1
+    "transliteration": 4
   }
 }

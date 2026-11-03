@@ -1,4 +1,5 @@
 import json
+import math
 import re
 from itertools import pairwise
 from pathlib import Path
@@ -11,11 +12,16 @@ from scripts.add_noise import (
     INPUT_DIR,
     SPEAKER_MAPS_PATH,
     WORLD_PATH,
+    Combo,
     build_entity_index,
     dump_json,
     load_config,
     main,
+    make_rng,
+    op_fillers,
     process,
+    segs_from_raw,
+    snap_position,
     split_token,
 )
 from src.ingest.scribal_adapter import convert_files
@@ -24,7 +30,9 @@ from src.schemas import ScribalMeeting, ScribalTranscript, Transcript
 COMBOS = [f"{lv}_{var}" for lv in ("clean", "medium", "strong") for var in ("labeled", "unlabeled")]
 KK_MAP = {"ә": "а", "ғ": "г", "қ": "к", "ң": "н", "ө": "о", "ұ": "у", "ү": "у", "һ": "х", "і": "и"}
 TRANSLIT = {"рэг": "rag", "файнтюнинг": "fine-tuning", "опенсорс": "open-source",
-            "эксель": "excel", "пуш": "push", "апи": "api"}
+            "эксель": "excel", "пуш": "push", "апи": "api", "фрейм": "frame",
+            "гейтвей": "gateway", "киллер": "killer", "бэд": "bad", "юай": "ui",
+            "эмэль": "ml", "лама": "llama", "миксраль": "mixtral"}
 TEMPLATES = [
     "Привет всем. Эээ, давайте начнем... Нуралы, ты готов?",
     "Да.",
@@ -34,6 +42,7 @@ TEMPLATES = [
     "Колю попросим, а Абду и Сандуғаш посмотрят интеграцию Boost.",
     "Ладно, договорились. Тогда ммм до пятницы, да?",
     "Жақсы, келістік. Қазақша да жұмыс істеуі керек, мына жерде қате бар...",
+    "Frame и Gateway-ом, killer Bad, UI и ML-мен, LLaMA с Mixtral, WD-40 и OOM и ChromaDB.",
 ]
 LABELS = ["SPEAKER_00", "SPEAKER_01", "SPEAKER_02", "SPEAKER_03"]
 MAPS = json.loads(SPEAKER_MAPS_PATH.read_text(encoding="utf-8"))
@@ -451,3 +460,136 @@ def test_real_raw_files_run_and_clean_labeled_matches(tmp_path):
         for combo in COMBOS:
             t_path = out / combo / f.name
             convert_files(t_path, out / combo / f"{meeting}.meeting.json", meeting, source="synthetic")
+
+
+# ---------- нарезка блоков по границам предложений ----------
+
+SPEC = {"median": 21, "sigma": 1.24, "min": 1, "max": 250}
+SENTENCES = ["аа бб вв.", "гг дд?", "ее жж зз!", "ии кк."]  # предложения до 3 слов
+
+
+def noisy_combo(texts: list[str], variant: str = "labeled", seed: int = 42, **params) -> Combo:
+    cfg = load_config(CONFIG_PATH)
+    cfg["levels"]["medium"] = {**cfg["levels"]["clean"], **params}
+    return process("m_001", "medium", variant, make_raw(texts), cfg, INDEX, MAPS["m_001"], seed)
+
+
+def sentence_replies(n: int = 120) -> list[str]:
+    return [" ".join(SENTENCES[(i + k) % 4] for k in range(2 + i % 2)) for i in range(n)]
+
+
+def test_snap_position_picks_nearest_boundary_and_farther_one_on_ties():
+    boundary = [False] * 30
+    boundary[17] = boundary[23] = True  # токены 18 и 24: размеры блока 18 и 24
+    assert snap_position(boundary, 21) == 24  # расстояние 3 и 3: берём более дальний
+    boundary[19] = True  # размер 20 ближе
+    assert snap_position(boundary, 21) == 20
+    assert snap_position([False] * 30, 21) is None
+    assert snap_position(boundary, 40) is None  # окно ±12 до 28..52 без границ в потоке
+    assert snap_position([True] + [False] * 9, 3) == 1  # окно [1, 6]: нижняя граница не ниже 1
+    assert snap_position([True] + [False] * 9, 8) is None  # окно [5, 11] границу не видит
+
+
+def test_snap_window_has_floor_of_three_words():
+    boundary = [False] * 10
+    boundary[5] = True  # размер 6; для n=2 окно [1, 5] его не видит
+    assert snap_position(boundary, 2) is None
+    assert snap_position(boundary, 3) == 6  # окно [1, 6]
+
+
+def test_snap_probability_one_ends_blocks_on_sentence_boundaries():
+    combo = noisy_combo(sentence_replies(), variant="unlabeled", block_words=SPEC,
+                        boundary_snap_prob=1)
+    segs = combo.log["segments"]
+    assert len(segs) > 5
+    assert all(s["snapped"] for s in segs[:-1])
+    ends = [s["text"].rstrip()[-1] for s in combo.segments]
+    assert sum(c in ".?!" for c in ends) / len(ends) >= 0.95
+    kinds = combo.log["block_boundaries"]
+    assert kinds["mid_sentence"] == 0
+    assert kinds["sentence_end"] + kinds["reply_end"] == len(segs)
+
+
+def test_snap_probability_zero_matches_cutting_by_word_count():
+    texts = sentence_replies()
+    combo = noisy_combo(texts, variant="unlabeled", block_words=SPEC, boundary_snap_prob=0)
+    # прежнее поведение: размеры из того же генератора, остаток короче 5 слов уходит в блок
+    rng = make_rng(42, "m_001", "medium", "unlabeled", "blocks")
+    words = [w for t in texts for w in t.split()]
+    mu, sigma = math.log(SPEC["median"]), SPEC["sigma"]
+    want, i = [], 0
+    while i < len(words):
+        size = min(max(round(math.exp(rng.gauss(mu, sigma))), 1), 250)
+        if len(words) - i - size < 5:
+            size = len(words) - i
+        want.append(" ".join(words[i:i + size]))
+        i += size
+    assert [s["text"] for s in combo.segments] == want
+    assert not any(s["snapped"] for s in combo.log["segments"])
+
+
+def test_snap_keeps_words_order_and_time():
+    texts = sentence_replies()
+    segs = noisy_combo(texts, variant="unlabeled", block_words=SPEC,
+                       boundary_snap_prob=0.9).segments
+    assert [w for s in segs for w in s["text"].split()] == [w for t in texts for w in t.split()]
+    assert all(a["end"] <= b["start"] for a, b in pairwise(segs))
+
+
+def test_snap_never_exceeds_block_limits():
+    spec = {"median": 40, "sigma": 1.0, "min": 1, "max": 60}
+    segs = noisy_combo(sentence_replies(300), variant="unlabeled", block_words=spec,
+                       boundary_snap_prob=1).segments
+    sizes = [len(s["text"].split()) for s in segs]
+    assert min(sizes) >= 1 and max(sizes) <= 60 + 4
+
+
+def test_snap_is_deterministic():
+    kw = {"variant": "unlabeled", "block_words": SPEC, "boundary_snap_prob": 0.5}
+    a = noisy_combo(sentence_replies(), **kw)
+    b = noisy_combo(sentence_replies(), **kw)
+    assert dump_json(a.transcript) == dump_json(b.transcript)
+    assert dump_json(a.log) == dump_json(b.log)
+
+
+def test_boundary_flags_come_from_clean_text_and_move_to_previous_token():
+    segs = segs_from_raw(make_raw(["привет. как дела? ну эээ.", "да"])["segments"])
+    first = segs[0].toks
+    assert [t.sent_end for t in first] == [True, False, True, False, True]
+    assert [t.reply_end for t in first] == [False, False, False, False, True]
+    op_fillers(segs, make_rng(1, "m", "l", "v", "f"), 1.0, {"эээ"}, [])
+    assert [t.text for t in segs[0].toks] == ["привет.", "как", "дела?", "ну."]
+    last = segs[0].toks[-1]  # «ну» унаследовал конец предложения и реплики от «эээ.»
+    assert last.sent_end and last.reply_end
+
+
+def test_block_log_has_snapped_boundary_and_counters(run):
+    for level in ("medium", "strong"):
+        log = load(run["logs"] / f"{level}_unlabeled" / "m_001.json")
+        assert all(isinstance(s["snapped"], bool) and s["boundary"] in
+                   ("sentence_end", "reply_end", "mid_sentence") for s in log["segments"])
+        counts = log["block_boundaries"]
+        assert counts["sentence_end"] + counts["reply_end"] + counts["mid_sentence"] == len(
+            log["segments"])
+        assert counts["snapped"] == sum(s["snapped"] for s in log["segments"])
+    assert "snapped" not in load(run["logs"] / "medium_labeled" / "m_001.json")["segments"][0]
+    assert "block_snap" in load(run["logs"] / "medium_unlabeled" / "m_001.json")["seeds"]
+
+
+def test_snap_probabilities_are_in_config():
+    levels = load_config(CONFIG_PATH)["levels"]
+    assert levels["clean"]["boundary_snap_prob"] == 0
+    assert 0 < levels["strong"]["boundary_snap_prob"] < levels["medium"]["boundary_snap_prob"] <= 1
+
+
+# ---------- расширенная таблица замен латиницы ----------
+
+def test_new_latin_entries_are_transliterated_with_suffixes_and_others_stay():
+    text = "Frame Gateway-ом killer Bad UI ML-мен LLaMA Mixtral, WD-40 OOM ChromaDB 15"
+    got = noisy([text], transliteration_prob=1)[0]["text"]
+    assert got == "фрейм гейтвей-ом киллер бэд юай эмэль-мен лама миксраль, WD-40 OOM ChromaDB 15"
+
+
+def test_transliteration_probability_zero_leaves_text_alone():
+    text = "Frame ML-мен UI"
+    assert noisy([text], transliteration_prob=0)[0]["text"] == text

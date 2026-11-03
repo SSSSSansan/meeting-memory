@@ -18,7 +18,8 @@
       "sigma": 1.24,
       "min": 1,
       "max": 250
-    }
+    },
+    "boundary_snap_prob": 0.9
   },
   "seeds": {
     "fillers": 5721783910139698124,
@@ -30,6 +31,7 @@
     "sentence_start": 7776723074724814646,
     "mislabel": 9982652170589540807,
     "blocks": 7326348022689044619,
+    "block_snap": 17217026863851970004,
     "noise_tag": 17662048146696239608
   },
   "dropped_source_segments": [],
