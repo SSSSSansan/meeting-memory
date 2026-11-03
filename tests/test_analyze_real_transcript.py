@@ -29,7 +29,8 @@ def test_parser_empty_block_multiline_blank_start_and_hours_format():
     assert s["blocks"]["total"] == 4 and s["blocks"]["empty"] == 1
     assert s["format_check"]["blocks_starting_with_blank_line"] == 1
     assert s["normalization"]["blocks_with_line_breaks_inside"] == 1
-    assert s["blocks"]["total_seconds"] == 3600
+    # пустой блок 0:05 исключён из времени: от 0:10 до 1:00:05
+    assert s["blocks"]["total_seconds"] == 3595
 
 
 def test_tag_positions_counts_and_block_share():
@@ -106,10 +107,10 @@ def test_scripts_kazakh_digits_and_numerals():
     assert s["kazakh"]["words_with_kazakh_letters_pct"] == round(100 * 3 / total, 2)
 
 
-def test_long_pauses():
-    text = "".join(f"{ts}\nслово\n\n" for ts in ("0:00", "0:05", "0:20", "1:00", "1:00:05"))
-    pauses = stats_of(text)["pauses"]
-    assert pauses == {"gaps_over_10_s": 3, "gaps_over_30_s": 2}
+def test_long_blocks_over_60_and_120_seconds():
+    text = "".join(f"{ts}\nслово\n\n" for ts in ("0:00", "0:30", "1:40", "4:00", "4:05"))
+    # длительности блоков: 30, 70, 140, 5
+    assert stats_of(text)["long_blocks"] == {"longer_than_60_s": 2, "longer_than_120_s": 1}
 
 
 def test_normalization_flags():
@@ -123,7 +124,9 @@ def test_speech_rate_and_distributions():
     ten = " ".join("абвгдежзик")
     text = f"0:00\n{ten}\n\n0:10\nа б в г д\n\n0:30\nконец\n"
     s = stats_of(text)
-    assert s["speech_rate"]["words_per_second_overall"] == 0.5
+    assert s["speech_rate"]["words_per_second_overall_cleaned"] == 0.5
+    assert s["speech_rate"]["words_per_second_overall_raw"] == 0.5
+    assert s["timing_cleanup"]["excluded_blocks"] == 0
     short = s["speech_rate"]["short_blocks_words_per_second"]
     assert (short["p10"], short["median"], short["p90"]) == (0.325, 0.625, 0.925)
     d = s["blocks"]["duration_seconds"]
@@ -151,12 +154,13 @@ def test_odd_lines_land_in_anomalies_not_dropped():
         "10:30 дальше\n"         # 14: метка с текстом
     )
     s = stats_of(text)
+    no_label = {"label": None, "label_s": None}
     assert s["anomalies"] == [
-        {"line": 1, "length": 15, "kind": "before_first_timestamp"},
-        {"line": 5, "length": 2, "kind": "digits_only"},
-        {"line": 9, "length": 1, "kind": "page_break_char"},
-        {"line": 13, "length": 3, "kind": "malformed_timestamp"},
-        {"line": 14, "length": 12, "kind": "timestamp_with_text"},
+        {"line": 1, "length": 15, "kind": "before_first_timestamp", **no_label},
+        {"line": 5, "length": 2, "kind": "digits_only", **no_label},
+        {"line": 9, "length": 1, "kind": "page_break_char", **no_label},
+        {"line": 13, "length": 3, "kind": "malformed_timestamp", **no_label},
+        {"line": 14, "length": 12, "kind": "timestamp_with_text", **no_label},
     ]
     assert s["format_check"]["text_lines_in_blocks"] == 3
     assert s["format_check"]["timestamp_lines"] == 3
@@ -165,6 +169,56 @@ def test_odd_lines_land_in_anomalies_not_dropped():
 def test_timestamp_glued_to_previous_text_is_counted():
     p = parse("0:01\nтекст\n0:05\nещё\n")
     assert p.ts_not_after_blank == 1
+
+
+TEN = " ".join("абвгдежзик")
+
+
+def test_empty_block_with_stray_label_is_excluded_from_timing():
+    # как в настоящем образце: пустая метка 17:07 между 0:00 и 0:03
+    text = f"0:00\nа б в г д е\n\n17:07\n\n0:03\n{TEN}\n\n0:19\nпоследний\n"
+    s = stats_of(text)
+    assert s["speech_rate"]["words_per_second_overall_cleaned"] == 0.842  # 16 слов за 19 с
+    assert s["speech_rate"]["words_per_second_overall_raw"] == 0.015
+    assert s["timing_cleanup"]["excluded_blocks"] == 1
+    assert s["timing_cleanup"]["excluded_empty_blocks"] == 1
+    assert s["timing_cleanup"]["max_block_duration_seconds_cleaned"] == 16
+    assert s["anomalies"] == [
+        {"line": 4, "length": 5, "kind": "empty_block", "label": "17:07", "label_s": 1027}
+    ]
+
+
+def test_label_17_minutes_back_does_not_spoil_speech_rate():
+    text = (
+        f"20:00\n{TEN}\n\n20:10\n{TEN}\n\n"
+        "3:00\nа б в г д\n\n"  # назад на 17 минут
+        f"20:20\n{TEN}\n\n20:30\nконец\n"
+    )
+    s = stats_of(text)
+    assert s["speech_rate"]["words_per_second_overall_cleaned"] == 1.0
+    assert s["speech_rate"]["words_per_second_overall_raw"] < 0.05
+    assert s["timing_cleanup"]["excluded_backwards_labels"] == 1
+    assert s["timing_cleanup"]["max_block_duration_seconds_cleaned"] == 10
+    assert s["anomalies"] == [
+        {"line": 7, "length": 4, "kind": "timestamp_backwards", "label": "3:00", "label_s": 180}
+    ]
+    assert s["blocks"]["total_words"] == 36  # слова исключённого блока остаются в текстовых метриках
+
+
+def test_equal_labels_are_not_errors_and_give_no_zero_duration():
+    text = f"0:00\n{TEN}\n\n0:10\nа б\n\n0:10\nв г д\n\n0:20\nконец\n"
+    s = stats_of(text)
+    assert s["anomalies"] == []
+    assert s["timing_cleanup"]["excluded_blocks"] == 0
+    assert s["timing_cleanup"]["zero_or_negative_gaps_skipped"] == 1
+    assert s["speech_rate"]["words_per_second_overall_cleaned"] == 0.65  # 13 слов за 20 с
+
+
+def test_small_step_back_within_tolerance_is_not_an_anomaly():
+    s = stats_of("0:10\nа б в\n\n0:07\nг д\n\n0:20\nконец\n")
+    assert s["anomalies"] == []
+    assert s["timing_cleanup"]["zero_or_negative_gaps_skipped"] == 1
+    assert s["speech_rate"]["words_per_second_overall_cleaned"] == round(2 / 13, 3)
 
 
 SAMPLE = (
@@ -192,6 +246,15 @@ def test_output_is_deterministic_and_has_no_text_content(tmp_path, capsys):
         assert leaked not in first.decode("utf-8")
         assert leaked not in printed1
     assert "[шум]" in printed1
+
+
+def test_summary_lists_timestamp_anomalies_with_label(tmp_path, capsys):
+    src = tmp_path / "in.txt"
+    src.write_text(f"0:00\nа б\n\n17:07\n\n0:03\n{TEN}\n\n0:19\nконец\n", encoding="utf-8")
+    assert main([str(src), str(tmp_path / "out.json")]) == 0
+    out = capsys.readouterr().out
+    assert "4, 5, empty_block, метка 17:07 (1027 с)" in out
+    assert "Исключено блоков из расчёта времени: 1" in out
 
 
 def test_no_timestamps_fails_with_numbers_only(tmp_path, capsys):
