@@ -1,10 +1,12 @@
 """РОЛЬ C. Генерация ответа с цитатами. ОДИН промпт для baseline и graph (раздел 11.3).
 
-    python -m src.answer.answerer "Когда релиз?"             # baseline по data/transcripts
+    python -m src.answer.answerer "Когда релиз?"                  # baseline по data/transcripts
+    python -m src.answer.answerer "Как менялся срок?" --mode graph
 
 Возвращает src.schemas.Answer — единый формат 4.6 для обеих веток:
     answer(question, mode="baseline")   — поиск по чанкам → контекст → LLM
-    generate(question, context, mode)   — только LLM-часть; graph-ветка (C4) передаёт сюда свой контекст
+    answer(question, mode="graph")      — подграф (src.retrieval.graph_rag) → контекст → тот же LLM-шаг
+    generate(question, context, mode)   — только LLM-часть, общая для обеих веток
 
 Что делает generate():
   1. Просит модель ответить JSON с цитатами по промпту 11.3.
@@ -27,6 +29,7 @@ from typing import Optional
 from src.answer.prompts import SYSTEM_PROMPT, retry_prompt, user_prompt
 from src.llm_client import complete
 from src.retrieval.baseline import ROOT, BaselineIndex, load_transcripts
+from src.retrieval.graph_rag import retrieve_subgraph
 from src.schemas import Answer, Citation, Usage
 from src.utils.text import normalize
 
@@ -184,12 +187,17 @@ def generate(question: str, context: str, mode: str,
 
 
 def answer(question: str, mode: str = "baseline", k: int = 5,
-           index: Optional[BaselineIndex] = None, stats: Optional[AnswerStats] = None) -> Answer:
+           index: Optional[BaselineIndex] = None, stats: Optional[AnswerStats] = None,
+           depth: int = 2, graph=None) -> Answer:
+    """k — сколько чанков берёт baseline; depth и graph — параметры graph-ветки."""
     t0 = time.perf_counter()
-    if mode != "baseline":
-        raise NotImplementedError("graph-ветка — задача C4, роутер режимов — C5")
-    hits = (index or default_index()).search(question, k=k)
-    result = generate(question, format_context(hits), mode, stats)
+    if mode == "baseline":
+        context = format_context((index or default_index()).search(question, k=k))
+    elif mode == "graph":
+        context = retrieve_subgraph(question, depth=depth, G=graph)["context"]
+    else:
+        raise ValueError(f"mode={mode!r}: допустимо baseline | graph (auto — задача C5)")
+    result = generate(question, context, mode, stats)
     result.latency_ms = int((time.perf_counter() - t0) * 1000)
     return result
 
@@ -205,8 +213,10 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("question")
     ap.add_argument("-k", type=int, default=5)
+    ap.add_argument("--mode", choices=["baseline", "graph"], default="baseline")
+    ap.add_argument("--depth", type=int, default=2)
     a = ap.parse_args()
-    print(answer(a.question, k=a.k).model_dump_json(indent=2))
+    print(answer(a.question, mode=a.mode, k=a.k, depth=a.depth).model_dump_json(indent=2))
     return 0
 
 

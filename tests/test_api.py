@@ -82,6 +82,18 @@ def test_ask_uses_api_index(monkeypatch):
     assert "=== Встреча m_00" in seen["user"]
 
 
-def test_ask_graph_not_ready():
-    with pytest.raises(NotImplementedError):
-        api.ask("?", mode="graph")
+def test_ask_graph_mode_reads_graph(monkeypatch):
+    seen = {}
+
+    def fake(messages, **kw):
+        seen["user"] = messages[1]["content"]
+        return LLMResponse(text=json.dumps({"answer": "ok", "citations": []}))
+
+    monkeypatch.setattr(answerer, "complete", fake)
+    assert api.ask("Как менялся срок релиза Атласа?", mode="graph").mode == "graph"
+    assert "=== Проект Атлас ===" in seen["user"]
+
+
+def test_graph_info_points_to_sample_until_role_b_builds_graph():
+    info = api.graph_info()
+    assert info["meetings"] and info["path"].replace("\\", "/").startswith("data/")

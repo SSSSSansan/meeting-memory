@@ -19,6 +19,7 @@ from typing import Iterator, Optional
 from src.answer.answerer import answer
 from src.ingest.scribal_adapter import convert
 from src.retrieval.baseline import DEFAULT_INDEX_DIR, ROOT, BaselineIndex
+from src.retrieval.graph_rag import SAMPLE_GRAPH_PATH, default_graph_path, get_graph
 from src.schemas import Answer, ScribalMeeting, ScribalTranscript, Transcript
 
 BATCH_SIZE = 5  # решение куратора: встречи обрабатываются батчами по 5
@@ -108,7 +109,14 @@ def reset_index() -> None:
         (_index_dir / name).unlink(missing_ok=True)
 
 
-def ask(question: str, mode: str = "baseline", k: int = 5) -> Answer:
-    if mode != "baseline":
-        raise NotImplementedError("graph-ветка — задача C4, роутер режимов — C5")
-    return answer(question, mode=mode, k=k, index=get_index())
+def ask(question: str, mode: str = "baseline", k: int = 5, depth: int = 2) -> Answer:
+    """baseline ищет по индексу встреч, загруженных в UI; graph — по графу роли B (graph_info())."""
+    return answer(question, mode=mode, k=k, depth=depth, index=get_index())
+
+
+def graph_info() -> dict:
+    """Какой граф читает режим graph и что в нём есть — чтобы в UI было видно расхождение с индексом."""
+    path = default_graph_path()
+    G = get_graph(path)
+    meetings = sorted({d["meeting_id"] for _, d in G.nodes(data=True) if d.get("type") == "Meeting"})
+    return {"path": path.relative_to(ROOT).as_posix(), "is_sample": path == SAMPLE_GRAPH_PATH, "meetings": meetings}

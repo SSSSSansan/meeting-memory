@@ -51,9 +51,15 @@ def test_demo_indexing_then_question(monkeypatch):
     assert any("Токены: 20 + 10" in c.value for c in at.caption)
 
 
-def test_graph_mode_explains_not_ready():
+def test_graph_mode_answers_without_index(monkeypatch):
+    cit = {"meeting_id": "m_002", "ts": "00:01:05", "quote": "Переносим релиз Атласа на пятое мая"}
+    monkeypatch.setattr(answerer, "complete", lambda messages, **kw: LLMResponse(
+        text=json.dumps({"answer": "Срок — 5 мая", "citations": [cit]}, ensure_ascii=False)))
     at = AppTest.from_file(APP, default_timeout=30).run()
     at.radio[0].set_value("graph").run()
-    at.text_input[0].input("Что по Zhol?").run()
+    assert any("Граф: data" in c.value for c in at.caption)
+    at.text_input[0].input("Как менялся срок релиза Атласа?").run()
     _button(at, "Спросить").click().run()
-    assert any("C4" in i.value for i in at.info)
+    assert not at.exception
+    shown = " ".join(m.value for m in at.markdown)
+    assert "Срок — 5 мая" in shown and "m_002 · 00:01:05" in shown
