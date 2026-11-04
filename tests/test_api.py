@@ -97,3 +97,8 @@ def test_ask_graph_mode_reads_graph(monkeypatch):
 def test_graph_info_points_to_sample_until_role_b_builds_graph():
     info = api.graph_info()
     assert info["meetings"] and info["path"].replace("\\", "/").startswith("data/")
+
+
+def test_route_is_exposed_for_ui():
+    r = api.route("Что по Атласу ещё не закрыто?")
+    assert (r.mode, r.qtype) == ("graph", "T5")

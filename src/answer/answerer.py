@@ -2,6 +2,7 @@
 
     python -m src.answer.answerer "Когда релиз?"                  # baseline по data/transcripts
     python -m src.answer.answerer "Как менялся срок?" --mode graph
+    python -m src.answer.answerer "Как менялся срок?" --mode auto   # ветку выбирает src.retrieval.router
 
 Возвращает src.schemas.Answer — единый формат 4.6 для обеих веток:
     answer(question, mode="baseline")   — поиск по чанкам → контекст → LLM
@@ -30,6 +31,7 @@ from src.answer.prompts import SYSTEM_PROMPT, retry_prompt, user_prompt
 from src.llm_client import complete
 from src.retrieval.baseline import ROOT, BaselineIndex, load_transcripts
 from src.retrieval.graph_rag import retrieve_subgraph
+from src.retrieval.router import route
 from src.schemas import Answer, Citation, Usage
 from src.utils.text import normalize
 
@@ -44,8 +46,11 @@ _index: Optional[BaselineIndex] = None
 
 @dataclass
 class AnswerStats:
-    mode: str
+    mode: str                    # какой веткой реально ответили
     question: str = ""
+    requested_mode: str = ""     # что попросили: baseline | graph | auto
+    route_qtype: str = ""        # для auto: как роутер понял вопрос (T1..T5) и почему
+    route_reason: str = ""
     attempts: int = 0
     json_failed_first: bool = False
     citations_first: int = 0
@@ -189,14 +194,34 @@ def generate(question: str, context: str, mode: str,
 def answer(question: str, mode: str = "baseline", k: int = 5,
            index: Optional[BaselineIndex] = None, stats: Optional[AnswerStats] = None,
            depth: int = 2, graph=None) -> Answer:
-    """k — сколько чанков берёт baseline; depth и graph — параметры graph-ветки."""
+    """mode: baseline | graph | auto (выбирает src.retrieval.router).
+
+    k — сколько чанков берёт baseline; depth и graph — параметры graph-ветки.
+    """
     t0 = time.perf_counter()
+    requested, context, chosen = mode, None, None
+    if mode == "auto":
+        chosen = route(question, graph)
+        mode = chosen.mode
+        if mode == "graph":
+            sub = retrieve_subgraph(question, depth=depth, G=graph)
+            if sub["items"]:
+                context = sub["context"]
+            else:
+                mode = "baseline"
+                chosen.reason += "; в графе по вопросу ничего нет — отвечает baseline"
     if mode == "baseline":
         context = format_context((index or default_index()).search(question, k=k))
     elif mode == "graph":
-        context = retrieve_subgraph(question, depth=depth, G=graph)["context"]
+        if context is None:
+            context = retrieve_subgraph(question, depth=depth, G=graph)["context"]
     else:
-        raise ValueError(f"mode={mode!r}: допустимо baseline | graph (auto — задача C5)")
+        raise ValueError(f"mode={mode!r}: допустимо baseline | graph | auto")
+
+    stats = stats or AnswerStats(mode=mode, question=question)
+    stats.mode, stats.requested_mode = mode, requested
+    if chosen:
+        stats.route_qtype, stats.route_reason = chosen.qtype, chosen.reason
     result = generate(question, context, mode, stats)
     result.latency_ms = int((time.perf_counter() - t0) * 1000)
     return result
@@ -213,7 +238,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("question")
     ap.add_argument("-k", type=int, default=5)
-    ap.add_argument("--mode", choices=["baseline", "graph"], default="baseline")
+    ap.add_argument("--mode", choices=["baseline", "graph", "auto"], default="baseline")
     ap.add_argument("--depth", type=int, default=2)
     a = ap.parse_args()
     print(answer(a.question, mode=a.mode, k=a.k, depth=a.depth).model_dump_json(indent=2))

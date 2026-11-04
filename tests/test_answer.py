@@ -187,4 +187,4 @@ def test_graph_mode_uses_subgraph_context_and_same_verification(monkeypatch):
 
 def test_unknown_mode_rejected():
     with pytest.raises(ValueError):
-        ans.answer("?", mode="auto", index=_index())
+        ans.answer("?", mode="hybrid", index=_index())

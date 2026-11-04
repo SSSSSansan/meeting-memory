@@ -63,3 +63,14 @@ def test_graph_mode_answers_without_index(monkeypatch):
     assert not at.exception
     shown = " ".join(m.value for m in at.markdown)
     assert "Срок — 5 мая" in shown and "m_002 · 00:01:05" in shown
+
+
+def test_auto_mode_shows_route_decision(monkeypatch):
+    monkeypatch.setattr(answerer, "complete", lambda messages, **kw: LLMResponse(
+        text=json.dumps({"answer": "ok", "citations": []})))
+    at = AppTest.from_file(APP, default_timeout=30).run()
+    assert at.radio[0].value == "auto"
+    at.text_input[0].input("Как менялся срок релиза Атласа?").run()
+    _button(at, "Спросить").click().run()
+    assert not at.exception
+    assert any(c.value.startswith("auto → graph (T2)") for c in at.caption)
