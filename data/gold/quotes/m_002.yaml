@@ -1,0 +1,16 @@
+# Цитаты эталона для m_002: дословный фрагмент из транскрипта в поле quote.
+# Проверка и сборка: python scripts/build_gold.py --build
+meeting: m_002
+events:
+- id: ev_m002_01
+  type: decision
+  description: Для Qamqor берём готовую модель, свою не дообучаем
+  quote: ''
+- id: ev_m002_02
+  type: task
+  description: Сделать прототип Qamqor
+  quote: ''
+- id: ev_m002_03
+  type: open_question
+  description: Кто делает интерфейс бота
+  quote: ''

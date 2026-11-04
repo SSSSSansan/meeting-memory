@@ -1,0 +1,16 @@
+# Цитаты эталона для m_001: дословный фрагмент из транскрипта в поле quote.
+# Проверка и сборка: python scripts/build_gold.py --build
+meeting: m_001
+events:
+- id: ev_m001_01
+  type: decision
+  description: Релиз Zhol назначен на 15 сентября 2026
+  quote: ''
+- id: ev_m001_02
+  type: decision
+  description: Push-уведомления входят в первую версию Zhol
+  quote: ''
+- id: ev_m001_03
+  type: task
+  description: Сделать миграцию БД
+  quote: ''
