@@ -5,12 +5,12 @@ events:
 - id: ev_m001_01
   type: decision
   description: Релиз Zhol назначен на 15 сентября 2026
-  quote: ''
+  quote: 'ну тогда пятнадцатое сентября'
 - id: ev_m001_02
   type: decision
   description: Push-уведомления входят в первую версию Zhol
-  quote: ''
+  quote: 'пуши оставляем, не обсуждается'
 - id: ev_m001_03
   type: task
   description: Сделать миграцию БД
-  quote: ''
+  quote: 'ну да, до четырнадцатого сделаю миграцию.'

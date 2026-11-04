@@ -5,12 +5,12 @@ events:
 - id: ev_m002_01
   type: decision
   description: Для Qamqor берём готовую модель, свою не дообучаем
-  quote: ''
+  quote: 'Ну всё, тогда готовую берем'
 - id: ev_m002_02
   type: task
   description: Сделать прототип Qamqor
-  quote: ''
+  quote: 'Ладно. Двадцать шестое августа. Договорились.'
 - id: ev_m002_03
   type: open_question
   description: Кто делает интерфейс бота
-  quote: ''
+  quote: 'А кто делает интерфейс бота?'

@@ -1,0 +1,54 @@
+[
+  {
+    "id": "ev_m001_01",
+    "type": "decision",
+    "project": "zhol",
+    "meeting": "m_001",
+    "quote": "ну тогда пятнадцатое сентября",
+    "start_s": 577.38
+  },
+  {
+    "id": "ev_m001_02",
+    "type": "decision",
+    "project": "zhol",
+    "meeting": "m_001",
+    "quote": "пуши оставляем, не обсуждается",
+    "start_s": 750.52
+  },
+  {
+    "id": "ev_m001_03",
+    "type": "task",
+    "project": "zhol",
+    "meeting": "m_001",
+    "owner": "nikolay",
+    "due": "2026-08-14",
+    "quote": "ну да, до четырнадцатого сделаю миграцию.",
+    "start_s": 420.38
+  },
+  {
+    "id": "ev_m002_01",
+    "type": "decision",
+    "project": "qamqor",
+    "meeting": "m_002",
+    "quote": "Ну всё, тогда готовую берем",
+    "start_s": 120.94
+  },
+  {
+    "id": "ev_m002_02",
+    "type": "task",
+    "project": "qamqor",
+    "meeting": "m_002",
+    "owner": "sandugash",
+    "due": "2026-08-26",
+    "quote": "Ладно. Двадцать шестое августа. Договорились.",
+    "start_s": 371.71
+  },
+  {
+    "id": "ev_m002_03",
+    "type": "open_question",
+    "project": "qamqor",
+    "meeting": "m_002",
+    "quote": "А кто делает интерфейс бота?",
+    "start_s": 196.02
+  }
+]
