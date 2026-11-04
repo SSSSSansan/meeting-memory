@@ -99,7 +99,7 @@ def _normalize_rows(m: np.ndarray) -> np.ndarray:
 def _embed_all(texts: list[str]) -> np.ndarray:
     vectors: list[list[float]] = []
     for i in range(0, len(texts), EMBED_BATCH):
-        vectors += embed(texts[i:i + EMBED_BATCH])
+        vectors += embed(texts[i:i + EMBED_BATCH], purpose="embed_index")
     return np.array(vectors, dtype=np.float32)
 
 
@@ -139,7 +139,7 @@ class BaselineIndex:
         """Top-k чанков по косинусу; к каждому добавлено поле score."""
         if not self.chunks:
             return []
-        q = _normalize_rows(np.array(embed([question]), dtype=np.float32))[0]
+        q = _normalize_rows(np.array(embed([question], purpose="embed_query"), dtype=np.float32))[0]
         scores = self._vectors @ q
         top = np.argsort(-scores, kind="stable")[:k]
         return [{**self.chunks[i], "score": float(scores[i])} for i in top]
