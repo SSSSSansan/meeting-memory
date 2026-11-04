@@ -1,7 +1,7 @@
 """РОЛЬ C. Демо-приложение. Запуск: streamlit run app/streamlit_app.py
 
 Только отображение: загрузка, индексация и ответы — в src/api.py.
-TODO (C7): таймлайн решений по проекту, визуализация графа, подсветка источников, режим graph.
+TODO (C7): таймлайн решений по проекту, визуализация графа, подсветка источников.
 """
 import os
 import sys
@@ -61,13 +61,15 @@ with st.sidebar:
     st.caption(f"LLM backend: {backend}")
 
 mode = st.radio("Режим", ["baseline", "graph"], horizontal=True,
-                help="graph появится в задаче C4")
+                help="baseline — поиск по репликам загруженных встреч; graph — по графу решений и задач")
+if mode == "graph":
+    g = api.graph_info()
+    note = " — это заглушка, настоящий граф строит роль B" if g["is_sample"] else ""
+    st.caption(f"Граф: {g['path']} ({len(g['meetings'])} встреч: {', '.join(g['meetings'])}){note}")
 question = st.text_input("Вопрос", placeholder="Что решили по Zhol за последние три встречи?")
 
 if st.button("Спросить", type="primary", disabled=not question.strip()):
-    if mode == "graph":
-        st.info("Режим graph ещё не готов (задача C4). Пока доступен только baseline.")
-    elif not meetings:
+    if mode == "baseline" and not meetings:
         st.info("Индекс пуст: загрузите встречи слева или нажмите «Демо-встречи».")
     else:
         with st.spinner("Ищу и отвечаю…"):

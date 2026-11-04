@@ -173,6 +173,18 @@ def test_empty_index_answers_no_context_without_llm(monkeypatch):
     assert a.answer == ans.NO_CONTEXT_ANSWER and a.citations == [] and calls == []
 
 
-def test_graph_mode_not_implemented_yet():
-    with pytest.raises(NotImplementedError):
-        ans.answer("?", mode="graph", index=_index())
+def test_graph_mode_uses_subgraph_context_and_same_verification(monkeypatch):
+    from src.graph.queries import load_graph
+    calls = _fake_llm(monkeypatch, _json("Сначала 20 апреля, потом 5 мая.",
+                                         ("m_001", "00:04:12", "перенесём релиз на двадцатое апреля"),
+                                         ("m_002", "00:01:05", "Переносим релиз Атласа на пятое мая")))
+    G = load_graph(ans.ROOT / "data/sample/graph.json")
+    a = ans.answer("Как менялся срок релиза Атласа?", mode="graph", graph=G)
+    assert a.mode == "graph" and len(a.citations) == 2 and "Удалено" not in a.answer
+    assert "=== Проект Атлас ===" in calls[0][0][1]["content"]
+    assert calls[0][1]["purpose"] == "answer_graph"
+
+
+def test_unknown_mode_rejected():
+    with pytest.raises(ValueError):
+        ans.answer("?", mode="auto", index=_index())
