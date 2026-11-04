@@ -7,8 +7,10 @@ Backend переключается переменной LLM_BACKEND в .env:
     openai — OpenAI API
     local  — любой OpenAI-совместимый сервер (vLLM / Ollama) по LOCAL_BASE_URL
 
-Каждый вызов пишется в runs/calls.jsonl (токены, задержка, стоимость),
-кэшируется по хэшу в runs/cache/ и проходит через cost_guard.
+Каждый вызов пишется в runs/calls.jsonl (backend, purpose, токены, задержка, стоимость),
+проходит через cost_guard, ответы чата кэшируются по хэшу в runs/cache/.
+Сетевые сбои, 429 и 5xx повторяет сам клиент openai (LLM_MAX_RETRIES, по умолчанию 3);
+повтор при невалидном JSON — забота вызывающего кода (extract, answer), он знает, что исправлять.
 """
 from __future__ import annotations
 
@@ -72,12 +74,15 @@ def _cache_key(backend: str, model: str, messages: list[dict], temperature: floa
     return hashlib.sha256(blob.encode("utf-8")).hexdigest()
 
 
-def _log_call(resp: LLMResponse, purpose: str) -> None:
+def _log_call(resp: LLMResponse, purpose: str, kind: str = "chat") -> None:
     RUNS.mkdir(exist_ok=True)
     with open(RUNS / "calls.jsonl", "a", encoding="utf-8") as f:
         row = asdict(resp)
-        row["purpose"] = purpose
-        row["ts"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        row.update(purpose=purpose, kind=kind, backend=_env("LLM_BACKEND", "stub"),
+                   ts=time.strftime("%Y-%m-%dT%H:%M:%S"),
+                   # cost_usd — цена ответа (для сравнения режимов), spent_usd — реально потрачено:
+                   # у ответа из кэша они различаются, для отчёта о расходах суммировать spent_usd
+                   spent_usd=0.0 if resp.from_cache else resp.cost_usd)
         f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
@@ -96,7 +101,9 @@ def complete(messages: list[dict], *, json_schema: Optional[dict] = None,
     if cache_file.exists():
         data = json.loads(cache_file.read_text(encoding="utf-8"))
         data["from_cache"] = True
-        return LLMResponse(**data)
+        resp = LLMResponse(**data)
+        _log_call(resp, purpose)
+        return resp
 
     check_budget()
     t0 = time.perf_counter()
@@ -129,10 +136,12 @@ def _complete_stub(messages: list[dict], json_schema: Optional[dict]) -> LLMResp
 def _client(backend: str):
     from openai import OpenAI  # импорт здесь: для stub пакет не нужен
 
+    retry = dict(max_retries=int(_env("LLM_MAX_RETRIES", "3")),
+                 timeout=float(_env("LLM_TIMEOUT_S", "120")))
     if backend == "openai":
-        return OpenAI(api_key=_env("OPENAI_API_KEY"))
+        return OpenAI(api_key=_env("OPENAI_API_KEY"), **retry)
     return OpenAI(base_url=_env("LOCAL_BASE_URL", "http://localhost:8000/v1"),
-                  api_key=_env("LOCAL_API_KEY", "not-needed"))
+                  api_key=_env("LOCAL_API_KEY", "not-needed"), **retry)
 
 
 def _complete_openai_compatible(backend: str, model: str, messages: list[dict],
@@ -154,8 +163,8 @@ def _complete_openai_compatible(backend: str, model: str, messages: list[dict],
                        cached_tokens=cached)
 
 
-def embed(texts: list[str]) -> list[list[float]]:
-    """Эмбеддинги. stub возвращает детерминированные векторы из хэша."""
+def embed(texts: list[str], *, purpose: str = "embed") -> list[list[float]]:
+    """Эмбеддинги. stub возвращает детерминированные векторы из хэша (бесплатно, не логируется)."""
     backend = _env("LLM_BACKEND", "stub")
     if backend == "stub":
         out = []
@@ -163,6 +172,18 @@ def embed(texts: list[str]) -> list[list[float]]:
             h = hashlib.sha256(t.encode("utf-8")).digest()
             out.append([b / 255.0 for b in h[:16]])
         return out
+    if backend not in ("openai", "local"):
+        raise ValueError(f"Неизвестный LLM_BACKEND={backend!r}. Допустимо: stub | openai | local")
+    from scripts.cost_guard import check_budget, record_spend  # локальный импорт: нет циклов
+
+    check_budget()
     model = _env("EMBED_MODEL", "text-embedding-3-small")
+    t0 = time.perf_counter()
     r = _client(backend).embeddings.create(model=model, input=texts)
+    tokens = getattr(getattr(r, "usage", None), "prompt_tokens", 0) or 0
+    resp = LLMResponse(text="", prompt_tokens=tokens, model=model,
+                       latency_ms=int((time.perf_counter() - t0) * 1000),
+                       cost_usd=tokens * float(_env("PRICE_EMBED_PER_M", "0")) / 1_000_000)
+    record_spend(resp.cost_usd)
+    _log_call(resp, purpose, kind="embed")
     return [d.embedding for d in r.data]
