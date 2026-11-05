@@ -1,7 +1,8 @@
 """Сверка извлечения с gold Даны (data/gold/decisions.json) по близости цитат.
 
     python scripts/compare_gold.py [data/extracted_llm_raw]
-Совпадение: цитаты близки по словам ИЛИ таймкод в пределах WINDOW_S. Gold-события decision/task/open_question считаем эталоном; recall — доля найденных,
+Совпадение: цитаты близки по словам ИЛИ таймкод в пределах WINDOW_S.
+Gold-события decision/task/open_question считаем эталоном; recall — доля найденных,
 precision — доля выдачи модели, попавшая в gold (лишнее может быть настоящим решением, которого нет в gold).
 """
 import json
@@ -29,7 +30,8 @@ for mid in sorted({g["meeting"] for g in gold}):
     if not f.exists():
         continue
     d = json.loads(f.read_text(encoding="utf-8"))
-    preds = [(i["source"]["quote"], i["source"]["ts"]) for k in ("decisions", "tasks", "open_questions") for i in d.get(k, [])]
+    preds = [(i["source"]["quote"], i["source"]["ts"])
+             for k in ("decisions", "tasks", "open_questions") for i in d.get(k, [])]
     gs = [g for g in gold if g["meeting"] == mid]
     found = [g for g in gs if any(_match(p, g["quote"]) or abs(_sec(ts) - g["start_s"]) <= WINDOW_S
                                   for p, ts in preds)]
@@ -37,5 +39,7 @@ for mid in sorted({g["meeting"] for g in gold}):
     for g in gs:
         if g not in found:
             print("   пропущено:", g["type"], "|", g["quote"][:70])
-    hit += len(found); n_gold += len(gs); n_pred += len(preds)
+    hit += len(found)
+    n_gold += len(gs)
+    n_pred += len(preds)
 print(f"recall={hit}/{n_gold}  выдано моделью={n_pred}")

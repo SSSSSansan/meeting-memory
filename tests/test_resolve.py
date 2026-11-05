@@ -2,7 +2,8 @@ from src.resolve.entities import resolve_people, resolve_projects
 
 
 def test_projects_cluster_ru_kk_latin():
-    m = resolve_projects(["Zhol", "Жол", "Джол", "проект Жол", "Squad", "Сквад", "Qamqor", "Қамқор", "Камкор", "Boost", "Буст"])
+    m = resolve_projects(["Zhol", "Жол", "Джол", "проект Жол", "Squad", "Сквад",
+                          "Qamqor", "Қамқор", "Камкор", "Boost", "Буст"])
     assert len({m[x] for x in ["Zhol", "Жол", "Джол", "проект Жол"]}) == 1
     assert len({m[x] for x in ["Squad", "Сквад"]}) == 1
     assert len({m[x] for x in ["Qamqor", "Қамқор", "Камкор"]}) == 1
