@@ -8,7 +8,7 @@
       "id": "d_m002_01",
       "project": "Qamqor",
       "statement": "Берем готовую модель и не тратим время на дообучение",
-      "made_by": "Sандуғаш",
+      "made_by": null,
       "confidence": 0.9,
       "source": {
         "ts": "00:01:42",
@@ -19,7 +19,7 @@
       "id": "d_m002_02",
       "project": "Qamqor",
       "statement": "Двадцать шестое августа",
-      "made_by": "Sандуғаш",
+      "made_by": null,
       "confidence": 0.9,
       "source": {
         "ts": "00:06:11",
@@ -32,7 +32,7 @@
       "id": "t_m002_01",
       "project": "Qamqor",
       "statement": "Показать прототип",
-      "owner": "Sандуғаш",
+      "owner": "Сандуғаш",
       "due": "2026-08-26",
       "status": "open",
       "source": {
@@ -41,15 +41,5 @@
       }
     }
   ],
-  "open_questions": [
-    {
-      "id": "q_m002_01",
-      "project": "Qamqor",
-      "statement": "Кто делает интерфейс бота?",
-      "source": {
-        "ts": "00:03:16",
-        "quote": "Так, с моделью понятно. А кто делает интерфейс бота?"
-      }
-    }
-  ]
+  "open_questions": []
 }
