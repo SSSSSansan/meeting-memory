@@ -1,0 +1,6448 @@
+{
+  "meeting_id": "m_004",
+  "level": "medium",
+  "variant": "labeled",
+  "global_seed": 42,
+  "params": {
+    "filler_remove_prob": 0.95,
+    "ellipsis_mode": "drop",
+    "entity_variant_prob": 0.25,
+    "kk_letter_loss_prob": 0.15,
+    "transliteration_prob": 0.3,
+    "sentence_end_drop_prob": 0.15,
+    "sentence_start_capitalize_prob": 0.9,
+    "noise_tag_prob": 0.01,
+    "speaker_mislabel_prob": 0.03,
+    "block_words": {
+      "median": 21,
+      "sigma": 1.24,
+      "min": 1,
+      "max": 250
+    },
+    "boundary_snap_prob": 0.9
+  },
+  "seeds": {
+    "fillers": 17497924540544143697,
+    "ellipsis": 10576431132810056391,
+    "entities": 4177286781771767386,
+    "kk_loss": 514051528170883814,
+    "translit": 10427032262386162640,
+    "sentence_end": 17602800250794664086,
+    "sentence_start": 11120944394134779885,
+    "mislabel": 1765079224356163661,
+    "blocks": 16358346500567113761,
+    "block_snap": 17372818794358592053,
+    "noise_tag": 12596035113085323322
+  },
+  "dropped_source_segments": [],
+  "segments": [
+    {
+      "index": 0,
+      "start": 0.19,
+      "end": 1.13,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 0,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "start": 1.38,
+      "end": 1.98,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 1,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "start": 2.19,
+      "end": 2.79,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 2,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "start": 3.4,
+      "end": 5.7,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 3,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "start": 6.08,
+      "end": 8.18,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 4,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "start": 8.97,
+      "end": 10.82,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 5,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "start": 11.97,
+      "end": 16.11,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 6,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "start": 16.38,
+      "end": 17.06,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 7,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "start": 17.9,
+      "end": 20.35,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 8,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "start": 21.66,
+      "end": 25.58,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 9,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "start": 26.96,
+      "end": 28.76,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 10,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "start": 29.69,
+      "end": 32.89,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 11,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "start": 33.32,
+      "end": 34.04,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 12,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "start": 34.81,
+      "end": 40.98,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 13,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "start": 41.38,
+      "end": 41.98,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 14,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "start": 42.63,
+      "end": 51.85,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 15,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "start": 52.14,
+      "end": 52.74,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 16,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "start": 53.92,
+      "end": 55.29,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 17,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "start": 56.46,
+      "end": 59.78,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 18,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "start": 60.21,
+      "end": 60.81,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 19,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "start": 61.45,
+      "end": 63.89,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 20,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "start": 64.86,
+      "end": 68.76,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 21,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "start": 69.87,
+      "end": 72.15,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 22,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "start": 72.47,
+      "end": 80.17,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 23,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "start": 80.54,
+      "end": 82.16,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 24,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "start": 83.66,
+      "end": 88.69,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 25,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "start": 88.91,
+      "end": 89.61,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 26,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "start": 90.89,
+      "end": 100.7,
+      "words": 24,
+      "sources": [
+        {
+          "segment": 27,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 24
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "start": 100.72,
+      "end": 101.47,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 28,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "start": 102.43,
+      "end": 109.83,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 29,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "start": 109.95,
+      "end": 110.55,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 30,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "start": 110.85,
+      "end": 111.64,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 31,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "start": 112.15,
+      "end": 115.76,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 32,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "start": 116.83,
+      "end": 118.38,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 33,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "start": 118.87,
+      "end": 126.39,
+      "words": 19,
+      "sources": [
+        {
+          "segment": 34,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 19
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "start": 126.7,
+      "end": 127.67,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 35,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "start": 128.98,
+      "end": 139.03,
+      "words": 28,
+      "sources": [
+        {
+          "segment": 36,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 28
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "start": 139.08,
+      "end": 139.99,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 37,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "start": 141.24,
+      "end": 149.15,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 38,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "start": 149.3,
+      "end": 150.11,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 39,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "start": 150.56,
+      "end": 153.8,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 40,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "start": 154.09,
+      "end": 155.07,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 41,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "start": 155.84,
+      "end": 161.73,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 42,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 43,
+      "start": 161.75,
+      "end": 162.58,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 43,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "start": 163.02,
+      "end": 165.91,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 44,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "start": 166.82,
+      "end": 169.37,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 45,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "start": 170.66,
+      "end": 173.18,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 46,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 47,
+      "start": 174.65,
+      "end": 177.39,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 47,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 48,
+      "start": 178.37,
+      "end": 180.02,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 48,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 49,
+      "start": 180.39,
+      "end": 184.41,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 49,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 50,
+      "start": 184.79,
+      "end": 187.14,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 50,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 51,
+      "start": 187.81,
+      "end": 194.0,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 51,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 52,
+      "start": 195.47,
+      "end": 196.48,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 52,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 53,
+      "start": 197.08,
+      "end": 202.81,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 53,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 54,
+      "start": 203.62,
+      "end": 205.88,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 54,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 55,
+      "start": 206.95,
+      "end": 215.12,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 55,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 56,
+      "start": 215.69,
+      "end": 217.41,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 56,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 57,
+      "start": 217.67,
+      "end": 222.97,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 57,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 58,
+      "start": 224.31,
+      "end": 227.1,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 58,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 59,
+      "start": 228.53,
+      "end": 232.41,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 59,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 60,
+      "start": 232.51,
+      "end": 233.5,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 60,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 61,
+      "start": 233.77,
+      "end": 238.23,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 61,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 62,
+      "start": 238.97,
+      "end": 240.67,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 62,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 63,
+      "start": 241.98,
+      "end": 249.74,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 63,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 64,
+      "start": 251.03,
+      "end": 253.54,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 64,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 65,
+      "start": 253.93,
+      "end": 263.57,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 65,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 66,
+      "start": 263.66,
+      "end": 264.26,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 66,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 67,
+      "start": 265.17,
+      "end": 268.49,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 67,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 68,
+      "start": 268.89,
+      "end": 269.58,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 68,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 69,
+      "start": 269.96,
+      "end": 273.67,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 69,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 70,
+      "start": 273.74,
+      "end": 274.64,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 70,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 71,
+      "start": 275.21,
+      "end": 281.33,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 71,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 72,
+      "start": 282.44,
+      "end": 284.59,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 72,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 73,
+      "start": 285.54,
+      "end": 287.64,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 73,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 74,
+      "start": 288.18,
+      "end": 291.04,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 74,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 75,
+      "start": 291.79,
+      "end": 298.32,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 75,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 76,
+      "start": 299.55,
+      "end": 301.83,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 76,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 77,
+      "start": 302.95,
+      "end": 306.36,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 77,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 78,
+      "start": 306.73,
+      "end": 308.92,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 78,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 79,
+      "start": 309.22,
+      "end": 312.5,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 79,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 80,
+      "start": 313.71,
+      "end": 319.41,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 80,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 81,
+      "start": 320.16,
+      "end": 322.52,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 81,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 82,
+      "start": 322.68,
+      "end": 323.28,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 82,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 83,
+      "start": 324.03,
+      "end": 326.37,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 83,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 84,
+      "start": 327.25,
+      "end": 330.44,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 84,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 85,
+      "start": 330.7,
+      "end": 331.96,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 85,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 86,
+      "start": 332.3,
+      "end": 336.08,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 86,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 87,
+      "start": 336.47,
+      "end": 338.7,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 87,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 88,
+      "start": 338.95,
+      "end": 352.36,
+      "words": 37,
+      "sources": [
+        {
+          "segment": 88,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 37
+        }
+      ]
+    },
+    {
+      "index": 89,
+      "start": 352.75,
+      "end": 353.35,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 89,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 90,
+      "start": 353.56,
+      "end": 354.16,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 90,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 91,
+      "start": 355.28,
+      "end": 359.82,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 91,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 92,
+      "start": 360.03,
+      "end": 362.27,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 92,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 93,
+      "start": 362.58,
+      "end": 364.15,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 93,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 94,
+      "start": 365.15,
+      "end": 367.55,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 94,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 95,
+      "start": 367.92,
+      "end": 368.52,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 95,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 96,
+      "start": 369.59,
+      "end": 374.85,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 96,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 97,
+      "start": 375.18,
+      "end": 376.15,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 97,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 98,
+      "start": 376.38,
+      "end": 379.89,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 98,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 99,
+      "start": 380.52,
+      "end": 385.5,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 99,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 100,
+      "start": 385.71,
+      "end": 388.42,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 100,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 101,
+      "start": 389.32,
+      "end": 392.15,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 101,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 102,
+      "start": 393.14,
+      "end": 399.72,
+      "words": 19,
+      "sources": [
+        {
+          "segment": 102,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 19
+        }
+      ]
+    },
+    {
+      "index": 103,
+      "start": 400.07,
+      "end": 400.75,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 103,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 104,
+      "start": 401.46,
+      "end": 404.1,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 104,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 105,
+      "start": 404.58,
+      "end": 408.14,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 105,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 106,
+      "start": 408.16,
+      "end": 408.86,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 106,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 107,
+      "start": 409.15,
+      "end": 412.29,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 107,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 108,
+      "start": 412.82,
+      "end": 416.72,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 108,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 109,
+      "start": 417.36,
+      "end": 418.86,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 109,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 110,
+      "start": 419.69,
+      "end": 422.37,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 110,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 111,
+      "start": 422.81,
+      "end": 424.52,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 111,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 112,
+      "start": 425.81,
+      "end": 427.97,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 112,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 113,
+      "start": 428.42,
+      "end": 429.02,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 113,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 114,
+      "start": 430.37,
+      "end": 431.83,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 114,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 115,
+      "start": 432.29,
+      "end": 435.77,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 115,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 116,
+      "start": 436.8,
+      "end": 439.47,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 116,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 117,
+      "start": 440.64,
+      "end": 445.02,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 117,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 118,
+      "start": 445.29,
+      "end": 449.51,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 118,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 119,
+      "start": 450.95,
+      "end": 454.68,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 119,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 120,
+      "start": 455.29,
+      "end": 457.7,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 120,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 121,
+      "start": 458.59,
+      "end": 459.64,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 121,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 122,
+      "start": 459.99,
+      "end": 462.33,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 122,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 123,
+      "start": 462.96,
+      "end": 464.82,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 123,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 124,
+      "start": 465.24,
+      "end": 465.98,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 124,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 125,
+      "start": 466.6,
+      "end": 468.63,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 125,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 126,
+      "start": 469.44,
+      "end": 473.01,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 126,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 127,
+      "start": 473.29,
+      "end": 473.99,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 127,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 128,
+      "start": 475.31,
+      "end": 477.09,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 128,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 129,
+      "start": 477.37,
+      "end": 478.85,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 129,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 130,
+      "start": 479.65,
+      "end": 491.82,
+      "words": 29,
+      "sources": [
+        {
+          "segment": 130,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 29
+        }
+      ]
+    },
+    {
+      "index": 131,
+      "start": 492.12,
+      "end": 494.1,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 131,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 132,
+      "start": 494.35,
+      "end": 494.95,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 132,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 133,
+      "start": 495.45,
+      "end": 496.41,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 133,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 134,
+      "start": 497.03,
+      "end": 499.68,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 134,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 135,
+      "start": 500.97,
+      "end": 503.13,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 135,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 136,
+      "start": 503.75,
+      "end": 505.54,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 136,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 137,
+      "start": 506.18,
+      "end": 507.93,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 137,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 138,
+      "start": 509.09,
+      "end": 511.37,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 138,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 139,
+      "start": 511.87,
+      "end": 513.71,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 139,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 140,
+      "start": 514.05,
+      "end": 517.25,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 140,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 141,
+      "start": 518.06,
+      "end": 521.84,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 141,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 142,
+      "start": 522.59,
+      "end": 523.89,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 142,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 143,
+      "start": 525.03,
+      "end": 528.03,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 143,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 144,
+      "start": 528.38,
+      "end": 530.02,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 144,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 145,
+      "start": 531.44,
+      "end": 533.69,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 145,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 146,
+      "start": 534.77,
+      "end": 537.25,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 146,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 147,
+      "start": 537.74,
+      "end": 542.18,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 147,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 148,
+      "start": 542.61,
+      "end": 543.21,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 148,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 149,
+      "start": 544.49,
+      "end": 548.46,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 149,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 150,
+      "start": 548.91,
+      "end": 551.33,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 150,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 151,
+      "start": 551.67,
+      "end": 554.85,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 151,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 152,
+      "start": 555.53,
+      "end": 557.95,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 152,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 153,
+      "start": 558.12,
+      "end": 559.02,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 153,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 154,
+      "start": 560.12,
+      "end": 561.28,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 154,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 155,
+      "start": 561.31,
+      "end": 561.91,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 155,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 156,
+      "start": 563.23,
+      "end": 568.78,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 156,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 157,
+      "start": 568.97,
+      "end": 569.57,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 157,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 158,
+      "start": 569.85,
+      "end": 571.19,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 158,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 159,
+      "start": 571.67,
+      "end": 573.42,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 159,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 160,
+      "start": 574.17,
+      "end": 575.63,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 160,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 161,
+      "start": 576.22,
+      "end": 577.33,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 161,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 162,
+      "start": 577.86,
+      "end": 580.53,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 162,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 163,
+      "start": 580.92,
+      "end": 581.71,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 163,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 164,
+      "start": 582.49,
+      "end": 586.78,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 164,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 165,
+      "start": 588.17,
+      "end": 589.27,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 165,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 166,
+      "start": 589.65,
+      "end": 593.13,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 166,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 167,
+      "start": 594.55,
+      "end": 597.1,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 167,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 168,
+      "start": 597.78,
+      "end": 598.88,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 168,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 169,
+      "start": 599.77,
+      "end": 604.49,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 169,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 170,
+      "start": 605.39,
+      "end": 608.2,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 170,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 171,
+      "start": 609.34,
+      "end": 612.81,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 171,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 172,
+      "start": 613.82,
+      "end": 614.83,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 172,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 173,
+      "start": 616.07,
+      "end": 620.89,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 173,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 174,
+      "start": 622.07,
+      "end": 623.16,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 174,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 175,
+      "start": 623.78,
+      "end": 627.6,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 175,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 176,
+      "start": 627.86,
+      "end": 628.46,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 176,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 177,
+      "start": 629.04,
+      "end": 633.78,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 177,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 178,
+      "start": 634.71,
+      "end": 639.17,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 178,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 179,
+      "start": 640.59,
+      "end": 642.41,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 179,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 180,
+      "start": 643.35,
+      "end": 653.93,
+      "words": 28,
+      "sources": [
+        {
+          "segment": 180,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 28
+        }
+      ]
+    },
+    {
+      "index": 181,
+      "start": 654.29,
+      "end": 656.51,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 181,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 182,
+      "start": 656.77,
+      "end": 659.97,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 182,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 183,
+      "start": 660.61,
+      "end": 670.51,
+      "words": 23,
+      "sources": [
+        {
+          "segment": 183,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 23
+        }
+      ]
+    },
+    {
+      "index": 184,
+      "start": 670.89,
+      "end": 675.41,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 184,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 185,
+      "start": 676.1,
+      "end": 680.84,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 185,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 186,
+      "start": 681.89,
+      "end": 683.98,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 186,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 187,
+      "start": 684.96,
+      "end": 690.43,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 187,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 188,
+      "start": 691.35,
+      "end": 694.14,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 188,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 189,
+      "start": 694.18,
+      "end": 695.03,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 189,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 190,
+      "start": 695.41,
+      "end": 696.01,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 190,
+          "speaker": "SPEAKER_02",
+          "person": "nikolay",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 191,
+      "start": 696.45,
+      "end": 697.05,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 191,
+          "speaker": "SPEAKER_03",
+          "person": "abdurakhman",
+          "words": 1
+        }
+      ]
+    }
+  ],
+  "entity_mentions": [
+    {
+      "segment": 6,
+      "token": 8,
+      "entity": "zhol",
+      "canonical": "Zhol",
+      "source_form": "Zhol",
+      "final_form": "Zhol",
+      "changed": false,
+      "source": {
+        "segment": 6,
+        "token": 8
+      }
+    },
+    {
+      "segment": 8,
+      "token": 0,
+      "entity": "nikolay",
+      "canonical": "Николай",
+      "source_form": "Коля",
+      "final_form": "Коля",
+      "changed": false,
+      "source": {
+        "segment": 8,
+        "token": 0
+      }
+    },
+    {
+      "segment": 20,
+      "token": 0,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 20,
+        "token": 0
+      }
+    },
+    {
+      "segment": 44,
+      "token": 0,
+      "entity": "nikolay",
+      "canonical": "Николай",
+      "source_form": "Коля",
+      "final_form": "Коля",
+      "changed": false,
+      "source": {
+        "segment": 44,
+        "token": 0
+      }
+    },
+    {
+      "segment": 44,
+      "token": 5,
+      "entity": "zhol",
+      "canonical": "Zhol",
+      "source_form": "Zhol",
+      "final_form": "Zhol",
+      "changed": false,
+      "source": {
+        "segment": 44,
+        "token": 5
+      }
+    },
+    {
+      "segment": 46,
+      "token": 0,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 46,
+        "token": 0
+      }
+    },
+    {
+      "segment": 69,
+      "token": 7,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Boost",
+      "changed": false,
+      "source": {
+        "segment": 69,
+        "token": 7
+      }
+    },
+    {
+      "segment": 71,
+      "token": 6,
+      "entity": "zhol",
+      "canonical": "Zhol",
+      "source_form": "Zhol",
+      "final_form": "Zhol",
+      "changed": false,
+      "source": {
+        "segment": 71,
+        "token": 6
+      }
+    },
+    {
+      "segment": 71,
+      "token": 9,
+      "entity": "squad",
+      "canonical": "Squad",
+      "source_form": "Squad",
+      "final_form": "Squad",
+      "changed": false,
+      "source": {
+        "segment": 71,
+        "token": 9
+      }
+    },
+    {
+      "segment": 91,
+      "token": 9,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Boost",
+      "changed": false,
+      "source": {
+        "segment": 91,
+        "token": 9
+      }
+    },
+    {
+      "segment": 94,
+      "token": 2,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Буст",
+      "changed": true,
+      "source": {
+        "segment": 94,
+        "token": 2
+      }
+    },
+    {
+      "segment": 94,
+      "token": 4,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 94,
+        "token": 4
+      }
+    },
+    {
+      "segment": 102,
+      "token": 12,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Буст",
+      "changed": true,
+      "source": {
+        "segment": 102,
+        "token": 12
+      }
+    },
+    {
+      "segment": 102,
+      "token": 18,
+      "entity": "zhol",
+      "canonical": "Zhol",
+      "source_form": "Zhol",
+      "final_form": "Zhol",
+      "changed": false,
+      "source": {
+        "segment": 102,
+        "token": 18
+      }
+    },
+    {
+      "segment": 122,
+      "token": 2,
+      "entity": "zhol",
+      "canonical": "Zhol",
+      "source_form": "Zhol",
+      "final_form": "Zhol",
+      "changed": false,
+      "source": {
+        "segment": 122,
+        "token": 2
+      }
+    }
+  ],
+  "replacements": [
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 0,
+      "token": 0,
+      "was": "всем",
+      "now": "Всем",
+      "source": {
+        "segment": 0,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 1,
+      "token": 0,
+      "was": "привет.",
+      "now": "Привет.",
+      "source": {
+        "segment": 1,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 2,
+      "token": 0,
+      "was": "салам.",
+      "now": "салам",
+      "source": {
+        "segment": 2,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 2,
+      "token": 0,
+      "was": "салам",
+      "now": "Салам",
+      "source": {
+        "segment": 2,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 3,
+      "token": 0,
+      "was": "всем",
+      "now": "Всем",
+      "source": {
+        "segment": 3,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 3,
+      "token": 1,
+      "was": "привет.",
+      "now": "привет",
+      "source": {
+        "segment": 3,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 4,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 4,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 4,
+      "token": 4,
+      "was": "было.",
+      "now": "было",
+      "source": {
+        "segment": 4,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 5,
+      "token": 0,
+      "was": "не",
+      "now": "Не",
+      "source": {
+        "segment": 5,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 5,
+      "token": 4,
+      "was": "ждал.",
+      "now": "ждал",
+      "source": {
+        "segment": 5,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 6,
+      "token": 0,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 6,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 7,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 7,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 9,
+      "token": 0,
+      "was": "это",
+      "now": "Это",
+      "source": {
+        "segment": 9,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 9,
+      "token": 1,
+      "was": "готово.",
+      "now": "готово",
+      "source": {
+        "segment": 9,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 9,
+      "token": 2,
+      "was": "миграция",
+      "now": "Миграция",
+      "source": {
+        "segment": 9,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 9,
+      "token": 6,
+      "was": "скрипты",
+      "now": "Скрипты",
+      "source": {
+        "segment": 9,
+        "token": 6
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 10,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 10,
+        "token": null
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 11,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 11,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 11,
+      "token": 3,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 11,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 12,
+      "token": 0,
+      "was": "қалай",
+      "now": "Қалай",
+      "source": {
+        "segment": 12,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 13,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 13,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 13,
+      "token": 9,
+      "was": "кто-то",
+      "now": "Кто-то",
+      "source": {
+        "segment": 13,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 14,
+      "token": 0,
+      "was": "жестко.",
+      "now": "Жестко.",
+      "source": {
+        "segment": 14,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 15,
+      "token": 8,
+      "was": "пустые",
+      "now": "Пустые",
+      "source": {
+        "segment": 15,
+        "token": 8
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 15,
+      "token": 13,
+      "was": "по",
+      "now": "По",
+      "source": {
+        "segment": 15,
+        "token": 13
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 15,
+      "token": 17,
+      "was": "индексы",
+      "now": "Индексы",
+      "source": {
+        "segment": 15,
+        "token": 17
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 16,
+      "token": 0,
+      "was": "круто.",
+      "now": "Круто.",
+      "source": {
+        "segment": 16,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 17,
+      "token": 0,
+      "was": "бэкапы",
+      "now": "Бэкапы",
+      "source": {
+        "segment": 17,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 18,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 18,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 18,
+      "token": 3,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 18,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 21,
+      "token": 6,
+      "was": "но",
+      "now": "Но",
+      "source": {
+        "segment": 21,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 22,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 22,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 23,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 23,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 23,
+      "token": 17,
+      "was": "двенадцать.",
+      "now": "двенадцать",
+      "source": {
+        "segment": 23,
+        "token": 17
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 25,
+      "token": 0,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 25,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 25,
+      "token": 5,
+      "was": "грубо",
+      "now": "Грубо",
+      "source": {
+        "segment": 25,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 26,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 26,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 27,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 27,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 27,
+      "token": 7,
+      "was": "просто",
+      "now": "Просто",
+      "source": {
+        "segment": 27,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 27,
+      "token": 10,
+      "was": "сломалась.",
+      "now": "сломалась",
+      "source": {
+        "segment": 27,
+        "token": 10
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 27,
+      "token": 11,
+      "was": "то",
+      "now": "То",
+      "source": {
+        "segment": 27,
+        "token": 11
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 27,
+      "token": 17,
+      "was": "они",
+      "now": "Они",
+      "source": {
+        "segment": 27,
+        "token": 17
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 28,
+      "token": 0,
+      "was": "аа",
+      "now": "Аа",
+      "source": {
+        "segment": 28,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 29,
+      "token": 0,
+      "was": "вот.",
+      "now": "Вот.",
+      "source": {
+        "segment": 29,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 29,
+      "token": 1,
+      "was": "и",
+      "now": "И",
+      "source": {
+        "segment": 29,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 30,
+      "token": 0,
+      "was": "бывает.",
+      "now": "Бывает.",
+      "source": {
+        "segment": 30,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 31,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 31,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 32,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 32,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 32,
+      "token": 7,
+      "was": "выглядит",
+      "now": "Выглядит",
+      "source": {
+        "segment": 32,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 33,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 33,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 34,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 34,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 34,
+      "token": 2,
+      "was": "просто",
+      "now": "Просто",
+      "source": {
+        "segment": 34,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 34,
+      "token": 3,
+      "was": "бесит.",
+      "now": "бесит",
+      "source": {
+        "segment": 34,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 34,
+      "token": 4,
+      "was": "сидишь",
+      "now": "Сидишь",
+      "source": {
+        "segment": 34,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 34,
+      "token": 9,
+      "was": "пикселей.",
+      "now": "пикселей",
+      "source": {
+        "segment": 34,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 34,
+      "token": 10,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 34,
+        "token": 10
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 35,
+      "token": 0,
+      "was": "как",
+      "now": "Как",
+      "source": {
+        "segment": 35,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 36,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 36,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 36,
+      "token": 6,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 36,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 36,
+      "token": 10,
+      "was": "и",
+      "now": "И",
+      "source": {
+        "segment": 36,
+        "token": 10
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 36,
+      "token": 15,
+      "was": "то",
+      "now": "То",
+      "source": {
+        "segment": 36,
+        "token": 15
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 37,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 37,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 38,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 38,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 38,
+      "token": 3,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 38,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 38,
+      "token": 7,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 38,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 40,
+      "token": 0,
+      "was": "вот.",
+      "now": "Вот.",
+      "source": {
+        "segment": 40,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 40,
+      "token": 1,
+      "was": "и",
+      "now": "И",
+      "source": {
+        "segment": 40,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 41,
+      "token": 0,
+      "was": "хардкодить",
+      "now": "Хардкодить",
+      "source": {
+        "segment": 41,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 42,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 42,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 43,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 43,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 45,
+      "token": 4,
+      "was": "висят.",
+      "now": "висят",
+      "source": {
+        "segment": 45,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 45,
+      "token": 5,
+      "was": "контроллеры",
+      "now": "Контроллеры",
+      "source": {
+        "segment": 45,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 47,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 47,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 47,
+      "token": 4,
+      "was": "авторизацию",
+      "now": "Авторизацию",
+      "source": {
+        "segment": 47,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 48,
+      "token": 0,
+      "was": "токены",
+      "now": "Токены",
+      "source": {
+        "segment": 48,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 49,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 49,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 49,
+      "token": 4,
+      "was": "рефреш",
+      "now": "Рефреш",
+      "source": {
+        "segment": 49,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 50,
+      "token": 0,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 50,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 51,
+      "token": 1,
+      "was": "видел.",
+      "now": "видел",
+      "source": {
+        "segment": 51,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 51,
+      "token": 2,
+      "was": "только",
+      "now": "Только",
+      "source": {
+        "segment": 51,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 52,
+      "token": 0,
+      "was": "по",
+      "now": "По",
+      "source": {
+        "segment": 52,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 53,
+      "token": 3,
+      "was": "просто",
+      "now": "Просто",
+      "source": {
+        "segment": 53,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 54,
+      "token": 0,
+      "was": "это",
+      "now": "Это",
+      "source": {
+        "segment": 54,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 55,
+      "token": 0,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 55,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 55,
+      "token": 5,
+      "was": "просто",
+      "now": "Просто",
+      "source": {
+        "segment": 55,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 55,
+      "token": 7,
+      "was": "сижу.",
+      "now": "сижу",
+      "source": {
+        "segment": 55,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 55,
+      "token": 8,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 55,
+        "token": 8
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 56,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 56,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 57,
+      "token": 0,
+      "was": "типа",
+      "now": "Типа",
+      "source": {
+        "segment": 57,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 57,
+      "token": 2,
+      "was": "оба",
+      "now": "Оба",
+      "source": {
+        "segment": 57,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 58,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 58,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 58,
+      "token": 5,
+      "was": "главной.",
+      "now": "главной",
+      "source": {
+        "segment": 58,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 59,
+      "token": 0,
+      "was": "так,",
+      "now": "Так,",
+      "source": {
+        "segment": 59,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 59,
+      "token": 4,
+      "was": "лифлет",
+      "now": "Лифлет",
+      "source": {
+        "segment": 59,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 59,
+      "token": 7,
+      "was": "обычно.",
+      "now": "обычно",
+      "source": {
+        "segment": 59,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 60,
+      "token": 0,
+      "was": "нормально",
+      "now": "Нормально",
+      "source": {
+        "segment": 60,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 60,
+      "token": 1,
+      "was": "рендерится?",
+      "now": "рендерится",
+      "source": {
+        "segment": 60,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 61,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 61,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 61,
+      "token": 4,
+      "was": "только",
+      "now": "Только",
+      "source": {
+        "segment": 61,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 62,
+      "token": 0,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 62,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 63,
+      "token": 0,
+      "was": "да.",
+      "now": "Да.",
+      "source": {
+        "segment": 63,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 63,
+      "token": 1,
+      "was": "когда",
+      "now": "Когда",
+      "source": {
+        "segment": 63,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 63,
+      "token": 11,
+      "was": "но",
+      "now": "Но",
+      "source": {
+        "segment": 63,
+        "token": 11
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 64,
+      "token": 0,
+      "was": "это",
+      "now": "Это",
+      "source": {
+        "segment": 64,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 64,
+      "token": 3,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 64,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 65,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 65,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 65,
+      "token": 6,
+      "was": "просто",
+      "now": "Просто",
+      "source": {
+        "segment": 65,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 65,
+      "token": 18,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 65,
+        "token": 18
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 66,
+      "token": 0,
+      "was": "супер.",
+      "now": "супер",
+      "source": {
+        "segment": 66,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 66,
+      "token": 0,
+      "was": "супер",
+      "now": "Супер",
+      "source": {
+        "segment": 66,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 67,
+      "token": 0,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 67,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 67,
+      "token": 5,
+      "was": "есть",
+      "now": "Есть",
+      "source": {
+        "segment": 67,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 67,
+      "token": 8,
+      "was": "бизнес-команды.",
+      "now": "бизнес-команды",
+      "source": {
+        "segment": 67,
+        "token": 8
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 68,
+      "token": 0,
+      "was": "что",
+      "now": "Что",
+      "source": {
+        "segment": 68,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 69,
+      "token": 0,
+      "was": "в",
+      "now": "В",
+      "source": {
+        "segment": 69,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 70,
+      "token": 0,
+      "was": "это",
+      "now": "Это",
+      "source": {
+        "segment": 70,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 71,
+      "token": 0,
+      "was": "бизнес-команде",
+      "now": "Бизнес-команде",
+      "source": {
+        "segment": 71,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 72,
+      "token": 0,
+      "was": "то",
+      "now": "То",
+      "source": {
+        "segment": 72,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 73,
+      "token": 0,
+      "was": "да.",
+      "now": "Да.",
+      "source": {
+        "segment": 73,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 73,
+      "token": 1,
+      "was": "отдельный",
+      "now": "Отдельный",
+      "source": {
+        "segment": 73,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 73,
+      "token": 3,
+      "was": "чисто",
+      "now": "Чисто",
+      "source": {
+        "segment": 73,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 74,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 74,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 75,
+      "token": 9,
+      "was": "скажем",
+      "now": "Скажем",
+      "source": {
+        "segment": 75,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 75,
+      "token": 12,
+      "was": "сколько",
+      "now": "Сколько",
+      "source": {
+        "segment": 75,
+        "token": 12
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 75,
+      "token": 15,
+      "was": "сколько",
+      "now": "Сколько",
+      "source": {
+        "segment": 75,
+        "token": 15
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 76,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 76,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 77,
+      "token": 0,
+      "was": "графики",
+      "now": "Графики",
+      "source": {
+        "segment": 77,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 77,
+      "token": 5,
+      "was": "активность",
+      "now": "Активность",
+      "source": {
+        "segment": 77,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 78,
+      "token": 0,
+      "was": "воронку",
+      "now": "Воронку",
+      "source": {
+        "segment": 78,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 79,
+      "token": 0,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 79,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 79,
+      "token": 4,
+      "was": "витрина",
+      "now": "Витрина",
+      "source": {
+        "segment": 79,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 80,
+      "token": 0,
+      "was": "бизнесу",
+      "now": "Бизнесу",
+      "source": {
+        "segment": 80,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 80,
+      "token": 5,
+      "was": "то",
+      "now": "То",
+      "source": {
+        "segment": 80,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 81,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 81,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 82,
+      "token": 0,
+      "was": "да.",
+      "now": "Да.",
+      "source": {
+        "segment": 82,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 83,
+      "token": 1,
+      "was": "по",
+      "now": "По",
+      "source": {
+        "segment": 83,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 84,
+      "token": 0,
+      "was": "вот.",
+      "now": "Вот.",
+      "source": {
+        "segment": 84,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 85,
+      "token": 0,
+      "was": "откуда",
+      "now": "Откуда",
+      "source": {
+        "segment": 85,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 86,
+      "token": 0,
+      "was": "с",
+      "now": "С",
+      "source": {
+        "segment": 86,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 86,
+      "token": 4,
+      "was": "чтобы",
+      "now": "Чтобы",
+      "source": {
+        "segment": 86,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 86,
+      "token": 9,
+      "was": "селектами.",
+      "now": "селектами",
+      "source": {
+        "segment": 86,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 87,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 87,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 88,
+      "token": 0,
+      "was": "ой",
+      "now": "Ой",
+      "source": {
+        "segment": 88,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 88,
+      "token": 36,
+      "was": "решил.",
+      "now": "решил",
+      "source": {
+        "segment": 88,
+        "token": 36
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 89,
+      "token": 0,
+      "was": "жестко.",
+      "now": "Жестко.",
+      "source": {
+        "segment": 89,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 91,
+      "token": 0,
+      "was": "главное",
+      "now": "Главное",
+      "source": {
+        "segment": 91,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 91,
+      "token": 3,
+      "was": "в",
+      "now": "В",
+      "source": {
+        "segment": 91,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 92,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 92,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 93,
+      "token": 0,
+      "was": "эндпоинты",
+      "now": "Эндпоинты",
+      "source": {
+        "segment": 93,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 94,
+      "token": 0,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 94,
+        "token": 0
+      }
+    },
+    {
+      "operation": "entity_variant",
+      "segment": 94,
+      "token": 2,
+      "was": "Boost",
+      "now": "Буст",
+      "source": {
+        "segment": 94,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 94,
+      "token": 4,
+      "was": "Абду.",
+      "now": "Абду",
+      "source": {
+        "segment": 94,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 95,
+      "token": 0,
+      "was": "понял.",
+      "now": "Понял.",
+      "source": {
+        "segment": 95,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 96,
+      "token": 0,
+      "was": "вот.",
+      "now": "Вот.",
+      "source": {
+        "segment": 96,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 96,
+      "token": 1,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 96,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 96,
+      "token": 7,
+      "was": "чтобы",
+      "now": "Чтобы",
+      "source": {
+        "segment": 96,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 97,
+      "token": 0,
+      "was": "ссо",
+      "now": "Ссо",
+      "source": {
+        "segment": 97,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 98,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 98,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 99,
+      "token": 0,
+      "was": "о",
+      "now": "О",
+      "source": {
+        "segment": 99,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 99,
+      "token": 3,
+      "was": "то",
+      "now": "То",
+      "source": {
+        "segment": 99,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 100,
+      "token": 0,
+      "was": "да.",
+      "now": "Да.",
+      "source": {
+        "segment": 100,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 100,
+      "token": 1,
+      "was": "по",
+      "now": "По",
+      "source": {
+        "segment": 100,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 101,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 101,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 102,
+      "token": 0,
+      "was": "дизайна",
+      "now": "Дизайна",
+      "source": {
+        "segment": 102,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 102,
+      "token": 3,
+      "was": "бизнес",
+      "now": "Бизнес",
+      "source": {
+        "segment": 102,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 102,
+      "token": 10,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 102,
+        "token": 10
+      }
+    },
+    {
+      "operation": "entity_variant",
+      "segment": 102,
+      "token": 12,
+      "was": "Boost",
+      "now": "Буст",
+      "source": {
+        "segment": 102,
+        "token": 12
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 102,
+      "token": 14,
+      "was": "давайте",
+      "now": "Давайте",
+      "source": {
+        "segment": 102,
+        "token": 14
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 103,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 103,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 104,
+      "token": 0,
+      "was": "что",
+      "now": "Что",
+      "source": {
+        "segment": 104,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 105,
+      "token": 0,
+      "was": "эндпоинты",
+      "now": "Эндпоинты",
+      "source": {
+        "segment": 105,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 105,
+      "token": 5,
+      "was": "апи",
+      "now": "Апи",
+      "source": {
+        "segment": 105,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 106,
+      "token": 0,
+      "was": "валидация",
+      "now": "Валидация",
+      "source": {
+        "segment": 106,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 107,
+      "token": 0,
+      "was": "работает.",
+      "now": "Работает.",
+      "source": {
+        "segment": 107,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 107,
+      "token": 1,
+      "was": "регулярки",
+      "now": "Регулярки",
+      "source": {
+        "segment": 107,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 108,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 108,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 108,
+      "token": 6,
+      "was": "с",
+      "now": "С",
+      "source": {
+        "segment": 108,
+        "token": 6
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 108,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 108,
+        "token": null
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 109,
+      "token": 0,
+      "was": "с",
+      "now": "С",
+      "source": {
+        "segment": 109,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 109,
+      "token": 2,
+      "was": "стринг",
+      "now": "Стринг",
+      "source": {
+        "segment": 109,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 110,
+      "token": 1,
+      "was": "маска",
+      "now": "Маска",
+      "source": {
+        "segment": 110,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 111,
+      "token": 0,
+      "was": "главное",
+      "now": "Главное",
+      "source": {
+        "segment": 111,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 112,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 112,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 112,
+      "token": 4,
+      "was": "семерка.",
+      "now": "семерка",
+      "source": {
+        "segment": 112,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 113,
+      "token": 0,
+      "was": "жақсы.",
+      "now": "жақсы",
+      "source": {
+        "segment": 113,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 113,
+      "token": 0,
+      "was": "жақсы",
+      "now": "Жақсы",
+      "source": {
+        "segment": 113,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 114,
+      "token": 0,
+      "was": "аватарки",
+      "now": "Аватарки",
+      "source": {
+        "segment": 114,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 115,
+      "token": 0,
+      "was": "да.",
+      "now": "Да.",
+      "source": {
+        "segment": 115,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 115,
+      "token": 1,
+      "was": "в",
+      "now": "В",
+      "source": {
+        "segment": 115,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 115,
+      "token": 4,
+      "was": "урл",
+      "now": "Урл",
+      "source": {
+        "segment": 115,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 116,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 116,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 117,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 117,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 117,
+      "token": 8,
+      "was": "и",
+      "now": "И",
+      "source": {
+        "segment": 117,
+        "token": 8
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 118,
+      "token": 0,
+      "was": "супер.",
+      "now": "Супер.",
+      "source": {
+        "segment": 118,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 118,
+      "token": 1,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 118,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 119,
+      "token": 0,
+      "was": "лимит",
+      "now": "Лимит",
+      "source": {
+        "segment": 119,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 119,
+      "token": 6,
+      "was": "если",
+      "now": "Если",
+      "source": {
+        "segment": 119,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 120,
+      "token": 0,
+      "was": "на",
+      "now": "На",
+      "source": {
+        "segment": 120,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 122,
+      "token": 0,
+      "was": "еще",
+      "now": "Еще",
+      "source": {
+        "segment": 122,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 123,
+      "token": 0,
+      "was": "шлюз",
+      "now": "Шлюз",
+      "source": {
+        "segment": 123,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 123,
+      "token": 3,
+      "was": "вебхуки",
+      "now": "Вебхуки",
+      "source": {
+        "segment": 123,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 124,
+      "token": 0,
+      "was": "статус",
+      "now": "Статус",
+      "source": {
+        "segment": 124,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 125,
+      "token": 0,
+      "was": "да.",
+      "now": "Да.",
+      "source": {
+        "segment": 125,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 126,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 126,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 126,
+      "token": 7,
+      "was": "прошла.",
+      "now": "прошла",
+      "source": {
+        "segment": 126,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 127,
+      "token": 0,
+      "was": "по",
+      "now": "По",
+      "source": {
+        "segment": 127,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 128,
+      "token": 0,
+      "was": "вебсокеты",
+      "now": "Вебсокеты",
+      "source": {
+        "segment": 128,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 128,
+      "token": 1,
+      "was": "лучше.",
+      "now": "лучше",
+      "source": {
+        "segment": 128,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 128,
+      "token": 2,
+      "was": "пуллинг",
+      "now": "Пуллинг",
+      "source": {
+        "segment": 128,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 129,
+      "token": 0,
+      "was": "сокеты",
+      "now": "Сокеты",
+      "source": {
+        "segment": 129,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 129,
+      "token": 2,
+      "was": "можно",
+      "now": "Можно",
+      "source": {
+        "segment": 129,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 130,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 130,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 130,
+      "token": 28,
+      "was": "решил.",
+      "now": "решил",
+      "source": {
+        "segment": 130,
+        "token": 28
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 131,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 131,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 132,
+      "token": 0,
+      "was": "бывает.",
+      "now": "бывает",
+      "source": {
+        "segment": 132,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 132,
+      "token": 0,
+      "was": "бывает",
+      "now": "Бывает",
+      "source": {
+        "segment": 132,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 133,
+      "token": 0,
+      "was": "главное",
+      "now": "Главное",
+      "source": {
+        "segment": 133,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 134,
+      "token": 2,
+      "was": "статус",
+      "now": "Статус",
+      "source": {
+        "segment": 134,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 135,
+      "token": 0,
+      "was": "так.",
+      "now": "Так.",
+      "source": {
+        "segment": 135,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 135,
+      "token": 1,
+      "was": "что",
+      "now": "Что",
+      "source": {
+        "segment": 135,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 136,
+      "token": 0,
+      "was": "апи",
+      "now": "Апи",
+      "source": {
+        "segment": 136,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 136,
+      "token": 2,
+      "was": "пагинация",
+      "now": "Пагинация",
+      "source": {
+        "segment": 136,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 137,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 137,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 137,
+      "token": 4,
+      "was": "офсет.",
+      "now": "офсет",
+      "source": {
+        "segment": 137,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 138,
+      "token": 0,
+      "was": "офсет.",
+      "now": "Офсет.",
+      "source": {
+        "segment": 138,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 138,
+      "token": 1,
+      "was": "лимит",
+      "now": "Лимит",
+      "source": {
+        "segment": 138,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 139,
+      "token": 0,
+      "was": "окей.",
+      "now": "Окей.",
+      "source": {
+        "segment": 139,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 139,
+      "token": 1,
+      "was": "инфинит",
+      "now": "Инфинит",
+      "source": {
+        "segment": 139,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 140,
+      "token": 0,
+      "was": "только",
+      "now": "Только",
+      "source": {
+        "segment": 140,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 140,
+      "token": 2,
+      "was": "чтобы",
+      "now": "Чтобы",
+      "source": {
+        "segment": 140,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 141,
+      "token": 4,
+      "was": "только",
+      "now": "Только",
+      "source": {
+        "segment": 141,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 141,
+      "token": 9,
+      "was": "остаются.",
+      "now": "остаются",
+      "source": {
+        "segment": 141,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 142,
+      "token": 0,
+      "was": "міне",
+      "now": "Міне",
+      "source": {
+        "segment": 142,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 143,
+      "token": 0,
+      "was": "так.",
+      "now": "так",
+      "source": {
+        "segment": 143,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 143,
+      "token": 0,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 143,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 143,
+      "token": 1,
+      "was": "с",
+      "now": "С",
+      "source": {
+        "segment": 143,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 144,
+      "token": 0,
+      "was": "эластик",
+      "now": "Эластик",
+      "source": {
+        "segment": 144,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 144,
+      "token": 2,
+      "was": "индексы",
+      "now": "Индексы",
+      "source": {
+        "segment": 144,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 145,
+      "token": 0,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 145,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 146,
+      "token": 0,
+      "was": "да.",
+      "now": "Да.",
+      "source": {
+        "segment": 146,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 146,
+      "token": 1,
+      "was": "фаззи",
+      "now": "Фаззи",
+      "source": {
+        "segment": 146,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 146,
+      "token": 4,
+      "was": "расстояние",
+      "now": "Расстояние",
+      "source": {
+        "segment": 146,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 147,
+      "token": 0,
+      "was": "то",
+      "now": "То",
+      "source": {
+        "segment": 147,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 148,
+      "token": 0,
+      "was": "найдет.",
+      "now": "найдет",
+      "source": {
+        "segment": 148,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 148,
+      "token": 0,
+      "was": "найдет",
+      "now": "Найдет",
+      "source": {
+        "segment": 148,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 149,
+      "token": 1,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 149,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 150,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 150,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 151,
+      "token": 0,
+      "was": "вот.",
+      "now": "Вот.",
+      "source": {
+        "segment": 151,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 151,
+      "token": 1,
+      "was": "сейчас",
+      "now": "Сейчас",
+      "source": {
+        "segment": 151,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 152,
+      "token": 0,
+      "was": "автокомплит",
+      "now": "Автокомплит",
+      "source": {
+        "segment": 152,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 153,
+      "token": 0,
+      "was": "быстро",
+      "now": "Быстро",
+      "source": {
+        "segment": 153,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 154,
+      "token": 0,
+      "was": "миллисекунд",
+      "now": "Миллисекунд",
+      "source": {
+        "segment": 154,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 155,
+      "token": 0,
+      "was": "нормально.",
+      "now": "Нормально.",
+      "source": {
+        "segment": 155,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 156,
+      "token": 0,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 156,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 157,
+      "token": 0,
+      "was": "дұрыс.",
+      "now": "дурыс.",
+      "hypothesis": true,
+      "source": {
+        "segment": 157,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 157,
+      "token": 0,
+      "was": "дурыс.",
+      "now": "Дурыс.",
+      "source": {
+        "segment": 157,
+        "token": 0
+      }
+    },
+    {
+      "operation": "speaker_mislabel",
+      "segment": 157,
+      "token": null,
+      "was": "SPEAKER_01",
+      "now": "SPEAKER_03",
+      "source": {
+        "segment": 157,
+        "token": null
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 158,
+      "token": 0,
+      "was": "так.",
+      "now": "Так.",
+      "source": {
+        "segment": 158,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 158,
+      "token": 1,
+      "was": "с",
+      "now": "С",
+      "source": {
+        "segment": 158,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 159,
+      "token": 0,
+      "was": "фильтры",
+      "now": "Фильтры",
+      "source": {
+        "segment": 159,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 159,
+      "token": 2,
+      "was": "мультиселект",
+      "now": "Мультиселект",
+      "source": {
+        "segment": 159,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 160,
+      "token": 0,
+      "was": "апи",
+      "now": "Апи",
+      "source": {
+        "segment": 160,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 161,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 161,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 162,
+      "token": 0,
+      "was": "сентри",
+      "now": "Сентри",
+      "source": {
+        "segment": 162,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 163,
+      "token": 0,
+      "was": "логи",
+      "now": "Логи",
+      "source": {
+        "segment": 163,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 164,
+      "token": 7,
+      "was": "эксепшены",
+      "now": "Эксепшены",
+      "source": {
+        "segment": 164,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 165,
+      "token": 0,
+      "was": "сорс",
+      "now": "Сорс",
+      "source": {
+        "segment": 165,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 166,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 166,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 167,
+      "token": 0,
+      "was": "алерты",
+      "now": "Алерты",
+      "source": {
+        "segment": 167,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 168,
+      "token": 0,
+      "was": "спама",
+      "now": "Спама",
+      "source": {
+        "segment": 168,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 168,
+      "token": 2,
+      "was": "будет.",
+      "now": "будет",
+      "source": {
+        "segment": 168,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 169,
+      "token": 0,
+      "was": "троттлинг",
+      "now": "Троттлинг",
+      "source": {
+        "segment": 169,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 170,
+      "token": 0,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 170,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 171,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 171,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 171,
+      "token": 3,
+      "was": "кроме",
+      "now": "Кроме",
+      "source": {
+        "segment": 171,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 172,
+      "token": 0,
+      "was": "макеты",
+      "now": "Макеты",
+      "source": {
+        "segment": 172,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 173,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 173,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 173,
+      "token": 4,
+      "was": "грубо",
+      "now": "Грубо",
+      "source": {
+        "segment": 173,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 174,
+      "token": 0,
+      "was": "дизайнер",
+      "now": "Дизайнер",
+      "source": {
+        "segment": 174,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 175,
+      "token": 0,
+      "was": "пусть",
+      "now": "Пусть",
+      "source": {
+        "segment": 175,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 176,
+      "token": 0,
+      "was": "смешно.",
+      "now": "Смешно.",
+      "source": {
+        "segment": 176,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 177,
+      "token": 0,
+      "was": "так",
+      "now": "Так",
+      "source": {
+        "segment": 177,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 177,
+      "token": 3,
+      "was": "по",
+      "now": "По",
+      "source": {
+        "segment": 177,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 179,
+      "token": 0,
+      "was": "какую.",
+      "now": "Какую.",
+      "source": {
+        "segment": 179,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 179,
+      "token": 1,
+      "was": "которая",
+      "now": "Которая",
+      "source": {
+        "segment": 179,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 179,
+      "token": 4,
+      "was": "открылась?",
+      "now": "открылась",
+      "source": {
+        "segment": 179,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 180,
+      "token": 0,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 180,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 180,
+      "token": 3,
+      "was": "эта.",
+      "now": "эта",
+      "source": {
+        "segment": 180,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 180,
+      "token": 4,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 180,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 180,
+      "token": 9,
+      "was": "обеде.",
+      "now": "обеде",
+      "source": {
+        "segment": 180,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 180,
+      "token": 10,
+      "was": "там",
+      "now": "Там",
+      "source": {
+        "segment": 180,
+        "token": 10
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 180,
+      "token": 16,
+      "was": "взял",
+      "now": "Взял",
+      "source": {
+        "segment": 180,
+        "token": 16
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 180,
+      "token": 23,
+      "was": "и",
+      "now": "И",
+      "source": {
+        "segment": 180,
+        "token": 23
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 181,
+      "token": 0,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 181,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 181,
+      "token": 4,
+      "was": "нормально.",
+      "now": "Нормально.",
+      "source": {
+        "segment": 181,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 182,
+      "token": 0,
+      "was": "иә",
+      "now": "Иә",
+      "source": {
+        "segment": 182,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 182,
+      "token": 3,
+      "was": "көрдім",
+      "now": "кордим",
+      "hypothesis": true,
+      "source": {
+        "segment": 182,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 182,
+      "token": 4,
+      "was": "сырттай.",
+      "now": "сырттай",
+      "source": {
+        "segment": 182,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 182,
+      "token": 5,
+      "was": "но",
+      "now": "Но",
+      "source": {
+        "segment": 182,
+        "token": 5
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 183,
+      "token": 0,
+      "was": "вот",
+      "now": "Вот",
+      "source": {
+        "segment": 183,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 183,
+      "token": 2,
+      "was": "грубо",
+      "now": "Грубо",
+      "source": {
+        "segment": 183,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 183,
+      "token": 12,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 183,
+        "token": 12
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 184,
+      "token": 0,
+      "was": "понятно.",
+      "now": "Понятно.",
+      "source": {
+        "segment": 184,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 184,
+      "token": 1,
+      "was": "значит",
+      "now": "Значит",
+      "source": {
+        "segment": 184,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 184,
+      "token": 6,
+      "was": "я",
+      "now": "Я",
+      "source": {
+        "segment": 184,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 185,
+      "token": 0,
+      "was": "везет.",
+      "now": "Везет.",
+      "source": {
+        "segment": 185,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 185,
+      "token": 1,
+      "was": "а",
+      "now": "А",
+      "source": {
+        "segment": 185,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 185,
+      "token": 9,
+      "was": "пиццу",
+      "now": "Пиццу",
+      "source": {
+        "segment": 185,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 186,
+      "token": 0,
+      "was": "долго",
+      "now": "Долго",
+      "source": {
+        "segment": 186,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 186,
+      "token": 4,
+      "was": "час",
+      "now": "Час",
+      "source": {
+        "segment": 186,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 187,
+      "token": 0,
+      "was": "есть",
+      "now": "Есть",
+      "source": {
+        "segment": 187,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 187,
+      "token": 1,
+      "was": "такое.",
+      "now": "такое",
+      "source": {
+        "segment": 187,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 187,
+      "token": 2,
+      "was": "ну",
+      "now": "Ну",
+      "source": {
+        "segment": 187,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 187,
+      "token": 13,
+      "was": "макетами.",
+      "now": "макетами",
+      "source": {
+        "segment": 187,
+        "token": 13
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 188,
+      "token": 0,
+      "was": "да",
+      "now": "Да",
+      "source": {
+        "segment": 188,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 188,
+      "token": 3,
+      "was": "всем",
+      "now": "Всем",
+      "source": {
+        "segment": 188,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 189,
+      "token": 0,
+      "was": "сау",
+      "now": "Сау",
+      "source": {
+        "segment": 189,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 190,
+      "token": 0,
+      "was": "давай.",
+      "now": "Давай.",
+      "source": {
+        "segment": 190,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_start_capitalize",
+      "segment": 191,
+      "token": 0,
+      "was": "пока.",
+      "now": "Пока.",
+      "source": {
+        "segment": 191,
+        "token": 0
+      }
+    }
+  ],
+  "counters": {
+    "entity_mentions": 15,
+    "entity_mentions_changed": 2,
+    "entity_variant": 2,
+    "kk_letter_loss": 2,
+    "noise_tag": 2,
+    "sentence_end_drop": 37,
+    "sentence_start_capitalize": 275,
+    "speaker_mislabel": 1
+  }
+}

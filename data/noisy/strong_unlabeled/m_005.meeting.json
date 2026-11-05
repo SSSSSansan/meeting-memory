@@ -1,0 +1,42 @@
+{
+  "public_id": "396439ec-686a-5913-a054-8f44e0eac81b",
+  "title": "Амина и Нұралы: один на один",
+  "language": "kk",
+  "started_at": "2026-08-19T14:35:09+05:00",
+  "ended_at": "2026-08-19T14:44:11+05:00",
+  "actual_duration_seconds": 541.91,
+  "transcription_provider": "synthetic",
+  "is_private": false,
+  "speaker_names": null,
+  "status": "READY",
+  "has_transcript": true,
+  "summary_count": 0,
+  "owner": {
+    "user": {
+      "full_name": "Амина",
+      "email": "amina@example.com",
+      "position": "Product manager"
+    }
+  },
+  "departments": [],
+  "participants": [
+    {
+      "user": {
+        "full_name": "Амина",
+        "email": "amina@example.com",
+        "position": "Product manager"
+      },
+      "role": "employee",
+      "added_at": "2026-08-19T14:35:09+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Нұралы",
+        "email": "nuraly@example.com",
+        "position": "Tech lead"
+      },
+      "role": "employee",
+      "added_at": "2026-08-19T14:35:09+05:00"
+    }
+  ]
+}
