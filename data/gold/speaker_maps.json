@@ -9,5 +9,21 @@
     "SPEAKER_00": "sandugash",
     "SPEAKER_01": "amina",
     "SPEAKER_02": "nuraly"
+  },
+  "m_003": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "daniyar",
+    "SPEAKER_02": "nuraly",
+    "SPEAKER_03": "client_squad"
+  },
+  "m_004": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly",
+    "SPEAKER_02": "nikolay",
+    "SPEAKER_03": "abdurakhman"
+  },
+  "m_005": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly"
   }
 }

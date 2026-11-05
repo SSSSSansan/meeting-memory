@@ -16,7 +16,7 @@ people:
   - {id: abdurakhman, name: Абдурахман, role: Fullstack developer, role_aliases: [фулстек, фронтендер, frontend], written_variants: [Абдурахман, Абду, Abdu, Abdurahman]}
   - {id: sandugash, name: Сандуғаш, role: ML engineer, role_aliases: [data scientist, AI engineer, датасайентист], written_variants: [Сандуғаш, Сандугаш, Санду, Sandugash]}
   - {id: daniyar, name: Данияр, role: Head of business development, role_aliases: [бизнес-девелопмент, бизнес, продажи], written_variants: [Данияр, Daniyar]}
-  - {id: client_squad, name: null, role: Представитель клиента Squad, role_aliases: [клиент], written_variants: [], note: гость; имя придумаем при написании встреч}
+  - {id: client_squad, name: Ержан, role: Представитель клиента Squad, role_aliases: [клиент], written_variants: []}
 
 projects:
   - {id: zhol, name: Zhol, description: мобильное приложение (маршруты и доставка), written_variants: [Zhol, Жол, Джол]}
