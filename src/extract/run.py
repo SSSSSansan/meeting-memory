@@ -20,20 +20,30 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("meetings", nargs="*", help="id встреч, по умолчанию все")
     ap.add_argument("--out", default="data/extracted_llm")
+    ap.add_argument("--raw", action="store_true", help="брать Scribal-пары из data/raw (адаптер + имена говорящих)")
     args = ap.parse_args()
 
     out_dir = ROOT / args.out
     out_dir.mkdir(parents=True, exist_ok=True)
-    files = sorted((ROOT / "data" / "transcripts").glob("*.json"))
-    if args.meetings:
-        files = [f for f in files if f.stem in args.meetings]
+    if args.raw:
+        from src.ingest.scribal_adapter import convert_files
+        from src.ingest.speakers import apply_speakers
+        raw = ROOT / "data" / "raw"
+        files = sorted(raw.glob("*.transcript.json"))
+        files = [f for f in files if not args.meetings or f.name.split(".")[0] in args.meetings]
+        loaded = [apply_speakers(convert_files(f, f.with_name(f.name.replace("transcript", "meeting")),
+                                               f.name.split(".")[0])) for f in files]
+    else:
+        files = sorted((ROOT / "data" / "transcripts").glob("*.json"))
+        if args.meetings:
+            files = [f for f in files if f.stem in args.meetings]
+        loaded = [Transcript.model_validate_json(f.read_text(encoding="utf-8")) for f in files]
     if not files:
         print("Нет транскриптов для обработки.")
         return 1
 
     total_cost = 0.0
-    for f in files:
-        t = Transcript.model_validate_json(f.read_text(encoding="utf-8"))
+    for t in loaded:
         stats = ExtractStats(meeting_id=t.meeting_id)
         try:
             ext = extract(t, stats=stats)
