@@ -1,0 +1,29 @@
+# Настройки инструментов. Зависимости — в requirements.txt (общий файл, меняется через PR со всеми ролями).
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+extend-exclude = ["try_*.py"]  # личные черновики в корне
+
+[tool.ruff.lint]
+# Ошибки и явные ловушки, без стилистики: стиль пока не навязываем всему репо разом.
+select = ["E", "F", "W"]
+
+[tool.ruff.lint.per-file-ignores]
+# Тексты промптов — длинные строки по природе.
+"src/**/prompts.py" = ["E501"]
+# Унаследованные замечания в файлах других ролей: CI не правит чужие папки (CLAUDE.md).
+# Владелец убирает строку, когда чинит файл, — дальше файл проверяется полностью.
+"scripts/validate_extraction.py" = ["F401"]       # B: неиспользуемые json, re
+"src/extract/extractor.py" = ["F401"]             # B: неиспользуемые field, date
+"src/extract/compare.py" = ["E702"]               # B: несколько выражений через «;»
+"src/extract/run.py" = ["E501"]                   # B: длинный print
+"src/graph/builder.py" = ["E731"]                 # B: lambda в переменной
+"tests/test_basics.py" = ["F401"]                 # каркас: неиспользуемый Extraction
+
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

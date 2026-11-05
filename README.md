@@ -11,12 +11,17 @@
 ## Быстрый старт
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+python3 -m venv .venv && source .venv/bin/activate     # Windows: python -m venv .venv; .venv\Scripts\activate
+pip install -r requirements.txt ruff
 cp .env.example .env          # LLM_BACKEND=stub работает без ключей
-python -m pytest -q           # тесты каркаса
+ruff check .                  # линтер (настройки — pyproject.toml)
+python -m pytest -q           # тесты
 python -m scripts.validate_extraction
+streamlit run app/streamlit_app.py
 ```
+
+CI (`.github/workflows/ci.yml`) гоняет `ruff check .` и `pytest -q` на Python 3.11 и 3.13 для каждого PR и push в `main`.
+Перед PR запустите обе команды локально — красный CI блокирует слияние только по договорённости, не технически.
 
 ## Роли
 

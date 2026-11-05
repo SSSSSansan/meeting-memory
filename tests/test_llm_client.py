@@ -68,7 +68,8 @@ def test_backends_return_same_shape_with_usage_and_cost(monkeypatch, tmp_path, b
     assert r.cost_usd == pytest.approx((1000 * 0.5 + 200 * 2) / 1e6) and r.model == "m-test"
     assert fake.calls[0][1]["response_format"] == {"type": "json_object"}
     row = _rows(tmp_path)[0]
-    assert (row["backend"], row["purpose"], row["kind"], row["from_cache"]) == (backend, "answer_baseline", "chat", False)
+    assert (row["backend"], row["purpose"], row["kind"]) == (backend, "answer_baseline", "chat")
+    assert row["from_cache"] is False
     assert row["spent_usd"] == pytest.approx(r.cost_usd)
     assert cg._read()["spent_usd"] == pytest.approx(r.cost_usd)
 
