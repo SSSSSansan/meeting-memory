@@ -50,5 +50,81 @@
     "meeting": "m_002",
     "quote": "А кто делает интерфейс бота?",
     "start_s": 196.02
+  },
+  {
+    "id": "ev_m003_01",
+    "type": "decision",
+    "project": "squad",
+    "meeting": "m_003",
+    "quote": "сложный эксель-экспорт делаем во второй версии.",
+    "start_s": 321.91
+  },
+  {
+    "id": "ev_m003_02",
+    "type": "decision",
+    "project": "squad",
+    "meeting": "m_003",
+    "quote": "давайте возьмём до тридцатого октября",
+    "start_s": 419.66
+  },
+  {
+    "id": "ev_m003_03",
+    "type": "task",
+    "project": "squad",
+    "meeting": "m_003",
+    "owner": "nikolay",
+    "due": "2026-08-21",
+    "quote": "Николай делает документацию API до 21 августа.",
+    "start_s": 497.96
+  },
+  {
+    "id": "ev_m003_04",
+    "type": "task",
+    "project": "squad",
+    "meeting": "m_003",
+    "owner": "daniyar",
+    "due": "2026-08-14",
+    "quote": "я отправлю коммерческое предложение до четырнадцатого августа.",
+    "start_s": 810.28
+  },
+  {
+    "id": "ev_m004_01",
+    "type": "decision",
+    "project": "boost",
+    "meeting": "m_004",
+    "quote": "в общем делаем внутреннюю панель метрик Boost",
+    "start_s": 355.28
+  },
+  {
+    "id": "ev_m004_02",
+    "type": "decision",
+    "project": "boost",
+    "meeting": "m_004",
+    "quote": "так интеграцию Boost ведет Абду.",
+    "start_s": 365.15
+  },
+  {
+    "id": "ev_m004_03",
+    "type": "status_update",
+    "project": "zhol",
+    "meeting": "m_004",
+    "quote": "миграция базы данных выполнена",
+    "start_s": 21.66
+  },
+  {
+    "id": "ev_m005_01",
+    "type": "non_decision",
+    "project": null,
+    "meeting": "m_005",
+    "quote": "Бізге тағы бір бэкендер керек пе екен деп.",
+    "start_s": 65.38
+  },
+  {
+    "id": "ev_m005_02",
+    "type": "decision",
+    "project": "boost",
+    "meeting": "m_005",
+    "quote": "Біз сол Boost-ты бірінші Zhol-ға жасаймыз, ал Squad үшін кейінірек қосамыз.",
+    "start_s": 458.29
   }
 ]

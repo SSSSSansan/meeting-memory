@@ -5,16 +5,16 @@ events:
 - id: ev_m003_01
   type: decision
   description: Экспорт в Excel откладываем на вторую версию Squad
-  quote: ''
+  quote: 'сложный эксель-экспорт делаем во второй версии.'
 - id: ev_m003_02
   type: decision
   description: Первую версию Squad выпускаем до 30 октября 2026
-  quote: ''
+  quote: 'давайте возьмём до тридцатого октября'
 - id: ev_m003_03
   type: task
   description: Подготовить документацию API Squad
-  quote: ''
+  quote: 'Николай делает документацию API до 21 августа.'
 - id: ev_m003_04
   type: task
   description: Отправить клиенту коммерческое предложение
-  quote: ''
+  quote: 'я отправлю коммерческое предложение до четырнадцатого августа.'

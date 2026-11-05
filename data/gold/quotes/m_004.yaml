@@ -5,12 +5,12 @@ events:
 - id: ev_m004_01
   type: decision
   description: Делаем панель метрик Boost
-  quote: ''
+  quote: 'в общем делаем внутреннюю панель метрик Boost'
 - id: ev_m004_02
   type: decision
   description: Интеграцию Boost ведёт Абдурахман
-  quote: ''
+  quote: 'так интеграцию Boost ведет Абду.'
 - id: ev_m004_03
   type: status_update
   description: Миграция БД выполнена
-  quote: ''
+  quote: 'миграция базы данных выполнена'

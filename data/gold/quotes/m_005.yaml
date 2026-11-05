@@ -5,8 +5,8 @@ events:
 - id: ev_m005_01
   type: non_decision
   description: Нұралы вслух думает, не взять ли ещё одного бэкендера; решения нет
-  quote: ''
+  quote: 'Бізге тағы бір бэкендер керек пе екен деп.'
 - id: ev_m005_02
   type: decision
   description: Boost сначала делаем для Zhol, для Squad позже
-  quote: ''
+  quote: 'Біз сол Boost-ты бірінші Zhol-ға жасаймыз, ал Squad үшін кейінірек қосамыз.'
