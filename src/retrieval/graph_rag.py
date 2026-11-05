@@ -160,6 +160,7 @@ _LINK_TEXT = {"SUPERSEDES": ("заменяет", "заменено решени�
               "REFINES": ("уточняет", "уточнено решением"),
               "SAME_TOPIC": ("на ту же тему, что", "на ту же тему, что")}
 _KIND = {"Decision": "Решение", "Task": "Задача", "OpenQuestion": "Открытый вопрос"}
+_TASK_STATUS = {"open": "открыта", "done": "выполнена", "cancelled": "отменена"}
 
 
 def _item_block(G: nx.MultiDiGraph, n: str, keep: set[str]) -> str:
@@ -174,7 +175,7 @@ def _item_block(G: nx.MultiDiGraph, n: str, keep: set[str]) -> str:
         if d.get("made_by"):
             marks.append(f"решил: {d['made_by']}")
     elif d["type"] == "Task":
-        marks.append({"open": "открыта", "done": "выполнена", "cancelled": "отменена"}.get(d.get("status"), d.get("status", "")))
+        marks.append(_TASK_STATUS.get(d.get("status"), d.get("status", "")))
         if d.get("owner"):
             marks.append(f"исполнитель: {d['owner']}")
         if d.get("due"):
