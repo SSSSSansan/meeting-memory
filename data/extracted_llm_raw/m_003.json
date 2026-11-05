@@ -8,7 +8,7 @@
       "id": "d_m003_01",
       "project": "Squad",
       "statement": "сложный эксель-экспорт делаем во второй версии.",
-      "made_by": "SPEAKER_00",
+      "made_by": null,
       "confidence": 0.9,
       "source": {
         "ts": "00:05:21",
@@ -19,7 +19,7 @@
       "id": "d_m003_02",
       "project": "Squad",
       "statement": "отдаем вам первую версию Squad до тридцатого октября.",
-      "made_by": "SPEAKER_00",
+      "made_by": null,
       "confidence": 0.9,
       "source": {
         "ts": "00:06:59",
@@ -30,7 +30,7 @@
       "id": "d_m003_03",
       "project": "Squad",
       "statement": "Николай делает документацию API до 21 августа.",
-      "made_by": "SPEAKER_00",
+      "made_by": null,
       "confidence": 0.9,
       "source": {
         "ts": "00:08:17",
@@ -41,7 +41,7 @@
       "id": "d_m003_04",
       "project": "Squad",
       "statement": "отправлю коммерческое предложение до четырнадцатого августа.",
-      "made_by": "SPEAKER_01",
+      "made_by": null,
       "confidence": 0.9,
       "source": {
         "ts": "00:13:30",
