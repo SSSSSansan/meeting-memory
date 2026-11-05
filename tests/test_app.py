@@ -41,7 +41,9 @@ def test_demo_indexing_then_question(monkeypatch):
     at = AppTest.from_file(APP, default_timeout=60).run()
     _button(at, "Демо-встречи").click().run()
     assert not at.exception
-    assert any("В индексе: 2" in s.value for s in at.sidebar.subheader)
+    demo_meetings = len(api.pair_scribal_files(api.demo_files())[0])   # роль A добавляет встречи в data/raw/
+    assert demo_meetings >= 2
+    assert any(f"В индексе: {demo_meetings}" in s.value for s in at.sidebar.subheader)
 
     at.text_input[0].input("Когда релиз Zhol?").run()
     _button(at, "Спросить").click().run()
