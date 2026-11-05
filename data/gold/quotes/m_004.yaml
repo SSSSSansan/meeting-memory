@@ -1,0 +1,16 @@
+# Цитаты эталона для m_004: дословный фрагмент из транскрипта в поле quote.
+# Проверка и сборка: python scripts/build_gold.py --build
+meeting: m_004
+events:
+- id: ev_m004_01
+  type: decision
+  description: Делаем панель метрик Boost
+  quote: ''
+- id: ev_m004_02
+  type: decision
+  description: Интеграцию Boost ведёт Абдурахман
+  quote: ''
+- id: ev_m004_03
+  type: status_update
+  description: Миграция БД выполнена
+  quote: ''
