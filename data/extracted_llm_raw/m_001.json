@@ -1,0 +1,56 @@
+{
+  "meeting_id": "m_001",
+  "projects_discussed": [
+    "Zhol"
+  ],
+  "decisions": [
+    {
+      "id": "d_m001_01",
+      "project": "Zhol",
+      "statement": "миграция базы до четырнадцатого августа",
+      "made_by": "Коля",
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:07:12",
+        "quote": "до четырнадцатого сделаю."
+      }
+    },
+    {
+      "id": "d_m001_02",
+      "project": "Zhol",
+      "statement": "дата релиза 15 сентября",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:09:37",
+        "quote": "ну тогда пятнадцатое сентября, и давайте уже без переносов"
+      }
+    },
+    {
+      "id": "d_m001_03",
+      "project": "Zhol",
+      "statement": "пуш-уведомления входят в первую версию Zhol",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:11:33",
+        "quote": "пуш-уведомления входят в первую версию Zhol. это критично для бизнеса."
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t_m001_01",
+      "project": "Zhol",
+      "statement": "миграция базы",
+      "owner": "Коля",
+      "due": "2026-08-14",
+      "status": "open",
+      "source": {
+        "ts": "00:06:38",
+        "quote": "дня три чистого времени если никто отвлекать не будет."
+      }
+    }
+  ],
+  "open_questions": []
+}

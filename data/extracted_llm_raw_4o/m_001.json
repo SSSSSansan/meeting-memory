@@ -1,0 +1,45 @@
+{
+  "meeting_id": "m_001",
+  "projects_discussed": [
+    "Zhol"
+  ],
+  "decisions": [
+    {
+      "id": "d_m001_01",
+      "project": "Zhol",
+      "statement": "Дата выхода в прод с Zhol зафиксирована на 15 сентября.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:09:37",
+        "quote": "ну тогда пятнадцатое сентября, и давайте уже без переносов"
+      }
+    },
+    {
+      "id": "d_m001_02",
+      "project": "Zhol",
+      "statement": "Пуш-уведомления входят в первую версию Zhol.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:12:30",
+        "quote": "пуши оставляем, не обсуждается"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t_m001_01",
+      "project": "Zhol",
+      "statement": "Миграция базы данных для Zhol.",
+      "owner": "Коля",
+      "due": "2026-08-14",
+      "status": "open",
+      "source": {
+        "ts": "00:07:12",
+        "quote": "до четырнадцатого сделаю. ок."
+      }
+    }
+  ],
+  "open_questions": []
+}

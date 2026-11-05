@@ -1,0 +1,55 @@
+{
+  "meeting_id": "m_004",
+  "projects_discussed": [
+    "Zhol"
+  ],
+  "decisions": [
+    {
+      "id": "d_m004_01",
+      "project": "Zhol",
+      "statement": "делаем внутреннюю панель метрик Boost.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:05:55",
+        "quote": "в общем делаем внутреннюю панель метрик Boost."
+      }
+    },
+    {
+      "id": "d_m004_02",
+      "project": "Zhol",
+      "statement": "интеграцию Boost ведет Абду.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:06:05",
+        "quote": "так интеграцию Boost ведет Абду."
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t_m004_01",
+      "project": "Zhol",
+      "statement": "подключить фронт к API.",
+      "owner": "Абдурахман",
+      "due": null,
+      "status": "open",
+      "source": {
+        "ts": "00:02:54",
+        "quote": "да я уже начал. авторизацию подцепил вчера."
+      }
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "q_m004_01",
+      "project": "Zhol",
+      "statement": "дизайн есть на эту панель вообще?",
+      "source": {
+        "ts": "00:06:29",
+        "quote": "а дизайн есть на эту панель вообще."
+      }
+    }
+  ]
+}

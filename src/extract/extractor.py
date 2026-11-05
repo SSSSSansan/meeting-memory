@@ -101,6 +101,8 @@ def _person(name, participants: list[str]) -> Optional[str]:
     if not name or str(name).lower() in ("null", "none"):
         return None
     name = str(name).strip()
+    if "peaker" in name.lower():  # SPEAKER_XX (в т.ч. с кириллической «С») — имя неизвестно, не выдумываем
+        return None
     for p in participants:
         if _norm(p) == _norm(name):
             return p

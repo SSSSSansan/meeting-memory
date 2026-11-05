@@ -1,0 +1,58 @@
+{
+  "meeting_id": "m_004",
+  "projects_discussed": [
+    "Zhol",
+    "Boost"
+  ],
+  "decisions": [
+    {
+      "id": "d_m004_01",
+      "project": "Boost",
+      "statement": "Делаем внутреннюю панель метрик Boost",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:05:55",
+        "quote": "в общем делаем внутреннюю панель метрик Boost."
+      }
+    },
+    {
+      "id": "d_m004_02",
+      "project": "Boost",
+      "statement": "Интеграцию Boost ведет Абду",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:06:05",
+        "quote": "так интеграцию Boost ведет Абду."
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t_m004_01",
+      "project": "Zhol",
+      "statement": "Миграция базы данных выполнена",
+      "owner": "Николай",
+      "due": null,
+      "status": "done",
+      "source": {
+        "ts": "00:00:21",
+        "quote": "это готово. миграция базы данных выполнена."
+      }
+    },
+    {
+      "id": "t_m004_02",
+      "project": "Zhol",
+      "statement": "Подключить фронт к апишкам",
+      "owner": "Абдурахман",
+      "due": null,
+      "status": "open",
+      "source": {
+        "ts": "00:02:54",
+        "quote": "да я уже начал. авторизацию подцепил вчера."
+      }
+    }
+  ],
+  "open_questions": []
+}

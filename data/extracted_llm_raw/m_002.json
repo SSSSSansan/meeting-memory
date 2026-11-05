@@ -1,0 +1,45 @@
+{
+  "meeting_id": "m_002",
+  "projects_discussed": [
+    "Qamqor"
+  ],
+  "decisions": [
+    {
+      "id": "d_m002_01",
+      "project": "Qamqor",
+      "statement": "Берем готовую модель и не тратим время на дообучение",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:01:42",
+        "quote": "То есть берем готовую и не тратим время на дообучение?"
+      }
+    },
+    {
+      "id": "d_m002_02",
+      "project": "Qamqor",
+      "statement": "Двадцать шестое августа",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:06:11",
+        "quote": "Ладно. Двадцать шестое августа. Договорились."
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t_m002_01",
+      "project": "Qamqor",
+      "statement": "Показать прототип",
+      "owner": "Сандуғаш",
+      "due": "2026-08-26",
+      "status": "open",
+      "source": {
+        "ts": "00:05:33",
+        "quote": "Иә, жиырма алтысына дейін прототипті көрсете аламын."
+      }
+    }
+  ],
+  "open_questions": []
+}

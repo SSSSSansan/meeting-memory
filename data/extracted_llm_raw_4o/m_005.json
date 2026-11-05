@@ -1,0 +1,33 @@
+{
+  "meeting_id": "m_005",
+  "projects_discussed": [
+    "Zhol",
+    "Squad",
+    "Boost"
+  ],
+  "decisions": [
+    {
+      "id": "d_m005_01",
+      "project": "Boost",
+      "statement": "Boost-ты бірінші Zhol-ға жасаймыз, ал Squad үшін кейінірек қосамыз.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:07:38",
+        "quote": "Біз сол Boost-ты бірінші Zhol-ға жасаймыз, ал Squad үшін кейінірек қосамыз."
+      }
+    }
+  ],
+  "tasks": [],
+  "open_questions": [
+    {
+      "id": "q_m005_01",
+      "project": "Zhol",
+      "statement": "Бізге тағы бір бэкендер керек пе екен деп.",
+      "source": {
+        "ts": "00:01:05",
+        "quote": "Бізге тағы бір бэкендер керек пе екен деп."
+      }
+    }
+  ]
+}
