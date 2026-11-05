@@ -60,20 +60,25 @@ with st.sidebar:
             st.rerun()
     st.caption(f"LLM backend: {backend}")
 
-mode = st.radio("Режим", ["baseline", "graph"], horizontal=True,
-                help="baseline — поиск по репликам загруженных встреч; graph — по графу решений и задач")
-if mode == "graph":
+mode = st.radio("Режим", ["auto", "baseline", "graph"], horizontal=True,
+                help="baseline — поиск по репликам загруженных встреч; graph — по графу решений и задач; "
+                     "auto — граф для вопросов через несколько встреч, baseline для простых фактов")
+if mode != "baseline":
     g = api.graph_info()
     note = " — это заглушка, настоящий граф строит роль B" if g["is_sample"] else ""
     st.caption(f"Граф: {g['path']} ({len(g['meetings'])} встреч: {', '.join(g['meetings'])}){note}")
 question = st.text_input("Вопрос", placeholder="Что решили по Zhol за последние три встречи?")
 
 if st.button("Спросить", type="primary", disabled=not question.strip()):
-    if mode == "baseline" and not meetings:
+    chosen = api.route(question) if mode == "auto" else None
+    if (mode == "baseline" or (chosen and chosen.mode == "baseline")) and not meetings:
         st.info("Индекс пуст: загрузите встречи слева или нажмите «Демо-встречи».")
     else:
         with st.spinner("Ищу и отвечаю…"):
             result = api.ask(question, mode=mode)
+        if chosen:
+            fallback = "; в графе по вопросу ничего нет" if chosen.mode != result.mode else ""
+            st.caption(f"auto → {result.mode} ({chosen.qtype}): {chosen.reason}{fallback}")
         st.markdown(result.answer)
         titles = {m["meeting_id"]: f"{m['title']}, {m['date']}" for m in meetings}
         if result.citations:

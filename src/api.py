@@ -20,6 +20,8 @@ from src.answer.answerer import answer
 from src.ingest.scribal_adapter import convert
 from src.retrieval.baseline import DEFAULT_INDEX_DIR, ROOT, BaselineIndex
 from src.retrieval.graph_rag import SAMPLE_GRAPH_PATH, default_graph_path, get_graph
+from src.retrieval.router import Route
+from src.retrieval.router import route as _route
 from src.schemas import Answer, ScribalMeeting, ScribalTranscript, Transcript
 
 BATCH_SIZE = 5  # решение куратора: встречи обрабатываются батчами по 5
@@ -110,8 +112,15 @@ def reset_index() -> None:
 
 
 def ask(question: str, mode: str = "baseline", k: int = 5, depth: int = 2) -> Answer:
-    """baseline ищет по индексу встреч, загруженных в UI; graph — по графу роли B (graph_info())."""
+    """Одна точка для UI и eval. baseline ищет по индексу встреч, загруженных в UI;
+    graph — по графу роли B (graph_info()); auto — ветку выбирает роутер (см. route()).
+    Какой веткой реально ответили — Answer.mode."""
     return answer(question, mode=mode, k=k, depth=depth, index=get_index())
+
+
+def route(question: str) -> Route:
+    """Какую ветку выберет auto и почему — без вызова LLM, для подписи в UI."""
+    return _route(question)
 
 
 def graph_info() -> dict:
