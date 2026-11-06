@@ -113,6 +113,51 @@ def test_all_six_combinations_are_written(run):
     assert not (run["out"] / "medium_labeled" / "m_001.txt").exists()
 
 
+def two_meetings(tmp: Path) -> Path:
+    texts = [TEMPLATES[i % len(TEMPLATES)] for i in range(40)]
+    write_input(tmp / "src2", texts, "m_001")
+    return write_input(tmp / "src2", texts[::-1], "m_004")
+
+
+def written_files(root: Path) -> list[str]:
+    return sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_file())
+
+
+def test_only_processes_listed_meetings_and_matches_full_run(tmp_path):
+    src = two_meetings(tmp_path)
+    code, full_out, full_logs = run_main(src, tmp_path, "full")
+    assert code == 0
+    code, out, logs = run_main(src, tmp_path, "only", "--only", "m_004")
+    assert code == 0
+    assert written_files(out) and all("m_004" in f for f in written_files(out))
+    assert all("m_004" in f for f in written_files(logs))
+    # зерно зависит от встречи, а не от набора: результат такой же, как в полном прогоне
+    for first, second in ((out, full_out), (logs, full_logs)):
+        for rel in written_files(first):
+            assert (first / rel).read_bytes() == (second / rel).read_bytes(), rel
+
+
+def test_without_only_all_meetings_are_processed(tmp_path):
+    code, out, _ = run_main(two_meetings(tmp_path), tmp_path, "all")
+    assert code == 0
+    names = {f.split("/")[1] for f in written_files(out)}
+    assert {"m_001.transcript.json", "m_004.transcript.json"} <= names
+
+
+def test_only_accepts_several_ids_in_any_order_with_repeats(tmp_path):
+    src = two_meetings(tmp_path)
+    code, out, _ = run_main(src, tmp_path, "two", "--only", "m_004", "m_001", "m_004")
+    assert code == 0
+    assert len(written_files(out)) == 2 * len(COMBOS) * 2
+
+
+def test_only_with_unknown_meeting_is_an_error(tmp_path, capsys):
+    src = two_meetings(tmp_path)
+    code, out, logs = run_main(src, tmp_path, "bad", "--only", "m_001", "m_099")
+    assert code == 1 and "m_099" in capsys.readouterr().err
+    assert not out.exists() and not logs.exists()
+
+
 def test_meeting_file_is_copied_unchanged(run):
     want = (run["src"] / "m_001.meeting.json").read_bytes()
     for combo in COMBOS:
