@@ -1,0 +1,12 @@
+# Цитаты эталона для m_007: дословный фрагмент из транскрипта в поле quote.
+# Проверка и сборка: python scripts/build_gold.py --build
+meeting: m_007
+events:
+- id: ev_m007_01
+  type: decision
+  description: Николай полностью работает на Squad с 14 по 18 сентября 2026
+  quote: ''
+- id: ev_m007_02
+  type: status_update
+  description: Коммерческое предложение клиенту отправлено
+  quote: ''
