@@ -1,0 +1,1584 @@
+{
+  "meeting_id": "m_009",
+  "level": "clean",
+  "variant": "unlabeled",
+  "global_seed": 42,
+  "params": {
+    "filler_remove_prob": 0,
+    "ellipsis_mode": "none",
+    "entity_variant_prob": 0,
+    "kk_letter_loss_prob": 0,
+    "transliteration_prob": 0,
+    "sentence_end_drop_prob": 0,
+    "sentence_start_capitalize_prob": 0,
+    "noise_tag_prob": 0,
+    "speaker_mislabel_prob": 0,
+    "block_words": null,
+    "boundary_snap_prob": 0
+  },
+  "seeds": {
+    "fillers": 2545973011028252407,
+    "ellipsis": 4268929158533508826,
+    "entities": 1197375849581581434,
+    "kk_loss": 18031414254386687148,
+    "translit": 7726543229428935685,
+    "sentence_end": 16197109046590165501,
+    "sentence_start": 17534873604976904184,
+    "mislabel": 342556484568745865,
+    "blocks": 11431675174226248866,
+    "block_snap": 10131004317231893614,
+    "noise_tag": 7018446859152463552
+  },
+  "dropped_source_segments": [],
+  "segments": [
+    {
+      "index": 0,
+      "start": 0.69,
+      "end": 4.16,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 0,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "start": 4.55,
+      "end": 5.15,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 1,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "start": 6.03,
+      "end": 8.5,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 2,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "start": 9.96,
+      "end": 11.11,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 3,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "start": 12.31,
+      "end": 17.05,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 4,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "start": 18.24,
+      "end": 19.97,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 5,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "start": 21.04,
+      "end": 28.12,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 6,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "start": 29.36,
+      "end": 31.76,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 7,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "start": 32.28,
+      "end": 39.71,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 8,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "start": 39.98,
+      "end": 42.36,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 9,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "start": 42.58,
+      "end": 47.63,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 10,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "start": 47.81,
+      "end": 48.77,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 11,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "start": 49.01,
+      "end": 55.68,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 12,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "start": 55.98,
+      "end": 59.4,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 13,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "start": 59.79,
+      "end": 60.39,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 14,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "start": 61.82,
+      "end": 73.55,
+      "words": 25,
+      "sources": [
+        {
+          "segment": 15,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 25
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "start": 73.98,
+      "end": 74.7,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 16,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "start": 74.93,
+      "end": 85.5,
+      "words": 29,
+      "sources": [
+        {
+          "segment": 17,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 29
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "start": 85.98,
+      "end": 87.35,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 18,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "start": 87.55,
+      "end": 100.0,
+      "words": 34,
+      "sources": [
+        {
+          "segment": 19,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 34
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "start": 100.35,
+      "end": 101.62,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 20,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "start": 102.64,
+      "end": 110.48,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 21,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "start": 110.79,
+      "end": 112.63,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 22,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "start": 113.38,
+      "end": 118.69,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 23,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "start": 120.05,
+      "end": 121.83,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 24,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "start": 122.34,
+      "end": 127.94,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 25,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "start": 128.27,
+      "end": 129.47,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 26,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "start": 130.37,
+      "end": 136.34,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 27,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "start": 136.82,
+      "end": 139.73,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 28,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "start": 140.86,
+      "end": 151.94,
+      "words": 29,
+      "sources": [
+        {
+          "segment": 29,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 29
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "start": 152.88,
+      "end": 154.42,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 30,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "start": 155.14,
+      "end": 161.09,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 31,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "start": 162.44,
+      "end": 166.3,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 32,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "start": 167.53,
+      "end": 169.62,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 33,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "start": 169.83,
+      "end": 170.43,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 34,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "start": 171.39,
+      "end": 181.06,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 35,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "start": 182.24,
+      "end": 183.46,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 36,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "start": 184.93,
+      "end": 190.5,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 37,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "start": 191.33,
+      "end": 193.21,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 38,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "start": 194.64,
+      "end": 198.34,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 39,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "start": 199.82,
+      "end": 203.83,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 40,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "start": 204.24,
+      "end": 206.33,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 41,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "start": 207.1,
+      "end": 209.52,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 42,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 43,
+      "start": 209.81,
+      "end": 214.31,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 43,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "start": 215.17,
+      "end": 217.37,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 44,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "start": 218.33,
+      "end": 227.93,
+      "words": 20,
+      "sources": [
+        {
+          "segment": 45,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 20
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "start": 229.34,
+      "end": 230.77,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 46,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 47,
+      "start": 231.02,
+      "end": 236.44,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 47,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 48,
+      "start": 237.78,
+      "end": 241.83,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 48,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 49,
+      "start": 242.86,
+      "end": 250.85,
+      "words": 19,
+      "sources": [
+        {
+          "segment": 49,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 19
+        }
+      ]
+    },
+    {
+      "index": 50,
+      "start": 252.18,
+      "end": 254.39,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 50,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 51,
+      "start": 255.41,
+      "end": 264.96,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 51,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 52,
+      "start": 266.31,
+      "end": 268.21,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 52,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 53,
+      "start": 269.48,
+      "end": 274.93,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 53,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 54,
+      "start": 275.83,
+      "end": 282.38,
+      "words": 19,
+      "sources": [
+        {
+          "segment": 54,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 19
+        }
+      ]
+    },
+    {
+      "index": 55,
+      "start": 283.0,
+      "end": 284.69,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 55,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 56,
+      "start": 284.97,
+      "end": 292.63,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 56,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 57,
+      "start": 293.96,
+      "end": 296.82,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 57,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 58,
+      "start": 297.56,
+      "end": 298.77,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 58,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 59,
+      "start": 300.07,
+      "end": 303.02,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 59,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 60,
+      "start": 304.12,
+      "end": 305.98,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 60,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 61,
+      "start": 306.9,
+      "end": 315.51,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 61,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 62,
+      "start": 315.95,
+      "end": 316.55,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 62,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 63,
+      "start": 317.99,
+      "end": 328.99,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 63,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 64,
+      "start": 330.15,
+      "end": 332.23,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 64,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 65,
+      "start": 333.25,
+      "end": 336.14,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 65,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 66,
+      "start": 336.3,
+      "end": 336.9,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 66,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 67,
+      "start": 337.15,
+      "end": 345.87,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 67,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 68,
+      "start": 346.19,
+      "end": 350.08,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 68,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 69,
+      "start": 351.02,
+      "end": 355.63,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 69,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 70,
+      "start": 356.21,
+      "end": 360.09,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 70,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 71,
+      "start": 360.31,
+      "end": 370.22,
+      "words": 26,
+      "sources": [
+        {
+          "segment": 71,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 26
+        }
+      ]
+    },
+    {
+      "index": 72,
+      "start": 370.67,
+      "end": 375.72,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 72,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 73,
+      "start": 376.48,
+      "end": 381.04,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 73,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 74,
+      "start": 381.14,
+      "end": 381.74,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 74,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 75,
+      "start": 382.12,
+      "end": 386.88,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 75,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 76,
+      "start": 387.49,
+      "end": 392.68,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 76,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 77,
+      "start": 393.45,
+      "end": 394.46,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 77,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 78,
+      "start": 395.52,
+      "end": 401.76,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 78,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 79,
+      "start": 402.81,
+      "end": 404.09,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 79,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 80,
+      "start": 405.44,
+      "end": 411.62,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 80,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 81,
+      "start": 412.02,
+      "end": 413.02,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 81,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 82,
+      "start": 414.04,
+      "end": 424.83,
+      "words": 23,
+      "sources": [
+        {
+          "segment": 82,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 23
+        }
+      ]
+    },
+    {
+      "index": 83,
+      "start": 425.02,
+      "end": 425.62,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 83,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 84,
+      "start": 426.92,
+      "end": 434.7,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 84,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 85,
+      "start": 435.18,
+      "end": 435.86,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 85,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 86,
+      "start": 436.73,
+      "end": 441.02,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 86,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 87,
+      "start": 442.12,
+      "end": 443.53,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 87,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 88,
+      "start": 444.13,
+      "end": 450.62,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 88,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 89,
+      "start": 451.84,
+      "end": 453.55,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 89,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 90,
+      "start": 454.72,
+      "end": 461.32,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 90,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 91,
+      "start": 461.34,
+      "end": 461.94,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 91,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 92,
+      "start": 463.34,
+      "end": 471.15,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 92,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 93,
+      "start": 472.56,
+      "end": 473.79,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 93,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 94,
+      "start": 474.27,
+      "end": 475.99,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 94,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 95,
+      "start": 476.85,
+      "end": 478.33,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 95,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 96,
+      "start": 478.63,
+      "end": 479.46,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 96,
+          "speaker": "SPEAKER_01",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 97,
+      "start": 479.65,
+      "end": 480.61,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 97,
+          "speaker": "SPEAKER_02",
+          "person": "sandugash",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 98,
+      "start": 480.85,
+      "end": 481.45,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 98,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 1
+        }
+      ]
+    }
+  ],
+  "entity_mentions": [
+    {
+      "segment": 2,
+      "token": 1,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 2,
+        "token": 1
+      }
+    },
+    {
+      "segment": 12,
+      "token": 6,
+      "entity": "qamqor",
+      "canonical": "Qamqor",
+      "source_form": "Qamqor",
+      "final_form": "Qamqor",
+      "changed": false,
+      "source": {
+        "segment": 12,
+        "token": 6
+      }
+    },
+    {
+      "segment": 12,
+      "token": 9,
+      "entity": "sandugash",
+      "canonical": "Сандуғаш",
+      "source_form": "Санду",
+      "final_form": "Санду",
+      "changed": false,
+      "source": {
+        "segment": 12,
+        "token": 9
+      }
+    },
+    {
+      "segment": 13,
+      "token": 4,
+      "entity": "qamqor",
+      "canonical": "Qamqor",
+      "source_form": "Qamqor",
+      "final_form": "Qamqor",
+      "changed": false,
+      "source": {
+        "segment": 13,
+        "token": 4
+      }
+    },
+    {
+      "segment": 42,
+      "token": 2,
+      "entity": "qamqor",
+      "canonical": "Qamqor",
+      "source_form": "қамқор",
+      "final_form": "қамқор",
+      "changed": false,
+      "source": {
+        "segment": 42,
+        "token": 2
+      }
+    },
+    {
+      "segment": 42,
+      "token": 4,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 42,
+        "token": 4
+      }
+    },
+    {
+      "segment": 49,
+      "token": 5,
+      "entity": "qamqor",
+      "canonical": "Qamqor",
+      "source_form": "Qamqor",
+      "final_form": "Qamqor",
+      "changed": false,
+      "source": {
+        "segment": 49,
+        "token": 5
+      }
+    },
+    {
+      "segment": 51,
+      "token": 5,
+      "entity": "qamqor",
+      "canonical": "Qamqor",
+      "source_form": "Qamqor",
+      "final_form": "Qamqor",
+      "changed": false,
+      "source": {
+        "segment": 51,
+        "token": 5
+      }
+    },
+    {
+      "segment": 51,
+      "token": 17,
+      "entity": "squad",
+      "canonical": "Squad",
+      "source_form": "Squad",
+      "final_form": "Squad",
+      "changed": false,
+      "source": {
+        "segment": 51,
+        "token": 17
+      }
+    },
+    {
+      "segment": 53,
+      "token": 4,
+      "entity": "squad",
+      "canonical": "Squad",
+      "source_form": "Squad",
+      "final_form": "Squad",
+      "changed": false,
+      "source": {
+        "segment": 53,
+        "token": 4
+      }
+    },
+    {
+      "segment": 61,
+      "token": 18,
+      "entity": "squad",
+      "canonical": "Squad",
+      "source_form": "Squad",
+      "final_form": "Squad",
+      "changed": false,
+      "source": {
+        "segment": 61,
+        "token": 18
+      }
+    },
+    {
+      "segment": 75,
+      "token": 10,
+      "entity": "qamqor",
+      "canonical": "Qamqor",
+      "source_form": "Qamqor",
+      "final_form": "Qamqor",
+      "changed": false,
+      "source": {
+        "segment": 75,
+        "token": 10
+      }
+    }
+  ],
+  "replacements": [],
+  "counters": {
+    "entity_mentions": 12,
+    "entity_mentions_changed": 0
+  }
+}

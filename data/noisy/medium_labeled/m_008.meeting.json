@@ -1,0 +1,60 @@
+{
+  "public_id": "e0675fdc-cc54-56e3-a8a2-d994e3810e1b",
+  "title": "Zhol: срочный созвон",
+  "language": "ru",
+  "started_at": "2026-09-02T11:55:41+05:00",
+  "ended_at": "2026-09-02T12:02:07+05:00",
+  "actual_duration_seconds": 386.49,
+  "transcription_provider": "synthetic",
+  "is_private": false,
+  "speaker_names": null,
+  "status": "READY",
+  "has_transcript": true,
+  "summary_count": 0,
+  "owner": {
+    "user": {
+      "full_name": "Амина",
+      "email": "amina@example.com",
+      "position": "Product manager"
+    }
+  },
+  "departments": [],
+  "participants": [
+    {
+      "user": {
+        "full_name": "Амина",
+        "email": "amina@example.com",
+        "position": "Product manager"
+      },
+      "role": "employee",
+      "added_at": "2026-09-02T11:55:41+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Нұралы",
+        "email": "nuraly@example.com",
+        "position": "Tech lead"
+      },
+      "role": "employee",
+      "added_at": "2026-09-02T11:55:41+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Николай",
+        "email": "nikolay@example.com",
+        "position": "Backend developer"
+      },
+      "role": "employee",
+      "added_at": "2026-09-02T11:55:41+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Абдурахман",
+        "email": "abdurakhman@example.com",
+        "position": "Fullstack developer"
+      },
+      "role": "employee",
+      "added_at": "2026-09-02T11:55:41+05:00"
+    }
+  ]
+}

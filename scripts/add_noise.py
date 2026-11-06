@@ -2,6 +2,7 @@
 
     python scripts/add_noise.py                       # data/raw → data/noisy, журналы в data/gold/noise_logs
     python scripts/add_noise.py DIR --text            # + m_NNN.txt в формате настоящей расшифровки
+    python scripts/add_noise.py --only m_006 m_007    # только эти встречи, остальные файлы не трогаются
 
 Для каждой встречи (m_NNN.transcript.json + m_NNN.meeting.json) и каждой из шести комбинаций
 уровень (clean, medium, strong) × вариант (labeled, unlabeled) пишется
@@ -679,6 +680,16 @@ def discover(input_dir: Path) -> list[str]:
     return ids
 
 
+def select_meetings(found: list[str], only: list[str] | None, input_dir: Path) -> list[str]:
+    """Без --only берутся все встречи папки; с --only — только перечисленные (должны быть в папке)."""
+    if not only:
+        return found
+    unknown = sorted(set(only) - set(found))
+    if unknown:
+        raise NoiseError(f"в {input_dir} нет m_NNN.transcript.json для: {', '.join(unknown)}")
+    return sorted(set(only))
+
+
 def validate_input(meeting: str, input_dir: Path, maps: dict, world: dict) -> dict:
     meta = input_dir / f"{meeting}.meeting.json"
     if not meta.exists():
@@ -709,7 +720,7 @@ def run(a: argparse.Namespace) -> int:
     world = yaml.safe_load(a.world.read_text(encoding="utf-8"))
     index = build_entity_index(world)
     maps = json.loads(a.speaker_maps.read_text(encoding="utf-8"))
-    meetings = discover(a.input_dir)
+    meetings = select_meetings(discover(a.input_dir), a.only, a.input_dir)
     raws = {m: validate_input(m, a.input_dir, maps, world) for m in meetings}
 
     results: dict[tuple[str, str], dict[str, Combo]] = {}
@@ -790,6 +801,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--world", type=Path, default=WORLD_PATH)
     ap.add_argument("--speaker-maps", type=Path, default=SPEAKER_MAPS_PATH)
     ap.add_argument("--seed", type=int, default=None, help="по умолчанию global_seed из конфига")
+    ap.add_argument("--only", nargs="+", metavar="ID",
+                    help="обработать только эти встречи (m_006 m_007 ...); по умолчанию все")
     ap.add_argument("--text", action="store_true",
                     help="для unlabeled писать ещё m_NNN.txt в формате настоящей расшифровки")
     a = ap.parse_args(argv)

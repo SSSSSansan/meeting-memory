@@ -25,5 +25,34 @@
   "m_005": {
     "SPEAKER_00": "amina",
     "SPEAKER_01": "nuraly"
+  },
+  "m_006": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly",
+    "SPEAKER_02": "nikolay",
+    "SPEAKER_03": "abdurakhman"
+  },
+  "m_007": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly",
+    "SPEAKER_02": "nikolay",
+    "SPEAKER_03": "daniyar"
+  },
+  "m_008": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly",
+    "SPEAKER_02": "nikolay",
+    "SPEAKER_03": "abdurakhman"
+  },
+  "m_009": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly",
+    "SPEAKER_02": "sandugash"
+  },
+  "m_010": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "daniyar",
+    "SPEAKER_02": "abdurakhman",
+    "SPEAKER_03": "sandugash"
   }
 }

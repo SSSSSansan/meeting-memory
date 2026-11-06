@@ -1,0 +1,51 @@
+{
+  "public_id": "dad15f9e-ab2a-53ad-98fe-b4207dbaf4cf",
+  "title": "Qamqor: статус",
+  "language": "ru",
+  "started_at": "2026-09-07T11:23:23+05:00",
+  "ended_at": "2026-09-07T11:31:24+05:00",
+  "actual_duration_seconds": 481.45,
+  "transcription_provider": "synthetic",
+  "is_private": false,
+  "speaker_names": null,
+  "status": "READY",
+  "has_transcript": true,
+  "summary_count": 0,
+  "owner": {
+    "user": {
+      "full_name": "Амина",
+      "email": "amina@example.com",
+      "position": "Product manager"
+    }
+  },
+  "departments": [],
+  "participants": [
+    {
+      "user": {
+        "full_name": "Амина",
+        "email": "amina@example.com",
+        "position": "Product manager"
+      },
+      "role": "employee",
+      "added_at": "2026-09-07T11:23:23+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Нұралы",
+        "email": "nuraly@example.com",
+        "position": "Tech lead"
+      },
+      "role": "employee",
+      "added_at": "2026-09-07T11:23:23+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Сандуғаш",
+        "email": "sandugash@example.com",
+        "position": "ML engineer"
+      },
+      "role": "employee",
+      "added_at": "2026-09-07T11:23:23+05:00"
+    }
+  ]
+}

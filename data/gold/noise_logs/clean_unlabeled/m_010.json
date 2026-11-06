@@ -1,0 +1,1804 @@
+{
+  "meeting_id": "m_010",
+  "level": "clean",
+  "variant": "unlabeled",
+  "global_seed": 42,
+  "params": {
+    "filler_remove_prob": 0,
+    "ellipsis_mode": "none",
+    "entity_variant_prob": 0,
+    "kk_letter_loss_prob": 0,
+    "transliteration_prob": 0,
+    "sentence_end_drop_prob": 0,
+    "sentence_start_capitalize_prob": 0,
+    "noise_tag_prob": 0,
+    "speaker_mislabel_prob": 0,
+    "block_words": null,
+    "boundary_snap_prob": 0
+  },
+  "seeds": {
+    "fillers": 10037502470760325502,
+    "ellipsis": 13936456412134056825,
+    "entities": 13207768803518232462,
+    "kk_loss": 13695970824892735983,
+    "translit": 8467362719942131225,
+    "sentence_end": 2109907564865804250,
+    "sentence_start": 11996353872262093959,
+    "mislabel": 5311842290995061305,
+    "blocks": 14207345562213147772,
+    "block_snap": 12991221307454415207,
+    "noise_tag": 12768110378548777699
+  },
+  "dropped_source_segments": [],
+  "segments": [
+    {
+      "index": 0,
+      "start": 0.88,
+      "end": 4.29,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 0,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "start": 4.57,
+      "end": 5.17,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 1,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "start": 6.65,
+      "end": 10.22,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 2,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "start": 10.22,
+      "end": 10.82,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 3,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "start": 11.26,
+      "end": 16.19,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 4,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "start": 16.45,
+      "end": 17.32,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 5,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "start": 18.31,
+      "end": 20.81,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 6,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "start": 21.36,
+      "end": 23.57,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 7,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "start": 24.07,
+      "end": 27.9,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 8,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "start": 28.3,
+      "end": 32.68,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 9,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "start": 33.12,
+      "end": 39.07,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 10,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "start": 40.41,
+      "end": 43.38,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 11,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "start": 44.65,
+      "end": 54.07,
+      "words": 20,
+      "sources": [
+        {
+          "segment": 12,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 20
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "start": 54.9,
+      "end": 59.57,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 13,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "start": 60.6,
+      "end": 62.35,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 14,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "start": 62.41,
+      "end": 63.21,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 15,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "start": 64.33,
+      "end": 69.49,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 16,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "start": 70.22,
+      "end": 82.66,
+      "words": 30,
+      "sources": [
+        {
+          "segment": 17,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 30
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "start": 83.54,
+      "end": 87.97,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 18,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "start": 89.29,
+      "end": 93.85,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 19,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "start": 94.31,
+      "end": 96.34,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 20,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "start": 97.49,
+      "end": 102.72,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 21,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "start": 103.82,
+      "end": 108.7,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 22,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "start": 109.38,
+      "end": 116.9,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 23,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "start": 117.39,
+      "end": 118.74,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 24,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "start": 119.13,
+      "end": 126.28,
+      "words": 20,
+      "sources": [
+        {
+          "segment": 25,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 20
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "start": 127.51,
+      "end": 130.33,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 26,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "start": 130.59,
+      "end": 137.74,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 27,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "start": 138.14,
+      "end": 145.05,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 28,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "start": 146.18,
+      "end": 156.23,
+      "words": 29,
+      "sources": [
+        {
+          "segment": 29,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 29
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "start": 157.02,
+      "end": 160.7,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 30,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "start": 161.86,
+      "end": 168.06,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 31,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "start": 169.0,
+      "end": 171.39,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 32,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "start": 172.42,
+      "end": 178.18,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 33,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "start": 178.81,
+      "end": 184.3,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 34,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "start": 185.69,
+      "end": 187.83,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 35,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "start": 188.75,
+      "end": 191.13,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 36,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "start": 191.95,
+      "end": 196.89,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 37,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "start": 197.95,
+      "end": 203.69,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 38,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "start": 204.63,
+      "end": 209.87,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 39,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "start": 210.87,
+      "end": 219.78,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 40,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "start": 220.53,
+      "end": 223.66,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 41,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "start": 224.75,
+      "end": 234.86,
+      "words": 27,
+      "sources": [
+        {
+          "segment": 42,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 27
+        }
+      ]
+    },
+    {
+      "index": 43,
+      "start": 235.56,
+      "end": 236.98,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 43,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "start": 238.41,
+      "end": 242.94,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 44,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "start": 243.48,
+      "end": 245.65,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 45,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "start": 245.92,
+      "end": 254.83,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 46,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 47,
+      "start": 255.95,
+      "end": 258.07,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 47,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 48,
+      "start": 258.82,
+      "end": 262.65,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 48,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 49,
+      "start": 263.44,
+      "end": 271.46,
+      "words": 23,
+      "sources": [
+        {
+          "segment": 49,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 23
+        }
+      ]
+    },
+    {
+      "index": 50,
+      "start": 272.84,
+      "end": 280.78,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 50,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 51,
+      "start": 281.65,
+      "end": 283.91,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 51,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 52,
+      "start": 284.85,
+      "end": 290.34,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 52,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 53,
+      "start": 291.63,
+      "end": 296.9,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 53,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 54,
+      "start": 297.63,
+      "end": 304.48,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 54,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 55,
+      "start": 305.31,
+      "end": 308.3,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 55,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 56,
+      "start": 309.56,
+      "end": 311.97,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 56,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 57,
+      "start": 313.09,
+      "end": 318.43,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 57,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 58,
+      "start": 318.68,
+      "end": 323.21,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 58,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 59,
+      "start": 323.9,
+      "end": 326.31,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 59,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 60,
+      "start": 326.87,
+      "end": 332.2,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 60,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 61,
+      "start": 332.63,
+      "end": 336.85,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 61,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 62,
+      "start": 338.04,
+      "end": 340.85,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 62,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 63,
+      "start": 341.72,
+      "end": 346.7,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 63,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 64,
+      "start": 348.1,
+      "end": 354.64,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 64,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 65,
+      "start": 355.56,
+      "end": 358.04,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 65,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 66,
+      "start": 358.61,
+      "end": 362.87,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 66,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 67,
+      "start": 363.09,
+      "end": 370.08,
+      "words": 20,
+      "sources": [
+        {
+          "segment": 67,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 20
+        }
+      ]
+    },
+    {
+      "index": 68,
+      "start": 370.95,
+      "end": 372.82,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 68,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 69,
+      "start": 373.73,
+      "end": 377.55,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 69,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 70,
+      "start": 378.48,
+      "end": 381.62,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 70,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 71,
+      "start": 382.06,
+      "end": 387.55,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 71,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 72,
+      "start": 388.58,
+      "end": 398.42,
+      "words": 24,
+      "sources": [
+        {
+          "segment": 72,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 24
+        }
+      ]
+    },
+    {
+      "index": 73,
+      "start": 398.95,
+      "end": 409.0,
+      "words": 24,
+      "sources": [
+        {
+          "segment": 73,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 24
+        }
+      ]
+    },
+    {
+      "index": 74,
+      "start": 409.63,
+      "end": 415.42,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 74,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 75,
+      "start": 415.77,
+      "end": 425.07,
+      "words": 26,
+      "sources": [
+        {
+          "segment": 75,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 26
+        }
+      ]
+    },
+    {
+      "index": 76,
+      "start": 426.34,
+      "end": 434.68,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 76,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 77,
+      "start": 435.9,
+      "end": 447.62,
+      "words": 25,
+      "sources": [
+        {
+          "segment": 77,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 25
+        }
+      ]
+    },
+    {
+      "index": 78,
+      "start": 448.49,
+      "end": 455.2,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 78,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 79,
+      "start": 456.23,
+      "end": 459.35,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 79,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 80,
+      "start": 459.86,
+      "end": 469.08,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 80,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 81,
+      "start": 470.33,
+      "end": 473.4,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 81,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 82,
+      "start": 473.9,
+      "end": 477.86,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 82,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 83,
+      "start": 478.82,
+      "end": 482.61,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 83,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 84,
+      "start": 484.03,
+      "end": 486.5,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 84,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 85,
+      "start": 487.93,
+      "end": 491.15,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 85,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 86,
+      "start": 491.98,
+      "end": 499.73,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 86,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 87,
+      "start": 500.19,
+      "end": 502.47,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 87,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 88,
+      "start": 503.38,
+      "end": 506.72,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 88,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 89,
+      "start": 507.61,
+      "end": 515.03,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 89,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 90,
+      "start": 515.78,
+      "end": 517.23,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 90,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 91,
+      "start": 518.04,
+      "end": 528.64,
+      "words": 30,
+      "sources": [
+        {
+          "segment": 91,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 30
+        }
+      ]
+    },
+    {
+      "index": 92,
+      "start": 529.21,
+      "end": 533.89,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 92,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 93,
+      "start": 534.81,
+      "end": 544.0,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 93,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 94,
+      "start": 545.03,
+      "end": 548.99,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 94,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 95,
+      "start": 549.0,
+      "end": 549.6,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 95,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 96,
+      "start": 550.63,
+      "end": 556.72,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 96,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 97,
+      "start": 557.84,
+      "end": 558.94,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 97,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 98,
+      "start": 559.37,
+      "end": 562.07,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 98,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 99,
+      "start": 563.09,
+      "end": 566.35,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 99,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 100,
+      "start": 566.54,
+      "end": 567.14,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 100,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 101,
+      "start": 568.28,
+      "end": 574.14,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 101,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 102,
+      "start": 574.69,
+      "end": 579.64,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 102,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 103,
+      "start": 580.6,
+      "end": 586.19,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 103,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 104,
+      "start": 587.67,
+      "end": 590.17,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 104,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 105,
+      "start": 590.75,
+      "end": 592.52,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 105,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 106,
+      "start": 593.83,
+      "end": 595.86,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 106,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 107,
+      "start": 597.05,
+      "end": 600.4,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 107,
+          "speaker": "SPEAKER_00",
+          "person": "amina",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 108,
+      "start": 600.48,
+      "end": 601.25,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 108,
+          "speaker": "SPEAKER_01",
+          "person": "daniyar",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 109,
+      "start": 601.42,
+      "end": 602.2,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 109,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 110,
+      "start": 602.51,
+      "end": 603.35,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 110,
+          "speaker": "SPEAKER_03",
+          "person": "sandugash",
+          "words": 2
+        }
+      ]
+    }
+  ],
+  "entity_mentions": [
+    {
+      "segment": 0,
+      "token": 7,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Boost",
+      "changed": false,
+      "source": {
+        "segment": 0,
+        "token": 7
+      }
+    },
+    {
+      "segment": 13,
+      "token": 8,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 13,
+        "token": 8
+      }
+    },
+    {
+      "segment": 16,
+      "token": 1,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 16,
+        "token": 1
+      }
+    },
+    {
+      "segment": 16,
+      "token": 4,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Boost",
+      "changed": false,
+      "source": {
+        "segment": 16,
+        "token": 4
+      }
+    },
+    {
+      "segment": 17,
+      "token": 23,
+      "entity": "zhol",
+      "canonical": "Zhol",
+      "source_form": "Zhol",
+      "final_form": "Zhol",
+      "changed": false,
+      "source": {
+        "segment": 17,
+        "token": 23
+      }
+    },
+    {
+      "segment": 32,
+      "token": 0,
+      "entity": "daniyar",
+      "canonical": "Данияр",
+      "source_form": "Данияр",
+      "final_form": "Данияр",
+      "changed": false,
+      "source": {
+        "segment": 32,
+        "token": 0
+      }
+    },
+    {
+      "segment": 39,
+      "token": 0,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 39,
+        "token": 0
+      }
+    },
+    {
+      "segment": 45,
+      "token": 0,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 45,
+        "token": 0
+      }
+    },
+    {
+      "segment": 51,
+      "token": 5,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 51,
+        "token": 5
+      }
+    },
+    {
+      "segment": 53,
+      "token": 0,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 53,
+        "token": 0
+      }
+    },
+    {
+      "segment": 66,
+      "token": 1,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 66,
+        "token": 1
+      }
+    },
+    {
+      "segment": 69,
+      "token": 0,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 69,
+        "token": 0
+      }
+    },
+    {
+      "segment": 83,
+      "token": 3,
+      "entity": "nikolay",
+      "canonical": "Николай",
+      "source_form": "Коля",
+      "final_form": "Коля",
+      "changed": false,
+      "source": {
+        "segment": 83,
+        "token": 3
+      }
+    },
+    {
+      "segment": 89,
+      "token": 16,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Boost",
+      "changed": false,
+      "source": {
+        "segment": 89,
+        "token": 16
+      }
+    },
+    {
+      "segment": 94,
+      "token": 2,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 94,
+        "token": 2
+      }
+    },
+    {
+      "segment": 94,
+      "token": 7,
+      "entity": "boost",
+      "canonical": "Boost",
+      "source_form": "Boost",
+      "final_form": "Boost",
+      "changed": false,
+      "source": {
+        "segment": 94,
+        "token": 7
+      }
+    }
+  ],
+  "replacements": [],
+  "counters": {
+    "entity_mentions": 16,
+    "entity_mentions_changed": 0
+  }
+}

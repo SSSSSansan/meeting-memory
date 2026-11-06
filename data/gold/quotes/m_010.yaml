@@ -1,0 +1,12 @@
+# Цитаты эталона для m_010: дословный фрагмент из транскрипта в поле quote.
+# Проверка и сборка: python scripts/build_gold.py --build
+meeting: m_010
+events:
+- id: ev_m010_01
+  type: decision
+  description: В Boost добавляем метрики продаж
+  quote: 'давай добавим эти метрики продаж в панель'
+- id: ev_m010_02
+  type: task
+  description: Сделать блок метрик продаж в Boost
+  quote: 'Абду, блок метрик продаж в Boost делаешь ты'

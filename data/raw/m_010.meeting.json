@@ -1,0 +1,60 @@
+{
+  "public_id": "fa6e809f-29f2-5a47-84a3-6683dbdd2bdc",
+  "title": "Boost: демо для бизнеса",
+  "language": "ru",
+  "started_at": "2026-09-14T14:48:31+05:00",
+  "ended_at": "2026-09-14T14:58:34+05:00",
+  "actual_duration_seconds": 603.35,
+  "transcription_provider": "synthetic",
+  "is_private": false,
+  "speaker_names": null,
+  "status": "READY",
+  "has_transcript": true,
+  "summary_count": 0,
+  "owner": {
+    "user": {
+      "full_name": "Амина",
+      "email": "amina@example.com",
+      "position": "Product manager"
+    }
+  },
+  "departments": [],
+  "participants": [
+    {
+      "user": {
+        "full_name": "Амина",
+        "email": "amina@example.com",
+        "position": "Product manager"
+      },
+      "role": "employee",
+      "added_at": "2026-09-14T14:48:31+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Данияр",
+        "email": "daniyar@example.com",
+        "position": "Head of business development"
+      },
+      "role": "employee",
+      "added_at": "2026-09-14T14:48:31+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Абдурахман",
+        "email": "abdurakhman@example.com",
+        "position": "Fullstack developer"
+      },
+      "role": "employee",
+      "added_at": "2026-09-14T14:48:31+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Сандуғаш",
+        "email": "sandugash@example.com",
+        "position": "ML engineer"
+      },
+      "role": "employee",
+      "added_at": "2026-09-14T14:48:31+05:00"
+    }
+  ]
+}
