@@ -126,5 +126,96 @@
     "meeting": "m_005",
     "quote": "Біз сол Boost-ты бірінші Zhol-ға жасаймыз, ал Squad үшін кейінірек қосамыз.",
     "start_s": 458.29
+  },
+  {
+    "id": "ev_m006_01",
+    "type": "decision",
+    "project": "zhol",
+    "meeting": "m_006",
+    "quote": "нет, не пятого, шестого. шестого октября вместо пятнадцатого сентября",
+    "start_s": 362.03
+  },
+  {
+    "id": "ev_m006_02",
+    "type": "task",
+    "project": "zhol",
+    "meeting": "m_006",
+    "owner": "abdurakhman",
+    "due": "2026-09-04",
+    "quote": "Абду, ты делаешь экран статистики до четвертого сентября",
+    "start_s": 385.15
+  },
+  {
+    "id": "ev_m007_01",
+    "type": "decision",
+    "project": "squad",
+    "meeting": "m_007",
+    "quote": "Николай полностью работает на Squad с четырнадцатого по восемнадцатого сентября",
+    "start_s": 314.98
+  },
+  {
+    "id": "ev_m007_02",
+    "type": "status_update",
+    "project": "squad",
+    "meeting": "m_007",
+    "quote": "коммерческое предложение клиенту отправлено.",
+    "start_s": 10.75
+  },
+  {
+    "id": "ev_m008_01",
+    "type": "decision",
+    "project": "zhol",
+    "meeting": "m_008",
+    "quote": "Николай занимается хотфиксом Zhol с четырнадцатого по восемнадцатое сентября",
+    "start_s": 323.72
+  },
+  {
+    "id": "ev_m008_02",
+    "type": "decision",
+    "project": "zhol",
+    "meeting": "m_008",
+    "quote": "пуш-уведомления в Zhol отменяются. и мы ничем их не заменяем",
+    "start_s": 137.93
+  },
+  {
+    "id": "ev_m009_01",
+    "type": "decision",
+    "project": "qamqor",
+    "meeting": "m_009",
+    "quote": "интерфейс бота қамқор делает Абду",
+    "start_s": 207.1
+  },
+  {
+    "id": "ev_m009_02",
+    "type": "status_update",
+    "project": "qamqor",
+    "meeting": "m_009",
+    "quote": "прототип Qamqor готов",
+    "start_s": 55.98
+  },
+  {
+    "id": "ev_m009_03",
+    "type": "decision",
+    "project": "squad",
+    "meeting": "m_009",
+    "quote": "только на готовой модели можно, без дообучения, иначе к Squad не подцепимся",
+    "start_s": 306.9
+  },
+  {
+    "id": "ev_m010_01",
+    "type": "decision",
+    "project": "boost",
+    "meeting": "m_010",
+    "quote": "давай добавим эти метрики продаж в панель",
+    "start_s": 529.21
+  },
+  {
+    "id": "ev_m010_02",
+    "type": "task",
+    "project": "boost",
+    "meeting": "m_010",
+    "owner": "abdurakhman",
+    "quote": "Абду, блок метрик продаж в Boost делаешь ты",
+    "start_s": 545.03
   }
 ]

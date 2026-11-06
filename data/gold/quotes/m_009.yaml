@@ -5,12 +5,12 @@ events:
 - id: ev_m009_01
   type: decision
   description: Интерфейс бота Qamqor делает Абдурахман
-  quote: ''
+  quote: 'интерфейс бота қамқор делает Абду'
 - id: ev_m009_02
   type: status_update
   description: Прототип Qamqor готов
-  quote: ''
+  quote: 'прототип Qamqor готов'
 - id: ev_m009_03
   type: decision
   description: Подключение бота Qamqor к Squad возможно только на готовой модели без дообучения
-  quote: ''
+  quote: 'только на готовой модели можно, без дообучения, иначе к Squad не подцепимся'

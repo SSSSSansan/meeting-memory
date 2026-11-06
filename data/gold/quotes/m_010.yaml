@@ -5,8 +5,8 @@ events:
 - id: ev_m010_01
   type: decision
   description: В Boost добавляем метрики продаж
-  quote: ''
+  quote: 'давай добавим эти метрики продаж в панель'
 - id: ev_m010_02
   type: task
   description: Сделать блок метрик продаж в Boost
-  quote: ''
+  quote: 'Абду, блок метрик продаж в Boost делаешь ты'
