@@ -8,7 +8,7 @@
     "as_of": "m_008",
     "expected_answer": "Абдурахман, до 4 сентября",
     "source_meetings": ["m_006"],
-    "event_ids": ["ev_m006_02"],
+    "decision_ids": ["ev_m006_02"],
     "answerable": true
   },
   {
@@ -20,7 +20,7 @@
     "as_of": "m_008",
     "expected_answer": "До 30 октября",
     "source_meetings": ["m_003"],
-    "event_ids": ["ev_m003_02"],
+    "decision_ids": ["ev_m003_02"],
     "answerable": true
   },
   {
@@ -32,7 +32,7 @@
     "as_of": "m_008",
     "expected_answer": "Миграция выполнена",
     "source_meetings": ["m_004"],
-    "event_ids": ["ev_m004_03"],
+    "decision_ids": ["ev_m004_03"],
     "answerable": true
   },
   {
@@ -44,7 +44,7 @@
     "as_of": "m_008",
     "expected_answer": "Готовую модель, без дообучения",
     "source_meetings": ["m_002"],
-    "event_ids": ["ev_m002_01"],
+    "decision_ids": ["ev_m002_01"],
     "answerable": true
   },
   {
@@ -56,7 +56,7 @@
     "as_of": "m_008",
     "expected_answer": "15 сентября (m_001), затем 6 октября (m_006)",
     "source_meetings": ["m_001", "m_006"],
-    "event_ids": ["ev_m001_01", "ev_m006_01"],
+    "decision_ids": ["ev_m001_01", "ev_m006_01"],
     "answerable": true
   },
   {
@@ -68,7 +68,7 @@
     "as_of": "m_008",
     "expected_answer": "Вошли в первую версию (m_001), затем отменены без замены (m_008)",
     "source_meetings": ["m_001", "m_008"],
-    "event_ids": ["ev_m001_02", "ev_m008_02"],
+    "decision_ids": ["ev_m001_02", "ev_m008_02"],
     "answerable": true
   },
   {
@@ -80,7 +80,7 @@
     "as_of": "m_008",
     "expected_answer": "Нет, только вторая версия (m_003); простой вопрос, граф не нужен",
     "source_meetings": ["m_003"],
-    "event_ids": ["ev_m003_01"],
+    "decision_ids": ["ev_m003_01"],
     "answerable": true
   },
   {
@@ -92,7 +92,7 @@
     "as_of": "m_008",
     "expected_answer": "Поручена Николаю до 14 августа (m_001), выполнена (m_004)",
     "source_meetings": ["m_001", "m_004"],
-    "event_ids": ["ev_m001_03", "ev_m004_03"],
+    "decision_ids": ["ev_m001_03", "ev_m004_03"],
     "answerable": true
   },
   {
@@ -104,7 +104,7 @@
     "as_of": "m_008",
     "expected_answer": "Делаем панель и Абдурахман ведёт интеграцию (m_004, встреча по Zhol), Boost сначала для Zhol (m_005)",
     "source_meetings": ["m_004", "m_005"],
-    "event_ids": ["ev_m004_01", "ev_m004_02", "ev_m005_02"],
+    "decision_ids": ["ev_m004_01", "ev_m004_02", "ev_m005_02"],
     "answerable": true
   },
   {
@@ -116,7 +116,7 @@
     "as_of": "m_008",
     "expected_answer": "Николай: Zhol (миграция, хотфикс) и Squad (документация API, полная загрузка). Абдурахман: Zhol (экран статистики), Boost (интеграция)",
     "source_meetings": ["m_001", "m_003", "m_004", "m_006", "m_007", "m_008"],
-    "event_ids": ["ev_m001_03", "ev_m003_03", "ev_m007_01", "ev_m008_01", "ev_m006_02", "ev_m004_02"],
+    "decision_ids": ["ev_m001_03", "ev_m003_03", "ev_m007_01", "ev_m008_01", "ev_m006_02", "ev_m004_02"],
     "answerable": true
   },
   {
@@ -128,7 +128,7 @@
     "as_of": "m_008",
     "expected_answer": "Zhol үшін, Squad кейінірек",
     "source_meetings": ["m_005"],
-    "event_ids": ["ev_m005_02"],
+    "decision_ids": ["ev_m005_02"],
     "answerable": true
   },
   {
@@ -140,7 +140,7 @@
     "as_of": "m_008",
     "expected_answer": "Да: Николай на Squad 14-18 сентября (m_007) и на хотфиксе Zhol в те же даты (m_008)",
     "source_meetings": ["m_007", "m_008"],
-    "event_ids": ["ev_m007_01", "ev_m008_01"],
+    "decision_ids": ["ev_m007_01", "ev_m008_01"],
     "answerable": true
   },
   {
@@ -152,7 +152,7 @@
     "as_of": "m_008",
     "expected_answer": "Нет: срок заменён, а не оспорен",
     "source_meetings": ["m_001", "m_006"],
-    "event_ids": ["ev_m001_01", "ev_m006_01"],
+    "decision_ids": ["ev_m001_01", "ev_m006_01"],
     "answerable": true
   },
   {
@@ -164,7 +164,7 @@
     "as_of": "m_008",
     "expected_answer": "Документация API у Николая, срок 21 августа прошёл (m_003). Предложение клиенту отправлено, закрыто (m_007)",
     "source_meetings": ["m_003", "m_007"],
-    "event_ids": ["ev_m003_03", "ev_m003_04", "ev_m007_02"],
+    "decision_ids": ["ev_m003_03", "ev_m003_04", "ev_m007_02"],
     "answerable": true
   },
   {
@@ -176,7 +176,7 @@
     "as_of": "m_008",
     "expected_answer": "Прототип Сандуғаш (срок 26 августа) и вопрос, кто делает интерфейс бота",
     "source_meetings": ["m_002"],
-    "event_ids": ["ev_m002_02", "ev_m002_03"],
+    "decision_ids": ["ev_m002_02", "ev_m002_03"],
     "answerable": true
   },
   {
@@ -188,7 +188,7 @@
     "as_of": "m_008",
     "expected_answer": "Прототип Qamqor (срок 26 августа) и документация API Squad (срок 21 августа). Миграция и предложение выполнены, экран статистики срок 4 сентября",
     "source_meetings": ["m_002", "m_003"],
-    "event_ids": ["ev_m002_02", "ev_m003_03"],
+    "decision_ids": ["ev_m002_02", "ev_m003_03"],
     "answerable": true
   },
   {
@@ -200,7 +200,7 @@
     "as_of": "m_008",
     "expected_answer": "В данных нет ответа",
     "source_meetings": [],
-    "event_ids": [],
+    "decision_ids": [],
     "answerable": false
   },
   {
@@ -212,7 +212,7 @@
     "as_of": "m_008",
     "expected_answer": "В данных нет ответа",
     "source_meetings": [],
-    "event_ids": [],
+    "decision_ids": [],
     "answerable": false
   }
 ]

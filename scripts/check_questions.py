@@ -3,11 +3,14 @@
     python scripts/check_questions.py
     python scripts/check_questions.py path/to/questions.json path/to/world.yaml
 
+Поле decision_ids: id событий из world.yaml (решения, задачи, открытые вопросы, статусы), из которых
+складывается ответ; название сохранено из TEAM.md.
+
 Проверяет:
   1. Схема каждой записи (лишние и недостающие поля, значения type/split/lang/as_of).
   2. id вопросов уникальны.
   3. Все source_meetings и as_of есть в world.yaml; source_meetings не позже as_of.
-  4. Все event_ids есть в world.yaml; встреча каждого события входит в source_meetings
+  4. Все decision_ids есть в world.yaml; встреча каждого события входит в source_meetings
      и не позже as_of.
   5. У вопросов answerable=false оба списка пусты, тип none; у остальных списки не пусты.
   6. Вопросов на казахском (lang=kk) не меньше 3.
@@ -48,7 +51,7 @@ class Question(BaseModel):
     as_of: str
     expected_answer: str = Field(min_length=1)
     source_meetings: list[str]
-    event_ids: list[str]
+    decision_ids: list[str]
     answerable: bool
 
     @field_validator("id")
@@ -80,7 +83,7 @@ class Question(BaseModel):
                 raise ValueError(f"встреча {m!r} не вида m_008")
         return v
 
-    @field_validator("event_ids")
+    @field_validator("decision_ids")
     @classmethod
     def _events_format(cls, v: list[str]) -> list[str]:
         for e in v:
@@ -152,7 +155,7 @@ def _reference_errors(q: Question, meeting_order: dict[str, int], event_meeting:
         elif as_of_known and meeting_order[m] > meeting_order[q.as_of]:
             errors.append(f"{q.id}: source_meetings содержит {m}, это позже as_of {q.as_of}")
 
-    for ev in q.event_ids:
+    for ev in q.decision_ids:
         meeting = event_meeting.get(ev)
         if meeting is None:
             errors.append(f"{q.id}: события {ev} нет в world.yaml")
@@ -167,13 +170,13 @@ def _reference_errors(q: Question, meeting_order: dict[str, int], event_meeting:
 def _answerable_errors(q: Question) -> list[str]:
     errors: list[str] = []
     if not q.answerable:
-        if q.source_meetings or q.event_ids:
-            errors.append(f"{q.id}: answerable=false, но source_meetings или event_ids не пусты")
+        if q.source_meetings or q.decision_ids:
+            errors.append(f"{q.id}: answerable=false, но source_meetings или decision_ids не пусты")
         if q.type != "none":
             errors.append(f"{q.id}: answerable=false требует type none, а не {q.type}")
     else:
-        if not q.source_meetings or not q.event_ids:
-            errors.append(f"{q.id}: answerable=true, но source_meetings или event_ids пусты")
+        if not q.source_meetings or not q.decision_ids:
+            errors.append(f"{q.id}: answerable=true, но source_meetings или decision_ids пусты")
         if q.type == "none":
             errors.append(f"{q.id}: type none допустим только при answerable=false")
     return errors

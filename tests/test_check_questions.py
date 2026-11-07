@@ -45,7 +45,7 @@ def test_real_questions_shape(questions):
 
 
 def test_broken_event_id_fails(questions, world):
-    _by_id(questions, "q_01")["event_ids"] = ["ev_m006_99"]
+    _by_id(questions, "q_01")["decision_ids"] = ["ev_m006_99"]
     errors = check(questions, world)
     assert any("q_01" in e and "ev_m006_99" in e and "нет в world.yaml" in e for e in errors)
 
@@ -64,7 +64,7 @@ def test_event_meeting_not_in_source_meetings_fails(questions, world):
 
 def test_event_after_as_of_fails(questions, world):
     q = _by_id(questions, "q_05")
-    q["event_ids"] = ["ev_m001_01", "ev_m011_01"]
+    q["decision_ids"] = ["ev_m001_01", "ev_m011_01"]
     q["source_meetings"] = ["m_001", "m_011"]
     errors = check(questions, world)
     assert any("q_05" in e and "позже as_of" in e for e in errors)
@@ -83,7 +83,7 @@ def test_unknown_as_of_fails(questions, world):
 
 
 def test_unanswerable_with_events_fails(questions, world):
-    _by_id(questions, "q_18")["event_ids"] = ["ev_m004_01"]
+    _by_id(questions, "q_18")["decision_ids"] = ["ev_m004_01"]
     errors = check(questions, world)
     assert any("q_18" in e and "answerable=false" in e for e in errors)
 
@@ -97,7 +97,7 @@ def test_unanswerable_with_meetings_fails(questions, world):
 def test_answerable_without_sources_fails(questions, world):
     q = _by_id(questions, "q_01")
     q["source_meetings"] = []
-    q["event_ids"] = []
+    q["decision_ids"] = []
     errors = check(questions, world)
     assert any("q_01" in e and "answerable=true" in e for e in errors)
 
@@ -121,9 +121,9 @@ def test_missing_field_fails(questions, world):
 
 
 def test_extra_field_fails(questions, world):
-    _by_id(questions, "q_02")["decision_ids"] = ["ev_m003_02"]
+    _by_id(questions, "q_02")["answer_ids"] = ["ev_m003_02"]
     errors = check(questions, world)
-    assert any("q_02" in e and "decision_ids" in e for e in errors)
+    assert any("q_02" in e and "answer_ids" in e for e in errors)
 
 
 @pytest.mark.parametrize(
@@ -155,7 +155,7 @@ def test_record_not_an_object_fails(questions, world):
 
 
 def test_main_returns_1_on_broken_reference(tmp_path, questions, capsys):
-    _by_id(questions, "q_01")["event_ids"] = ["ev_m006_99"]
+    _by_id(questions, "q_01")["decision_ids"] = ["ev_m006_99"]
     code, err = _run(tmp_path, questions, capsys)
     assert code == 1
     assert "ev_m006_99" in err
