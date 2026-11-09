@@ -16,7 +16,7 @@ from typing import Optional
 
 import networkx as nx
 
-from src.retrieval.graph_rag import find_entities, get_graph, last_n_meetings
+from src.retrieval.graph_rag import find_entities, get_aliases, get_graph, last_n_meetings
 from src.utils.text import normalize
 
 # Основы слов (ru + kk). Ищутся в начале слова: «менял» ловит «менялся», «менялись».
@@ -47,9 +47,11 @@ def _has(text: str, stems: list[str]) -> Optional[str]:
 
 
 def route(question: str, G: Optional[nx.MultiDiGraph] = None) -> Route:
-    G = G if G is not None else get_graph()
+    aliases = None
+    if G is None:
+        G, aliases = get_graph(), get_aliases()
     text = normalize(question)
-    entities = find_entities(G, question)
+    entities = find_entities(G, question, aliases)
     projects = [e for e in entities if e.startswith("project:")]
 
     for qtype in ("T4", "T2", "T5"):  # T4 первым: «загрузка изменилась» — это про конфликт людей

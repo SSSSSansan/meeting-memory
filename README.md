@@ -60,6 +60,7 @@ CI (`.github/workflows/ci.yml`) гоняет `ruff check .` и `pytest -q` на 
 | `PRICE_IN_PER_M`, `PRICE_OUT_PER_M`, `PRICE_EMBED_PER_M` | `0` | цены за 1M токенов — брать актуальные у провайдера, иначе учёт расходов врёт |
 | `BUDGET_USD` | `3.0` | жёсткий лимит: при превышении вызовы падают с `BudgetExceeded` |
 | `LLM_MAX_RETRIES`, `LLM_TIMEOUT_S` | `3`, `120` | повторы при сбоях сети, 429 и 5xx |
+| `MEETING_GRAPH` | — | какой граф читает режим graph; без неё — первый существующий из `data/graph/graph.json`, `data/graph_raw/graph.json`, `data/sample/graph.json` |
 
 Каждый вызов модели и эмбеддингов пишется в `runs/calls.jsonl` (`purpose`, токены, `cost_usd`, `spent_usd`, задержка; ответы из кэша — с `spent_usd = 0`).
 Потрачено и остаток бюджета: `python -m scripts.cost_guard --status`.
@@ -92,11 +93,11 @@ api.graph_info()                                           # какой граф
 
 ```bash
 python -m src.answer.answerer "Как менялся срок релиза Zhol?" --mode auto
-python -m src.retrieval.graph_rag "Что по Qamqor ещё не закрыто?" --depth 2 --graph data/graph_raw/graph.json
+python -m src.retrieval.graph_rag "Что по Камкор ещё не закрыто?" --depth 2
 python -m src.retrieval.baseline "Кто делает миграцию?" -k 5
 ```
 
-Ограничения сейчас: режим graph по умолчанию читает `data/graph/graph.json` (иначе заглушку `data/sample/graph.json`), а граф роли B лежит в `data/graph_raw/graph.json`; на `LLM_BACKEND=stub` поиск и ответы по смыслу случайны.
+Режим graph читает граф роли B (`data/graph_raw/graph.json`) и его `aliases.json`: вопрос можно писать с другим написанием имён («Жол», «Камкор», «Коля»). Ограничения сейчас: в графе B ещё нет связей между решениями (B5); на `LLM_BACKEND=stub` поиск и ответы по смыслу случайны.
 
 ## Работа в git
 
