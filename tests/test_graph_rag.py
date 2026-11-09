@@ -108,3 +108,70 @@ def test_graph_context_quotes_pass_answer_verification():
 def test_committed_sample_graph_works():
     sub = retrieve_subgraph("Как менялся срок релиза Атласа?", G=load_graph(ROOT / "data/sample/graph.json"))
     assert sub["items"][:1] == ["d_m001_01"]
+
+
+# ---------- граф роли B и варианты имён ----------
+
+import src.retrieval.graph_rag as gr  # noqa: E402
+from src.retrieval.graph_rag import default_graph_path, get_aliases  # noqa: E402
+
+B_GRAPH = ROOT / "data/graph_raw/graph.json"
+needs_b_graph = pytest.mark.skipif(not B_GRAPH.exists(), reason="граф роли B ещё не собран")
+
+
+def test_default_graph_path_order(monkeypatch, tmp_path):
+    monkeypatch.delenv("MEETING_GRAPH", raising=False)
+    contract, b_out, sample = tmp_path / "graph/graph.json", tmp_path / "graph_raw/graph.json", tmp_path / "s.json"
+    monkeypatch.setattr(gr, "GRAPH_CANDIDATES", [contract, b_out, sample])
+    sample.write_text("{}")
+    assert default_graph_path() == sample
+    b_out.parent.mkdir()
+    b_out.write_text("{}")
+    assert default_graph_path() == b_out
+    contract.parent.mkdir()
+    contract.write_text("{}")
+    assert default_graph_path() == contract
+    monkeypatch.setenv("MEETING_GRAPH", "data/sample/graph.json")
+    assert default_graph_path() == ROOT / "data/sample/graph.json"
+
+
+def test_aliases_are_read_next_to_graph(tmp_path):
+    (tmp_path / "aliases.json").write_text('{"Коля": "Николай"}', encoding="utf-8")
+    assert get_aliases(tmp_path / "graph.json") == {"Коля": "Николай"}
+    assert get_aliases(tmp_path / "other" / "graph.json") == {}
+
+
+def test_alias_variant_is_found_with_inflection():
+    G = _graph()
+    assert find_entities(G, "Что поручили Айке?", {"Айка": "Айгерим Нурланова"}) == ["person:Айгерим Нурланова"]
+    assert find_entities(G, "Что поручили Айке?") == []
+
+
+def test_sentence_initial_word_is_not_fuzzy_matched():
+    G = _graph()
+    assert find_entities(G, "Горизонт: что решили?") == ["project:Горизонт"]   # точное имя в начале — по основе
+    assert gr._proper_nouns("Жалко, что Жол не успели. Коля сказал") == ["Жол"]
+
+
+@needs_b_graph
+@pytest.mark.parametrize("question, entity", [
+    ("Что решили по Жол?", "project:Zhol"),                 # кириллица → Zhol через resolve роли B
+    ("Что решили по проекту Жолға?", "project:Zhol"),       # казахское окончание
+    ("Что по Камкор ещё не закрыто?", "project:Qamqor"),
+    ("Какие задачи у Коли?", "person:Николай"),             # алиас из aliases.json + склонение
+    ("Что поручили Нуралы?", "person:Нұралы"),              # без казахской буквы
+])
+def test_role_b_graph_variants(question, entity):
+    path = B_GRAPH
+    assert entity in find_entities(load_graph(path), question, get_aliases(path))
+
+
+@needs_b_graph
+def test_role_b_graph_context_passes_citation_check():
+    sub = retrieve_subgraph("Как менялся срок релиза Zhol?", G=load_graph(B_GRAPH))
+    assert sub["entities"] == ["project:Zhol"] and sub["items"]
+    first = sub["items"][0]
+    node = load_graph(B_GRAPH).nodes[first]
+    good, bad, _ = ans._verify([ans.Citation(meeting_id=node["meeting_id"], ts=node["ts"], quote=node["quote"])],
+                               sub["context"])
+    assert len(good) == 1 and bad == []

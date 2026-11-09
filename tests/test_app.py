@@ -15,6 +15,8 @@ APP = str(Path(__file__).resolve().parent.parent / "app" / "streamlit_app.py")
 def _isolated(monkeypatch, tmp_path):
     monkeypatch.setenv("LLM_BACKEND", "stub")
     monkeypatch.setenv("EMBED_MODEL", "")
+    # тесты UI и api — на заглушке: граф роли B меняется с каждым батчем встреч
+    monkeypatch.setenv("MEETING_GRAPH", "data/sample/graph.json")
     monkeypatch.setattr(answerer, "REPORT", tmp_path / "answer_report.jsonl")
     api.use_index_dir(tmp_path / "index")
     yield

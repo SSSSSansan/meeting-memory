@@ -19,7 +19,7 @@ from typing import Iterator, Optional
 from src.answer.answerer import answer
 from src.ingest.scribal_adapter import convert
 from src.retrieval.baseline import DEFAULT_INDEX_DIR, ROOT, BaselineIndex
-from src.retrieval.graph_rag import SAMPLE_GRAPH_PATH, default_graph_path, get_graph
+from src.retrieval.graph_rag import SAMPLE_GRAPH_PATH, default_graph_path, get_aliases, get_graph
 from src.retrieval.router import Route
 from src.retrieval.router import route as _route
 from src.schemas import Answer, ScribalMeeting, ScribalTranscript, Transcript
@@ -128,4 +128,5 @@ def graph_info() -> dict:
     path = default_graph_path()
     G = get_graph(path)
     meetings = sorted({d["meeting_id"] for _, d in G.nodes(data=True) if d.get("type") == "Meeting"})
-    return {"path": path.relative_to(ROOT).as_posix(), "is_sample": path == SAMPLE_GRAPH_PATH, "meetings": meetings}
+    return {"path": path.relative_to(ROOT).as_posix(), "is_sample": path == SAMPLE_GRAPH_PATH, "meetings": meetings,
+            "aliases": len(get_aliases(path))}

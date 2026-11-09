@@ -6,8 +6,10 @@
     sub = retrieve_subgraph("Что по Атласу ещё не закрыто?", depth=2)
     sub["context"]      # текст для src.answer.answerer.generate(question, context, "graph")
 
-Граф строит роль B (data/graph/graph.json, формат — docs/GRAPH_FORMAT.md); пока его нет,
-читается заглушка data/sample/graph.json.
+Граф строит роль B (формат — docs/GRAPH_FORMAT.md). Какой файл читать — default_graph_path():
+MEETING_GRAPH из .env, иначе первый существующий из data/graph/graph.json (путь из контракта),
+data/graph_raw/graph.json (туда сейчас пишет scripts/build_graph.py), data/sample/graph.json (заглушка).
+Рядом с графом может лежать aliases.json от resolve роли B — варианты имён тоже ищутся в вопросе.
 
 Обход: от узлов-сущностей (проекты и люди из вопроса) на depth шагов по рёбрам
 BELONGS_TO / ASSIGNED_TO / IMPLEMENTS и связям решений (SUPERSEDES, CONTRADICTS, ...).
@@ -17,9 +19,11 @@ BELONGS_TO / ASSIGNED_TO / IMPLEMENTS и связям решений (SUPERSEDES
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import sys
+import unicodedata
 from collections import deque
 from pathlib import Path
 from typing import Optional
@@ -27,11 +31,14 @@ from typing import Optional
 import networkx as nx
 
 from src.graph.queries import load_graph, project_meetings
+from src.resolve.entities import resolve_people, resolve_projects
 from src.utils.text import normalize
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 GRAPH_PATH = ROOT / "data" / "graph" / "graph.json"
+B_GRAPH_PATH = ROOT / "data" / "graph_raw" / "graph.json"
 SAMPLE_GRAPH_PATH = ROOT / "data" / "sample" / "graph.json"
+GRAPH_CANDIDATES = [GRAPH_PATH, B_GRAPH_PATH, SAMPLE_GRAPH_PATH]
 
 ITEM_TYPES = ("Decision", "Task", "OpenQuestion")
 TRAVERSE_EDGES = {"BELONGS_TO", "ASSIGNED_TO", "IMPLEMENTS",
@@ -42,20 +49,34 @@ _NUMBERS = {"одн": 1, "две": 2, "двух": 2, "три": 3, "трех": 3,
             "пят": 5, "шест": 6, "сем": 7, "восьм": 8, "девят": 9, "десят": 10}
 _LAST_N = re.compile(r"последн\w*\s+(\d+|[а-яё]+)\s+встреч", re.I)
 
-_cache: dict[Path, tuple[float, nx.MultiDiGraph]] = {}
+_cache: dict[Path, tuple[float, object]] = {}
 
 
 def default_graph_path() -> Path:
-    return GRAPH_PATH if GRAPH_PATH.exists() else SAMPLE_GRAPH_PATH
+    env = os.environ.get("MEETING_GRAPH")
+    if env:
+        return Path(env) if Path(env).is_absolute() else ROOT / env
+    return next((p for p in GRAPH_CANDIDATES if p.exists()), SAMPLE_GRAPH_PATH)
+
+
+def _cached(path: Path, load):
+    """Перечитывает файл, только если он изменился (роль B дописала батч)."""
+    mtime = os.path.getmtime(path)
+    if path not in _cache or _cache[path][0] != mtime:
+        _cache[path] = (mtime, load(path))
+    return _cache[path][1]
 
 
 def get_graph(path: Optional[Path] = None) -> nx.MultiDiGraph:
-    """Граф с диска; перечитывается, только если файл изменился (роль B дописала батч)."""
-    path = Path(path or default_graph_path())
-    mtime = os.path.getmtime(path)
-    if path not in _cache or _cache[path][0] != mtime:
-        _cache[path] = (mtime, load_graph(path))
-    return _cache[path][1]
+    return _cached(Path(path or default_graph_path()), load_graph)
+
+
+def get_aliases(graph_path: Optional[Path] = None) -> dict[str, str]:
+    """{как_прозвучало: каноническое_имя} из aliases.json рядом с графом; нет файла — пусто."""
+    path = Path(graph_path or default_graph_path()).with_name("aliases.json")
+    if not path.exists():
+        return {}
+    return _cached(path, lambda p: json.loads(p.read_text(encoding="utf-8")))
 
 
 # ---------- 1. Сущности из вопроса ----------
@@ -69,7 +90,9 @@ def _stem_match(label_token: str, word: str) -> bool:
     if len(label_token) <= 3:
         return label_token == word
     common = len(os.path.commonprefix([label_token, word]))
-    return common >= max(4, len(label_token) - 2) and len(word) - common <= 3
+    # у коротких имён склоняется последняя буква: «Коля» → «Коли», «Коле»
+    need = len(label_token) - 1 if len(label_token) <= 5 else max(4, len(label_token) - 2)
+    return common >= need and len(word) - common <= 3
 
 
 def _mentions(label: str, words: list[str], all_tokens: bool) -> bool:
@@ -81,14 +104,45 @@ def _mentions(label: str, words: list[str], all_tokens: bool) -> bool:
     return bool(parts) and (all(hits) if all_tokens else any(hits))
 
 
-def find_entities(G: nx.MultiDiGraph, question: str) -> list[str]:
+def _proper_nouns(question: str) -> list[str]:
+    """Слова с заглавной не в начале предложения.
+
+    Транслит и нечёткое сравнение resolve цепляют и обычные слова («Жалко» → Zhol), поэтому
+    им отдаём только вероятные имена; точное название в начале фразы найдёт и сравнение по основе.
+    """
+    out = []
+    for sentence in re.split(r"[.!?]+", unicodedata.normalize("NFC", question)):
+        out += [w for w in re.findall(r"\w+", sentence)[1:] if len(w) >= 3 and w[0].isupper()]
+    return out
+
+
+def find_entities(G: nx.MultiDiGraph, question: str, aliases: Optional[dict[str, str]] = None) -> list[str]:
+    """Проекты и люди из вопроса.
+
+    1. Название узла или его вариант из aliases.json — по основе слова: «Атласу» → Атлас, «Коле» → Николай.
+    2. Слова с заглавной — через resolve роли B (транслит + нечёткое сравнение): «Жол» → Zhol, «Нуралы» → Нұралы.
+    """
     words = _tokens(question)
-    found = []
+    by_label = {"Project": {}, "Person": {}}
     for n, d in G.nodes(data=True):
-        if d.get("type") == "Project" and _mentions(d.get("label", ""), words, all_tokens=True):
-            found.append(n)
-        elif d.get("type") == "Person" and _mentions(d.get("label", ""), words, all_tokens=False):
-            found.append(n)
+        if d.get("type") in by_label:
+            by_label[d["type"]][d.get("label", "")] = n
+    variants = {label: [label] for labels in by_label.values() for label in labels}
+    for alias, canon in (aliases or {}).items():
+        if canon in variants:
+            variants[canon].append(alias)
+
+    found = set()
+    for kind, labels in by_label.items():
+        for label, n in labels.items():
+            if any(_mentions(v, words, all_tokens=kind == "Project") for v in variants[label]):
+                found.add(n)
+    names = _proper_nouns(question)
+    if names:
+        for kind, resolve in (("Project", resolve_projects), ("Person", resolve_people)):
+            for canon in resolve(names, list(by_label[kind])).values():
+                if canon in by_label[kind]:
+                    found.add(by_label[kind][canon])
     return sorted(found)
 
 
@@ -215,15 +269,18 @@ def format_context(G: nx.MultiDiGraph, items: list[str]) -> str:
 
 # ---------- Точка входа ----------
 
-def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph] = None) -> dict:
+def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph] = None,
+                      aliases: Optional[dict[str, str]] = None) -> dict:
     """Подграф по вопросу. depth — сколько шагов от сущностей (1: их пункты; 2: + связанные решения; 3: ещё шаг).
 
+    Без G читается граф по умолчанию вместе с его aliases.json.
     Возвращает {"entities", "items", "last_meetings", "fallback", "context"}.
     """
     if depth < 1:
         raise ValueError("depth должен быть ≥ 1")
-    G = G if G is not None else get_graph()
-    seeds = find_entities(G, question)
+    if G is None:
+        G, aliases = get_graph(), get_aliases() if aliases is None else aliases
+    seeds = find_entities(G, question, aliases)
     found = _traverse(G, seeds, depth)
     for s in seeds:
         if G.nodes[s]["type"] == "Person":
@@ -252,9 +309,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("question")
     ap.add_argument("--depth", type=int, default=2)
-    ap.add_argument("--graph", default=None)
+    ap.add_argument("--graph", default=None, help="по умолчанию — default_graph_path()")
     a = ap.parse_args()
-    sub = retrieve_subgraph(a.question, a.depth, get_graph(ROOT / a.graph if a.graph else None))
+    path = ROOT / a.graph if a.graph else default_graph_path()
+    sub = retrieve_subgraph(a.question, a.depth, get_graph(path), get_aliases(path))
+    print(f"Граф: {path.relative_to(ROOT).as_posix()}")
     print(f"Сущности: {sub['entities'] or '— (запасной режим)'}; пунктов: {len(sub['items'])}; "
           f"последних встреч: {sub['last_meetings']}\n")
     print(sub["context"])
