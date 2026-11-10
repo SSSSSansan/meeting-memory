@@ -1,0 +1,21 @@
+{
+  "meeting_id": "m_009",
+  "projects_discussed": [
+    "Qamqor"
+  ],
+  "decisions": [
+    {
+      "id": "d_m009_01",
+      "project": "Qamqor",
+      "statement": "Интерфейс бота Qamqor делает Абду.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:03:27",
+        "quote": "интерфейс бота қамқор делает Абду."
+      }
+    }
+  ],
+  "tasks": [],
+  "open_questions": []
+}

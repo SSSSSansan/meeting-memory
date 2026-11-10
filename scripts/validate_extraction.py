@@ -1,9 +1,10 @@
 """Проверка результатов извлечения (раздел 4.5 контекста).
 
-    python -m scripts.validate_extraction              # data/extracted
+    python -m scripts.validate_extraction                      # data/extracted, транскрипты data/transcripts
     python -m scripts.validate_extraction data/extracted_llm
+    python -m scripts.validate_extraction data/extracted_llm_raw --raw   # транскрипты из data/raw (адаптер+speakers)
 
-Проверяет для каждого data/extracted/*.json:
+Проверяет для каждого <folder>/*.json:
   1. JSON соответствует схеме (pydantic).
   2. Каждая source.quote — дословная подстрока транскрипта своей встречи.
      Провал = выдуманная запись → идёт в hallucination rate.
@@ -15,8 +16,7 @@
 """
 from __future__ import annotations
 
-import json
-import re
+import argparse
 import sys
 from pathlib import Path
 
@@ -34,7 +34,19 @@ def quote_in_transcript(quote: str, transcript: Transcript) -> bool:
     return _norm(quote) in _norm(transcript.full_text())
 
 
-def validate_one(path: Path) -> tuple[list[str], int, int]:
+def _load_raw_transcript(meeting_id: str) -> Transcript | None:
+    """Строит Transcript из data/raw тем же путём, что src/extract/run.py --raw."""
+    from src.ingest.scribal_adapter import convert_files
+    from src.ingest.speakers import apply_speakers
+
+    tr_path = ROOT / "data" / "raw" / f"{meeting_id}.transcript.json"
+    meeting_path = ROOT / "data" / "raw" / f"{meeting_id}.meeting.json"
+    if not (tr_path.exists() and meeting_path.exists()):
+        return None
+    return apply_speakers(convert_files(tr_path, meeting_path, meeting_id))
+
+
+def validate_one(path: Path, raw: bool = False) -> tuple[list[str], int, int]:
     """Возвращает (ошибки, всего записей с цитатой, записей с несуществующей цитатой)."""
     errors: list[str] = []
     try:
@@ -42,10 +54,15 @@ def validate_one(path: Path) -> tuple[list[str], int, int]:
     except ValidationError as e:
         return [f"{path.name}: схема — {e.errors()[0]['msg']} @ {e.errors()[0]['loc']}"], 0, 0
 
-    tr_path = TRANSCRIPTS / f"{ext.meeting_id}.json"
-    if not tr_path.exists():
-        return [f"{path.name}: нет транскрипта {tr_path.name}"], 0, 0
-    transcript = Transcript.model_validate_json(tr_path.read_text(encoding="utf-8"))
+    if raw:
+        transcript = _load_raw_transcript(ext.meeting_id)
+        if transcript is None:
+            return [f"{path.name}: нет data/raw/{ext.meeting_id}.transcript.json"], 0, 0
+    else:
+        tr_path = TRANSCRIPTS / f"{ext.meeting_id}.json"
+        if not tr_path.exists():
+            return [f"{path.name}: нет транскрипта {tr_path.name}"], 0, 0
+        transcript = Transcript.model_validate_json(tr_path.read_text(encoding="utf-8"))
 
     items = [*ext.decisions, *ext.tasks, *ext.open_questions]
     ids = [i.id for i in items]
@@ -64,7 +81,12 @@ def validate_one(path: Path) -> tuple[list[str], int, int]:
 
 
 def main() -> int:
-    folder = Path(sys.argv[1]) if len(sys.argv) > 1 else EXTRACTED
+    ap = argparse.ArgumentParser()
+    ap.add_argument("folder", nargs="?", default=str(EXTRACTED))
+    ap.add_argument("--raw", action="store_true",
+                     help="сравнивать с транскриптами из data/raw (адаптер+speakers), а не data/transcripts")
+    args = ap.parse_args()
+    folder = Path(args.folder)
     files = sorted(folder.glob("*.json"))
     if not files:
         print(f"Нет файлов в {folder}")
@@ -72,7 +94,7 @@ def main() -> int:
     all_errors: list[str] = []
     total = bad = 0
     for f in files:
-        errs, n, b = validate_one(f)
+        errs, n, b = validate_one(f, raw=args.raw)
         all_errors += errs
         total += n
         bad += b
