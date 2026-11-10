@@ -158,7 +158,9 @@ def test_sentence_initial_word_is_not_fuzzy_matched():
     ("Что решили по Жол?", "project:Zhol"),                 # кириллица → Zhol через resolve роли B
     ("Что решили по проекту Жолға?", "project:Zhol"),       # казахское окончание
     ("Что по Камкор ещё не закрыто?", "project:Qamqor"),
-    ("Какие задачи у Коли?", "person:Николай"),             # алиас из aliases.json + склонение
+    # алиас из aliases.json + склонение (на синтетических данных) покрыт
+    # test_alias_variant_is_found_with_inflection — здесь убрано, т.к. extraction больше не
+    # пишет диминутив «Коля» ни в одной встрече, aliases.json на реальном графе теперь {}
     ("Что поручили Нуралы?", "person:Нұралы"),              # без казахской буквы
 ])
 def test_role_b_graph_variants(question, entity):
