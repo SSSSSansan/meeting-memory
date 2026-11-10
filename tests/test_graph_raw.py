@@ -1,4 +1,4 @@
-"""B6: структура графа, собранного из m_001–m_005 (data/graph_raw/graph.json)."""
+"""B6: структура графа, собранного из всех встреч (data/graph_raw/graph.json)."""
 import json
 from pathlib import Path
 
@@ -17,7 +17,7 @@ def test_node_types_and_meetings():
     G = load()
     types = {d["type"] for _, d in G.nodes(data=True)}
     assert {"Meeting", "Person", "Project", "Decision", "Task", "OpenQuestion"} <= types
-    assert sum(1 for _, d in G.nodes(data=True) if d["type"] == "Meeting") == 5
+    assert sum(1 for _, d in G.nodes(data=True) if d["type"] == "Meeting") == 10
 
 
 def test_every_item_has_project_meeting_and_status():
