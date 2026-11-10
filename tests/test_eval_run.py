@@ -165,7 +165,9 @@ def test_end_to_end_on_stub_backend_respects_as_of(tmp_path):
 
 
 def test_graph_without_real_graph_is_stub_with_reason():
-    system = systems.build_system("graph", "m_008", raw_dir=ROOT / "data" / "raw", index_root=Path("unused"))
+    # data/graph/graph.json теперь реальный граф роли B по m_001-m_008 (не заглушка), поэтому
+    # as_of="m_008" больше не даёт причину для stub; m_003 всё ещё не совпадает по составу встреч.
+    system = systems.build_system("graph", "m_003", raw_dir=ROOT / "data" / "raw", index_root=Path("unused"))
     assert system.is_stub and system.note
 
 

@@ -1,0 +1,34 @@
+{
+  "meeting_id": "m_010",
+  "projects_discussed": [
+    "Boost"
+  ],
+  "decisions": [
+    {
+      "id": "d_m010_01",
+      "project": "Boost",
+      "statement": "Добавить метрики продаж в панель Boost",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:08:49",
+        "quote": "давай добавим эти метрики продаж в панель"
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t_m010_01",
+      "project": "Boost",
+      "statement": "Сделать блок метрик продаж в Boost",
+      "owner": "Абдурахман",
+      "due": null,
+      "status": "open",
+      "source": {
+        "ts": "00:09:05",
+        "quote": "Абду, блок метрик продаж в Boost делаешь ты."
+      }
+    }
+  ],
+  "open_questions": []
+}

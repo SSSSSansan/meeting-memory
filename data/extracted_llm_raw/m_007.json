@@ -1,0 +1,21 @@
+{
+  "meeting_id": "m_007",
+  "projects_discussed": [
+    "Squad"
+  ],
+  "decisions": [
+    {
+      "id": "d_m007_01",
+      "project": "Squad",
+      "statement": "Николай полностью работает на Squad с четырнадцатого по восемнадцатого сентября.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:05:14",
+        "quote": "поэтому Николай полностью работает на Squad с четырнадцатого по восемнадцатого сентября."
+      }
+    }
+  ],
+  "tasks": [],
+  "open_questions": []
+}
