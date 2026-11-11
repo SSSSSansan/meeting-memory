@@ -5,8 +5,8 @@ events:
 - id: ev_m013_01
   type: decision
   description: Экспорт в Excel возвращается в первую версию Squad
-  quote: ''
+  quote: 'эксель экспорт возвращается в первую версию Squad'
 - id: ev_m013_02
   type: decision
   description: Первая версия Squad выходит 20 ноября 2026
-  quote: ''
+  quote: 'первая версия Squad теперь выходит двадцатого ноября вместо конца октября'

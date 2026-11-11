@@ -5,20 +5,20 @@ events:
 - id: ev_m015_01
   type: recap
   description: 'Подтверждено: релиз Zhol 10 ноября'
-  quote: ''
+  quote: 'по Zhol мы все помним что релиз у нас десятого ноября остается'
 - id: ev_m015_02
   type: task
   description: Подготовить документацию API Squad (повторно)
-  quote: ''
+  quote: 'Коля документацию апи Squad ты делаешь до шестого ноября'
 - id: ev_m015_03
   type: decision
   description: С 2 ноября 2026 новые функции в Zhol не добавляем
-  quote: ''
+  quote: 'со второго ноября новые функции в Zhol мы не добавляем'
 - id: ev_m015_04
   type: open_question
   description: Кто проводит QA перед релизом Zhol
-  quote: ''
+  quote: 'кто вообще проводит qa перед релизом Zhol'
 - id: ev_m015_05
   type: status_update
   description: Тестовая выборка собрана
-  quote: ''
+  quote: 'по Qamqor тестовая выборка собрана полностью'

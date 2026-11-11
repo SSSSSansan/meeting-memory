@@ -5,8 +5,8 @@ events:
 - id: ev_m011_01
   type: decision
   description: Релиз Zhol переносится на 10 ноября 2026
-  quote: ''
+  quote: 'релиз Zhol переносится на десятое ноября вместо шестого октября'
 - id: ev_m011_02
   type: status_update
   description: Экран статистики готов
-  quote: ''
+  quote: 'экран статистики готов'
