@@ -59,8 +59,11 @@ class Estimate:
         return out + self.notes
 
 
-def estimate_run(plan: dict[tuple[str, str], list[str]], *, raw_dir: Path, k: int, depth: int) -> Estimate:
-    """plan: {(mode, as_of): [тексты вопросов]}. Заглушки (graph без графа) вызовов не делают."""
+def estimate_run(plan: dict[tuple[str, str], list[str]], *, raw_dir: Path, k: int, depth: int,
+                 repeats: int = 1) -> Estimate:
+    """plan: {(mode, as_of): [тексты вопросов]}. Заглушки (graph без графа) вызовов не делают.
+    repeats: каждый повтор — полный проход по вопросам мимо кэша, поэтому вызовы, токены и эмбеддинги запросов ×repeats;
+    индекс baseline строится один раз на (as_of, режим)."""
     est = Estimate()
     for (mode, as_of), questions in sorted(plan.items()):
         n = len(questions)
@@ -77,14 +80,18 @@ def estimate_run(plan: dict[tuple[str, str], list[str]], *, raw_dir: Path, k: in
                 est.notes.append(f"baseline до {as_of}: нет встреч, вызовов 0")
                 continue
             chars = sum(len(c["text"]) for c in chunks)
-            est.embed_calls += -(-len(chunks) // EMBED_BATCH) + n  # индекс + по запросу на вопрос
-            est.embed_tokens += chars // CHARS_PER_TOKEN + sum(len(q) for q in questions) // CHARS_PER_TOKEN
+            est.embed_calls += -(-len(chunks) // EMBED_BATCH) + n * repeats  # индекс + по запросу на вопрос и повтор
+            est.embed_tokens += (chars // CHARS_PER_TOKEN
+                                 + repeats * sum(len(q) for q in questions) // CHARS_PER_TOKEN)
             ctx_chars = [k * chars // len(chunks) + 150] * n
-        est.chat_calls_min += n
-        est.chat_calls_max += 2 * n
+        est.chat_calls_min += n * repeats
+        est.chat_calls_max += 2 * n * repeats
         chars_in = sum(len(SYSTEM_PROMPT) + len(q) + c for q, c in zip(questions, ctx_chars))
-        est.prompt_tokens += chars_in // CHARS_PER_TOKEN
-        est.completion_tokens += n * ANSWER_TOKENS
+        est.prompt_tokens += repeats * chars_in // CHARS_PER_TOKEN
+        est.completion_tokens += repeats * n * ANSWER_TOKENS
+    if repeats > 1:
+        est.notes.append(f"повторов: {repeats}; ответы повторов идут мимо кэша и оплачиваются все "
+                         f"(оценка уже ×{repeats})")
     return est
 
 
@@ -97,9 +104,12 @@ class JudgeEstimate:
     completion_tokens: int = 0
     cost_lo: Optional[float] = None   # None: цены судьи не заданы
     cost_hi: Optional[float] = None   # если каждый вердикт придётся повторить из-за формата
+    repeats: int = 1
 
     def lines(self) -> list[str]:
-        out = [f"вызовов судьи: до {self.calls} (по одному на ответ; повторяющиеся входы не оцениваются дважды)",
+        again = (f" и повтор: {self.repeats} повторов оцениваются отдельно, но повтор с тем же ответом судья берёт "
+                 "из кэша по хэшу входа за $0, так что это верхняя граница" if self.repeats > 1 else "")
+        out = [f"вызовов судьи: до {self.calls} (по одному на ответ{again}; повторяющиеся входы не оцениваются дважды)",
                f"токенов судьи: ≈{self.prompt_tokens} вход + ≈{self.completion_tokens} выход "
                f"(транскрипты: source_meetings, добранные до {JUDGE_MIN_MEETINGS} встреч — в ответе могут быть другие)"]
         if self.cost_lo is None:
@@ -118,10 +128,10 @@ def _avg_meeting_chars(raw_dir: Path, as_of: str) -> int:
     return sum(sizes) // len(sizes) if sizes else 0
 
 
-def estimate_judge(questions: Sequence, modes: Sequence[str], *, raw_dir: Path) -> JudgeEstimate:
-    """Судья вызывается на каждый настоящий (не stub) ответ каждого режима. Ответы ещё не получены, поэтому вход
-    считаем по настоящему сообщению судьи с ответом средней длины. Модель не вызывается."""
-    est = JudgeEstimate()
+def estimate_judge(questions: Sequence, modes: Sequence[str], *, raw_dir: Path, repeats: int = 1) -> JudgeEstimate:
+    """Судья вызывается на каждый настоящий (не stub) ответ каждого режима и каждого повтора. Ответы ещё не получены,
+    поэтому вход считаем по настоящему сообщению судьи с ответом средней длины. Модель не вызывается."""
+    est = JudgeEstimate(repeats=repeats)
     chars = 0
     avg_cache: dict[str, int] = {}
     graph_stub: dict[str, bool] = {}
@@ -140,8 +150,8 @@ def estimate_judge(questions: Sequence, modes: Sequence[str], *, raw_dir: Path) 
                 docs += [filler] * (JUDGE_MIN_MEETINGS - len(docs))
             msgs = judge_mod.build_messages(q.question, q.expected_answer, "x" * ANSWER_TOKENS * CHARS_PER_TOKEN,
                                             q.answerable, meetings=docs)
-            chars += sum(len(m["content"]) for m in msgs)
-            est.calls += 1
+            chars += repeats * sum(len(m["content"]) for m in msgs)
+            est.calls += repeats
     est.prompt_tokens = chars // CHARS_PER_TOKEN
     est.completion_tokens = est.calls * JUDGE_COMPLETION_TOKENS
     p_in, p_out = judge_mod.judge_prices()
