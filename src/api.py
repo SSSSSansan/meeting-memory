@@ -166,10 +166,14 @@ def _project_node(G, project: str) -> Optional[str]:
 
 
 def _links(G, n: str) -> list[dict]:
-    out = [{"type": e["type"], "direction": "out", "other": v, "rationale": e.get("rationale", "")}
-           for _, v, e in G.out_edges(n, data=True) if e["type"] in LINK_TYPES]
-    out += [{"type": e["type"], "direction": "in", "other": u, "rationale": e.get("rationale", "")}
-            for u, _, e in G.in_edges(n, data=True) if e["type"] in LINK_TYPES]
+    def link(e: dict, direction: str, other: str) -> dict:
+        d = G.nodes[other]  # о связанном пункте — то, что понятно человеку, а не только id
+        return {"type": e["type"], "direction": direction, "other": other, "rationale": e.get("rationale", ""),
+                "other_statement": d.get("statement", ""), "other_date": d.get("date", ""),
+                "other_meeting": d.get("meeting_id", "")}
+
+    out = [link(e, "out", v) for _, v, e in G.out_edges(n, data=True) if e["type"] in LINK_TYPES]
+    out += [link(e, "in", u) for u, _, e in G.in_edges(n, data=True) if e["type"] in LINK_TYPES]
     return out
 
 
@@ -250,6 +254,36 @@ def demo_default_graph() -> Optional[Path]:
 def use_graph(path: Optional[Path]) -> None:
     """Какой граф читают режим graph, таймлайн и рисунок; None — граф по умолчанию (тот же, что у eval)."""
     use_graph_path(path)
+
+
+_ITEM_ID = re.compile(r"\b([dtq])_m(\d{3})_\d{2}\b")
+_ITEM_WORD = {"d": "решение", "t": "задача", "q": "вопрос"}
+
+
+def readable_ids(text: str) -> str:
+    """«согласно решению d_m007_01» → «согласно решению (m_007, 2026-08-31)»: в графовом контексте
+    у пунктов есть внутренние id, и модель иногда их цитирует; руководителю нужны встреча и дата."""
+    G = _load_graph()
+
+    def repl(m: re.Match) -> str:
+        d = G.nodes.get(m.group(0), {})
+        mid = d.get("meeting_id") or f"m_{m.group(2)}"
+        return f"({mid}, {d['date']})" if d.get("date") else f"({_ITEM_WORD[m.group(1)]} {mid})"
+
+    return _ITEM_ID.sub(repl, text)
+
+
+def overview() -> dict:
+    """Счётчики для шапки UI: что загружено в индекс и что есть в выбранном графе."""
+    G = _load_graph()
+    kinds = [d.get("type") for _, d in G.nodes(data=True)]
+    changes = get_changes()
+    open_tasks = sum(1 for _, d in G.nodes(data=True) if d.get("type") == "Task" and d.get("status") == "open")
+    return {"meetings_indexed": len(indexed_meetings()), "graph_meetings": kinds.count("Meeting"),
+            "projects": kinds.count("Project"), "decisions": kinds.count("Decision"), "tasks": kinds.count("Task"),
+            "open_tasks": open_tasks,
+            "open_questions": kinds.count("OpenQuestion"),
+            "conflicts": len(changes["conflicts"]), "replacements": len(changes["replacements"])}
 
 
 def _card(G, n: str) -> dict:

@@ -1,8 +1,8 @@
 """РОЛЬ C. Демо-приложение. Запуск: streamlit run app/streamlit_app.py
 
 Только отображение: загрузка, индексация, ответы, таймлайн и граф — в src/api.py.
-Вкладки: вопросы (режимы и сравнение, источники с подсветкой), таймлайн проекта, рисунок графа,
-конфликты и замены решений.
+Шапка со счётчиками; вкладки: вопросы (примеры, режимы и сравнение, источники с подсветкой),
+таймлайн проекта, рисунок графа, конфликты и замены решений.
 """
 import html
 import os
@@ -16,13 +16,14 @@ import streamlit as st  # noqa: E402
 
 from src import api  # noqa: E402
 
-st.set_page_config(page_title="Meeting Memory", layout="wide")
-st.title("Meeting Memory")
+st.set_page_config(page_title="Meeting Memory", page_icon=":material/hub:", layout="wide")
+st.markdown("""<style>
+mark {background: #FDE68A; padding: 0 .15em; border-radius: .2em;}
+[data-testid="stMetricValue"] {font-size: 1.9rem;}
+</style>""", unsafe_allow_html=True)
 
 backend = os.environ.get("LLM_BACKEND", "stub")
-if backend == "stub":
-    st.warning("LLM_BACKEND=stub: поиск и ответы — заглушка, по смыслу они случайны. "
-               "Подключите модель в .env.")
+model = os.environ.get("LLM_MODEL", "")
 
 KIND = {"Decision": "Решение", "Task": "Задача", "OpenQuestion": "Открытый вопрос"}
 STATUS = {"active": ":green[действует]", "superseded": ":gray[заменено]", "open": ":orange[открыта]",
@@ -32,20 +33,28 @@ LINK = {("SUPERSEDES", "out"): "заменяет", ("SUPERSEDES", "in"): "зам
         ("REFINES", "out"): "уточняет", ("REFINES", "in"): "уточнено решением",
         ("DEPENDS_ON", "out"): "зависит от", ("DEPENDS_ON", "in"): "от него зависит",
         ("SAME_TOPIC", "out"): "на ту же тему, что", ("SAME_TOPIC", "in"): "на ту же тему, что"}
+MODE_BADGE = {"graph": ("GraphRAG", "violet"), "baseline": ("Baseline RAG", "blue")}
+EXAMPLES = [(":material/fact_check:", "Факт из встречи", "Кто делает экран статистики и к какому сроку?"),
+            (":material/history:", "Как менялось решение", "Как менялся срок релиза Zhol?"),
+            (":material/warning:", "Конфликты", "Есть ли конфликты по загрузке людей?"),
+            (":material/block:", "Отмена решения", "Что решили по push-уведомлениям в Zhol?"),
+            (":material/translate:", "Вопрос на казахском", "Boost-ты қай проект үшін бірінші жасайды?"),
+            (":material/help:", "Ответа нет в данных", "Какой бюджет выделен на Boost?")]
 
 
 # ---------- Боковая панель: встречи для baseline и граф для graph ----------
 
 with st.sidebar:
-    st.header("Встречи")
-    uploaded = st.file_uploader("Файлы Scribal: <id>.transcript.json и <id>.meeting.json",
-                                type="json", accept_multiple_files=True)
-    col_upload, col_demo = st.columns(2)
+    st.header("Данные")
     files = None
-    if col_upload.button("Индексировать", disabled=not uploaded, width="stretch"):
-        files = {f.name: f.getvalue() for f in uploaded}
-    if col_demo.button("Демо-встречи", help="data/raw — синтетика роли A", width="stretch"):
+    if st.button("Загрузить демо-встречи", type="primary", width="stretch",
+                 help="14 синтетических встреч Scribal из data/raw"):
         files = api.demo_files()
+    with st.expander("Свои файлы Scribal"):
+        uploaded = st.file_uploader("<id>.transcript.json и <id>.meeting.json", type="json",
+                                    accept_multiple_files=True)
+        if st.button("Индексировать", disabled=not uploaded, width="stretch"):
+            files = {f.name: f.getvalue() for f in uploaded}
 
     if files is not None:
         pairs, errors = api.pair_scribal_files(files)
@@ -66,11 +75,12 @@ with st.sidebar:
     meetings = api.indexed_meetings()
     st.subheader(f"В индексе: {len(meetings)}")
     if meetings:
-        st.dataframe([{"встреча": m["meeting_id"], "дата": m["date"], "название": m["title"],
-                       "чанков": m["chunks"]} for m in meetings],
-                     hide_index=True, width="stretch")
-        if st.button("Очистить индекс"):
+        with st.expander("Список встреч"):
+            st.dataframe([{"встреча": m["meeting_id"], "дата": m["date"], "название": m["title"]}
+                          for m in meetings], hide_index=True, width="stretch")
+        if st.button("Очистить индекс", width="stretch"):
             api.reset_index()
+            st.session_state.pop("last", None)
             st.rerun()
 
     st.header("Граф")
@@ -82,9 +92,40 @@ with st.sidebar:
     api.use_graph(chosen_graph)
     info = api.graph_info()
     st.caption(f"Граф: {info['path']} — {len(info['meetings'])} встреч: {', '.join(info['meetings'])}")
-    st.caption(f"LLM backend: {backend}")
+    st.caption(f"LLM backend: {backend}" + (f" · {model}" if backend != "stub" else ""))
 
 titles = {m["meeting_id"]: f"{m['title']}, {m['date']}" for m in meetings}
+
+
+# ---------- Шапка ----------
+
+left, right = st.columns([5, 1], vertical_alignment="center")
+with left:
+    st.title("Meeting Memory")
+    st.markdown("Память встреч для **Scribal**: решения, задачи и их изменения между встречами — "
+                "каждый ответ со ссылкой на встречу, таймкод и дословную цитату.")
+with right:
+    if backend == "stub":
+        st.badge("stub — без модели", icon=":material/science:", color="orange")
+    else:
+        st.badge(f"{backend} · {model}", icon=":material/bolt:", color="green")
+
+if backend == "stub":
+    st.warning("LLM_BACKEND=stub: поиск и ответы — заглушка, по смыслу они случайны. "
+               "Подключите модель в .env.")
+
+ov = api.overview()
+for col, (label, value, hint) in zip(st.columns(5), [
+        ("Встреч в индексе", ov["meetings_indexed"], "для поиска по репликам (baseline)"),
+        ("Решений в графе", ov["decisions"], f"граф по {ov['graph_meetings']} встречам"),
+        ("Открытых задач", ov["open_tasks"], f"всего задач: {ov['tasks']}"),
+        ("Конфликтов", ov["conflicts"], "решения, которые противоречат друг другу"),
+        ("Замен решений", ov["replacements"], "решения, изменённые на поздних встречах")]):
+    col.metric(label, value, help=hint, border=True)
+
+if not meetings:
+    st.info("Нажмите «Загрузить демо-встречи» слева — 14 встреч проиндексируются за полминуты.",
+            icon=":material/arrow_back:")
 
 
 # ---------- Отрисовка ----------
@@ -100,7 +141,7 @@ def highlighted(text: str, span) -> str:
 def show_sources(result) -> None:
     if not result.citations:
         return
-    st.markdown("**Источники**")
+    st.markdown(f"**Источники · {len(result.citations)}**")
     for c in result.citations:
         src = api.get_source(c.meeting_id, c.ts, c.quote)
         title = src["title"] + ", " + src["date"] if src else titles.get(c.meeting_id, "")
@@ -118,13 +159,16 @@ def show_sources(result) -> None:
 
 
 def show_answer(result, chosen=None) -> None:
-    if chosen:
-        fallback = "; в графе по вопросу ничего нет" if chosen.mode != result.mode else ""
-        st.caption(f"auto → {result.mode} ({chosen.qtype}): {chosen.reason}{fallback}")
-    st.markdown(result.answer)
-    show_sources(result)
-    st.caption(f"Токены: {result.usage.prompt_tokens} + {result.usage.completion_tokens} · "
-               f"${result.usage.cost_usd:.5f} · {result.latency_ms} мс")
+    with st.container(border=True):
+        name, color = MODE_BADGE[result.mode]
+        st.badge(name, color=color)
+        if chosen:
+            fallback = "; в графе по вопросу ничего нет" if chosen.mode != result.mode else ""
+            st.caption(f"auto → {result.mode} ({chosen.qtype}): {chosen.reason}{fallback}")
+        st.markdown(api.readable_ids(result.answer))
+        show_sources(result)
+        st.caption(f"Токены: {result.usage.prompt_tokens} + {result.usage.completion_tokens} · "
+                   f"${result.usage.cost_usd:.5f} · {result.latency_ms} мс")
 
 
 def item_line(i: dict) -> str:
@@ -135,55 +179,80 @@ def item_line(i: dict) -> str:
     return f"**{KIND[i['kind']]}** {' '.join(m for m in marks if m)} — {text}{extra}"
 
 
+def pick_example(question: str) -> None:
+    st.session_state.q = question
+    st.session_state.go = True
+
+
 # ---------- Вкладки ----------
 
 tab_qa, tab_timeline, tab_graph, tab_changes = st.tabs(
-    ["Вопросы", "Таймлайн проекта", "Граф", "Конфликты и замены"])
+    [":material/forum: Вопросы", ":material/timeline: Таймлайн проекта", ":material/hub: Граф",
+     ":material/warning: Конфликты и замены"])
 
 with tab_qa:
+    st.markdown("**Примеры вопросов** — нажмите, чтобы спросить")
+    cols = st.columns(3)
+    for n, (icon, label, q) in enumerate(EXAMPLES):
+        cols[n % 3].button(label, key=f"ex_{n}", icon=icon, help=q, width="stretch",
+                           on_click=pick_example, args=(q,))
+
     mode = st.radio("Режим", ["auto", "baseline", "graph", "сравнить"], horizontal=True,
                     help="baseline — поиск по репликам загруженных встреч; graph — по графу решений и задач; "
                          "auto — граф для вопросов через несколько встреч, baseline для простых фактов; "
                          "сравнить — baseline и graph на один вопрос рядом")
-    question = st.text_input("Вопрос", placeholder="Как менялся срок релиза Zhol?")
-    if st.button("Спросить", type="primary", disabled=not question.strip()):
+    question = st.text_input("Вопрос", key="q", placeholder="Например: как менялся срок релиза Zhol?")
+    asked = st.button("Спросить", type="primary", disabled=not question.strip())
+    if (asked or st.session_state.pop("go", False)) and question.strip():
         chosen = api.route(question) if mode == "auto" else None
         needs_index = mode in ("baseline", "сравнить") or (chosen and chosen.mode == "baseline")
         if needs_index and not meetings:
-            st.info("Индекс пуст: загрузите встречи слева или нажмите «Демо-встречи».")
-        elif mode == "сравнить":
-            left, right = st.columns(2)
-            for col, m in ((left, "baseline"), (right, "graph")):
+            st.session_state.last = None
+            st.info("Индекс пуст: загрузите встречи слева.")
+        else:
+            modes = ["baseline", "graph"] if mode == "сравнить" else [mode]
+            with st.spinner("Ищу и отвечаю…"):
+                results = [api.ask(question, mode=m) for m in modes]
+            st.session_state.last = {"question": question, "mode": mode, "results": results, "chosen": chosen}
+
+    last = st.session_state.get("last")
+    if last:  # ответ живёт в сессии: переключение вкладок и выбор проекта его не стирают
+        st.markdown(f"#### {last['question']}")
+        if last["mode"] == "сравнить":
+            for col, m, result in zip(st.columns(2), ("baseline", "graph"), last["results"]):
                 with col:
                     st.subheader(m)
-                    with st.spinner(f"{m}: ищу и отвечаю…"):
-                        show_answer(api.ask(question, mode=m))
+                    show_answer(result)
         else:
-            with st.spinner("Ищу и отвечаю…"):
-                result = api.ask(question, mode=mode)
-            show_answer(result, chosen)
+            show_answer(last["results"][0], last["chosen"])
 
 projects = api.list_projects()
+# по умолчанию — проект, где больше всего пунктов: на нём видны и замены, и конфликты
+busiest = max(range(len(projects)), key=lambda n: len(api.get_timeline(projects[n]))) if projects else 0
 
 with tab_timeline:
     if not projects:
         st.info("В графе нет проектов.")
     else:
-        project = st.selectbox("Проект", projects, key="timeline_project")
+        project = st.selectbox("Проект", projects, index=busiest, key="timeline_project")
         items = api.get_timeline(project)
         st.caption(f"{len(items)} пунктов по дате. В проект попадает и то, что обсуждали на встречах "
                    "про другие проекты: важно поле проекта у пункта, а не название встречи.")
         for i in items:
             with st.container(border=True):
-                st.markdown(f"**{i['date']}** · {i['meeting_id']} «{i['meeting_title']}» · {i['ts']}")
-                st.markdown(item_line(i))
+                when, what = st.columns([1, 4])
+                when.markdown(f"**{i['date']}**  \n{i['meeting_id']} · {i['ts']}")
+                when.caption(i["meeting_title"])
+                what.markdown(item_line(i))
                 for link in i["links"]:
-                    why = f" — {link['rationale']}" if link["rationale"] else ""
-                    st.caption(f"{LINK.get((link['type'], link['direction']), link['type'])} {link['other']}{why}")
-                st.caption(f"«{i['quote']}»")
+                    what.caption(f"{LINK.get((link['type'], link['direction']), link['type'])} "
+                                 f"«{link['other_statement']}» ({link['other_meeting']}, {link['other_date']})",
+                                 help=link["rationale"] or None)
+                what.caption(f"«{i['quote']}»")
 
 with tab_graph:
-    scope = st.selectbox("Что показать", ["все проекты"] + projects, key="graph_project")
+    scope = st.selectbox("Что показать", ["все проекты"] + projects, index=busiest + 1 if projects else 0,
+                         key="graph_project")
     st.graphviz_chart(api.graph_dot(None if scope == "все проекты" else scope), width="stretch")
     st.caption("Синие — решения, жёлтые — задачи, розовые — открытые вопросы, зелёные — проекты, "
                "серые с пометкой [заменено] — заменённые решения, красная рамка и красная стрелка — конфликт.")

@@ -43,7 +43,7 @@ def test_demo_indexing_then_question(monkeypatch):
         prompt_tokens=10, completion_tokens=5))
 
     at = AppTest.from_file(APP, default_timeout=60).run()
-    _button(at, "Демо-встречи").click().run()
+    _button(at, "Загрузить демо-встречи").click().run()
     assert not at.exception
     demo_meetings = len(api.pair_scribal_files(api.demo_files())[0])   # роль A добавляет встречи в data/raw/
     assert demo_meetings >= 2
@@ -96,7 +96,7 @@ def test_compare_mode_shows_both_branches(monkeypatch):
     monkeypatch.setattr(answerer, "complete", lambda messages, **kw: LLMResponse(
         text=json.dumps({"answer": "ok", "citations": []})))
     at = AppTest.from_file(APP, default_timeout=60).run()
-    _button(at, "Демо-встречи").click().run()
+    _button(at, "Загрузить демо-встречи").click().run()
     at.radio[0].set_value("сравнить").run()
     at.text_input[0].input("Как менялся срок релиза Атласа?").run()
     _button(at, "Спросить").click().run()
@@ -118,3 +118,27 @@ def test_sources_are_highlighted_in_transcript(monkeypatch):
     _button(at, "Спросить").click().run()
     assert not at.exception
     assert any("<mark>" in m.value for m in at.markdown)
+
+
+def test_header_counters_and_example_question(monkeypatch):
+    monkeypatch.setattr(answerer, "complete", lambda messages, **kw: LLMResponse(
+        text=json.dumps({"answer": "Ответ по примеру", "citations": []}, ensure_ascii=False)))
+    at = AppTest.from_file(APP, default_timeout=30).run()
+    labels = {m.label: m.value for m in at.metric}
+    assert labels["Решений в графе"] == "3" and labels["Замен решений"] == "1" and labels["Конфликтов"] == "0"
+    example = next(b for b in at.button if b.label == "Конфликты")
+    example.click().run()
+    assert not at.exception
+    assert at.text_input[0].value == "Есть ли конфликты по загрузке людей?"
+    assert any("Ответ по примеру" in m.value for m in at.markdown)
+
+
+def test_answer_survives_rerun(monkeypatch):
+    monkeypatch.setattr(answerer, "complete", lambda messages, **kw: LLMResponse(
+        text=json.dumps({"answer": "Сохранённый ответ", "citations": []}, ensure_ascii=False)))
+    at = AppTest.from_file(APP, default_timeout=30).run()
+    at.radio[0].set_value("graph").run()
+    at.text_input[0].input("Как менялся срок релиза Атласа?").run()
+    _button(at, "Спросить").click().run()
+    at.selectbox(key="timeline_project").select("Горизонт").run()   # другая вкладка — ответ не пропадает
+    assert any("Сохранённый ответ" in m.value for m in at.markdown)

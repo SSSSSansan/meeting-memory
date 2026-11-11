@@ -170,3 +170,12 @@ def test_cost_guard_status_cli(args):
                          encoding="utf-8", env={**__import__("os").environ, "PYTHONIOENCODING": "utf-8"})
     assert out.returncode == 0, out.stderr
     assert "Потрачено $" in out.stdout and "осталось" in out.stdout
+
+
+def test_stub_costs_nothing_even_with_real_prices(monkeypatch):
+    monkeypatch.setenv("LLM_BACKEND", "stub")
+    monkeypatch.setenv("LLM_MODEL", "gpt-4o")
+    monkeypatch.setenv("PRICE_IN_PER_M", "2.5")
+    monkeypatch.setenv("PRICE_OUT_PER_M", "10")
+    r = llm.complete([{"role": "user", "content": "x" * 4000}], json_schema={"type": "object"})
+    assert r.cost_usd == 0 and cg._read()["spent_usd"] == 0
