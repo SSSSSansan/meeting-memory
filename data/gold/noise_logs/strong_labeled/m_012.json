@@ -1,0 +1,3628 @@
+{
+  "meeting_id": "m_012",
+  "level": "strong",
+  "variant": "labeled",
+  "global_seed": 42,
+  "params": {
+    "filler_remove_prob": 0.95,
+    "ellipsis_mode": "drop",
+    "entity_variant_prob": 0.5,
+    "kk_letter_loss_prob": 0.5,
+    "transliteration_prob": 0.6,
+    "sentence_end_drop_prob": 0.35,
+    "sentence_start_capitalize_prob": 0.6,
+    "noise_tag_prob": 0.04,
+    "speaker_mislabel_prob": 0.1,
+    "block_words": {
+      "median": 21,
+      "sigma": 1.24,
+      "min": 1,
+      "max": 250
+    },
+    "boundary_snap_prob": 0.6
+  },
+  "seeds": {
+    "fillers": 10709531815077848268,
+    "ellipsis": 12979507513183565473,
+    "entities": 1997179998242177319,
+    "kk_loss": 7372648719653630192,
+    "translit": 10093514729495155376,
+    "sentence_end": 12997220682010048664,
+    "sentence_start": 6257163132725345909,
+    "mislabel": 3011063144152894465,
+    "blocks": 11573924915591798904,
+    "block_snap": 1271352299660263951,
+    "noise_tag": 15371330243628769331
+  },
+  "dropped_source_segments": [],
+  "segments": [
+    {
+      "index": 0,
+      "start": 1.3,
+      "end": 3.76,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 0,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "start": 5.24,
+      "end": 6.78,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 1,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "start": 7.15,
+      "end": 12.18,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 2,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "start": 12.71,
+      "end": 14.18,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 3,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "start": 15.43,
+      "end": 21.33,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 4,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "start": 22.2,
+      "end": 26.73,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 5,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "start": 27.27,
+      "end": 32.99,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 6,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "start": 34.26,
+      "end": 37.0,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 7,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "start": 37.4,
+      "end": 45.35,
+      "words": 19,
+      "sources": [
+        {
+          "segment": 8,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 19
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "start": 45.56,
+      "end": 49.97,
+      "words": 12,
+      "sources": [
+        {
+          "segment": 9,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 12
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "start": 50.98,
+      "end": 54.39,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 10,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "start": 54.68,
+      "end": 55.45,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 11,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "start": 56.03,
+      "end": 62.59,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 12,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "start": 62.86,
+      "end": 64.73,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 13,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "start": 65.88,
+      "end": 73.14,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 14,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "start": 74.05,
+      "end": 78.18,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 15,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "start": 78.65,
+      "end": 87.02,
+      "words": 20,
+      "sources": [
+        {
+          "segment": 16,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 20
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "start": 87.31,
+      "end": 89.14,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 17,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "start": 90.28,
+      "end": 101.05,
+      "words": 23,
+      "sources": [
+        {
+          "segment": 18,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 23
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "start": 102.2,
+      "end": 108.84,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 19,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 20,
+      "start": 109.76,
+      "end": 116.66,
+      "words": 20,
+      "sources": [
+        {
+          "segment": 20,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 20
+        }
+      ]
+    },
+    {
+      "index": 21,
+      "start": 117.0,
+      "end": 121.02,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 21,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 22,
+      "start": 122.09,
+      "end": 124.03,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 22,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 23,
+      "start": 124.51,
+      "end": 131.67,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 23,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 24,
+      "start": 132.01,
+      "end": 132.83,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 24,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 25,
+      "start": 133.61,
+      "end": 147.71,
+      "words": 29,
+      "sources": [
+        {
+          "segment": 25,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 29
+        }
+      ]
+    },
+    {
+      "index": 26,
+      "start": 148.52,
+      "end": 153.14,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 26,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "start": 153.72,
+      "end": 160.08,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 27,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 28,
+      "start": 160.74,
+      "end": 162.54,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 28,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 29,
+      "start": 163.19,
+      "end": 169.61,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 29,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 30,
+      "start": 171.01,
+      "end": 175.46,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 30,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 31,
+      "start": 175.56,
+      "end": 176.42,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 31,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 32,
+      "start": 177.76,
+      "end": 185.32,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 32,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 33,
+      "start": 186.12,
+      "end": 189.84,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 33,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 34,
+      "start": 190.13,
+      "end": 196.9,
+      "words": 14,
+      "sources": [
+        {
+          "segment": 34,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "index": 35,
+      "start": 196.92,
+      "end": 197.67,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 35,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 36,
+      "start": 198.88,
+      "end": 201.92,
+      "words": 8,
+      "sources": [
+        {
+          "segment": 36,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 8
+        }
+      ]
+    },
+    {
+      "index": 37,
+      "start": 202.59,
+      "end": 205.99,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 37,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 38,
+      "start": 207.43,
+      "end": 212.55,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 38,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 39,
+      "start": 213.28,
+      "end": 221.35,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 39,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 40,
+      "start": 221.56,
+      "end": 226.51,
+      "words": 10,
+      "sources": [
+        {
+          "segment": 40,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "index": 41,
+      "start": 226.87,
+      "end": 234.38,
+      "words": 18,
+      "sources": [
+        {
+          "segment": 41,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 18
+        }
+      ]
+    },
+    {
+      "index": 42,
+      "start": 235.61,
+      "end": 244.87,
+      "words": 23,
+      "sources": [
+        {
+          "segment": 42,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 23
+        }
+      ]
+    },
+    {
+      "index": 43,
+      "start": 245.71,
+      "end": 247.7,
+      "words": 4,
+      "sources": [
+        {
+          "segment": 43,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 4
+        }
+      ]
+    },
+    {
+      "index": 44,
+      "start": 248.6,
+      "end": 256.72,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 44,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 45,
+      "start": 257.45,
+      "end": 262.59,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 45,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 46,
+      "start": 263.07,
+      "end": 265.63,
+      "words": 7,
+      "sources": [
+        {
+          "segment": 46,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "index": 47,
+      "start": 266.86,
+      "end": 277.77,
+      "words": 25,
+      "sources": [
+        {
+          "segment": 47,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 25
+        }
+      ]
+    },
+    {
+      "index": 48,
+      "start": 278.02,
+      "end": 286.72,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 48,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 49,
+      "start": 288.05,
+      "end": 292.89,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 49,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 50,
+      "start": 294.07,
+      "end": 300.85,
+      "words": 17,
+      "sources": [
+        {
+          "segment": 50,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 17
+        }
+      ]
+    },
+    {
+      "index": 51,
+      "start": 301.77,
+      "end": 309.86,
+      "words": 21,
+      "sources": [
+        {
+          "segment": 51,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 21
+        }
+      ]
+    },
+    {
+      "index": 52,
+      "start": 311.32,
+      "end": 314.68,
+      "words": 9,
+      "sources": [
+        {
+          "segment": 52,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "index": 53,
+      "start": 315.89,
+      "end": 320.96,
+      "words": 13,
+      "sources": [
+        {
+          "segment": 53,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 13
+        }
+      ]
+    },
+    {
+      "index": 54,
+      "start": 321.81,
+      "end": 333.04,
+      "words": 23,
+      "sources": [
+        {
+          "segment": 54,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 23
+        }
+      ]
+    },
+    {
+      "index": 55,
+      "start": 333.58,
+      "end": 335.91,
+      "words": 5,
+      "sources": [
+        {
+          "segment": 55,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 5
+        }
+      ]
+    },
+    {
+      "index": 56,
+      "start": 336.59,
+      "end": 347.15,
+      "words": 22,
+      "sources": [
+        {
+          "segment": 56,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 22
+        }
+      ]
+    },
+    {
+      "index": 57,
+      "start": 347.52,
+      "end": 354.78,
+      "words": 16,
+      "sources": [
+        {
+          "segment": 57,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "index": 58,
+      "start": 355.98,
+      "end": 357.07,
+      "words": 3,
+      "sources": [
+        {
+          "segment": 58,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 3
+        }
+      ]
+    },
+    {
+      "index": 59,
+      "start": 357.57,
+      "end": 365.65,
+      "words": 19,
+      "sources": [
+        {
+          "segment": 59,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 19
+        }
+      ]
+    },
+    {
+      "index": 60,
+      "start": 365.75,
+      "end": 366.35,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 60,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 61,
+      "start": 367.78,
+      "end": 374.74,
+      "words": 15,
+      "sources": [
+        {
+          "segment": 61,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "index": 62,
+      "start": 376.06,
+      "end": 379.81,
+      "words": 11,
+      "sources": [
+        {
+          "segment": 62,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "index": 63,
+      "start": 379.85,
+      "end": 380.45,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 63,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 1
+        }
+      ]
+    },
+    {
+      "index": 64,
+      "start": 381.73,
+      "end": 389.81,
+      "words": 23,
+      "sources": [
+        {
+          "segment": 64,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 23
+        }
+      ]
+    },
+    {
+      "index": 65,
+      "start": 390.47,
+      "end": 392.59,
+      "words": 6,
+      "sources": [
+        {
+          "segment": 65,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "index": 66,
+      "start": 392.77,
+      "end": 393.76,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 66,
+          "speaker": "SPEAKER_01",
+          "person": "sandugash",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 67,
+      "start": 393.86,
+      "end": 394.83,
+      "words": 2,
+      "sources": [
+        {
+          "segment": 67,
+          "speaker": "SPEAKER_02",
+          "person": "abdurakhman",
+          "words": 2
+        }
+      ]
+    },
+    {
+      "index": 68,
+      "start": 394.87,
+      "end": 395.47,
+      "words": 1,
+      "sources": [
+        {
+          "segment": 68,
+          "speaker": "SPEAKER_00",
+          "person": "nuraly",
+          "words": 1
+        }
+      ]
+    }
+  ],
+  "entity_mentions": [
+    {
+      "segment": 0,
+      "token": 2,
+      "entity": "amina",
+      "canonical": "Амина",
+      "source_form": "Амина",
+      "final_form": "Эмина",
+      "changed": true,
+      "source": {
+        "segment": 0,
+        "token": 2
+      }
+    },
+    {
+      "segment": 9,
+      "token": 4,
+      "entity": "qamqor",
+      "canonical": "Qamqor",
+      "source_form": "Qamqor",
+      "final_form": "Камкор",
+      "changed": true,
+      "source": {
+        "segment": 9,
+        "token": 4
+      }
+    },
+    {
+      "segment": 9,
+      "token": 7,
+      "entity": "sandugash",
+      "canonical": "Сандуғаш",
+      "source_form": "Санду",
+      "final_form": "Sandugash",
+      "changed": true,
+      "source": {
+        "segment": 9,
+        "token": 7
+      }
+    },
+    {
+      "segment": 22,
+      "token": 4,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Абду",
+      "changed": false,
+      "source": {
+        "segment": 22,
+        "token": 4
+      }
+    },
+    {
+      "segment": 34,
+      "token": 2,
+      "entity": "abdurakhman",
+      "canonical": "Абдурахман",
+      "source_form": "Абду",
+      "final_form": "Abdurahman",
+      "changed": true,
+      "source": {
+        "segment": 34,
+        "token": 2
+      }
+    },
+    {
+      "segment": 62,
+      "token": 1,
+      "entity": "sandugash",
+      "canonical": "Сандуғаш",
+      "source_form": "Сандуғаш",
+      "final_form": "Сандугаш",
+      "changed": true,
+      "source": {
+        "segment": 62,
+        "token": 1
+      }
+    }
+  ],
+  "replacements": [
+    {
+      "operation": "entity_variant",
+      "segment": 0,
+      "token": 2,
+      "was": "Амина",
+      "now": "Эмина",
+      "source": {
+        "segment": 0,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 0,
+      "token": 4,
+      "was": "жоқ",
+      "now": "жок",
+      "hypothesis": true,
+      "source": {
+        "segment": 0,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 0,
+      "token": 6,
+      "was": "өткіземіз.",
+      "now": "откиземиз.",
+      "hypothesis": true,
+      "source": {
+        "segment": 0,
+        "token": 6
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 0,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 0,
+        "token": null
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 1,
+      "token": 0,
+      "was": "Сәлем.",
+      "now": "Салем.",
+      "hypothesis": true,
+      "source": {
+        "segment": 1,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 1,
+      "token": 3,
+      "was": "берейік.",
+      "now": "берейік",
+      "source": {
+        "segment": 1,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 2,
+      "token": 9,
+      "was": "бірдеңе",
+      "now": "бирдене",
+      "hypothesis": true,
+      "source": {
+        "segment": 2,
+        "token": 9
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 2,
+      "token": 10,
+      "was": "сырқылдайды.",
+      "now": "сыркылдайды.",
+      "hypothesis": true,
+      "source": {
+        "segment": 2,
+        "token": 10
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 4,
+      "token": 5,
+      "was": "по-моему.",
+      "now": "по-моему",
+      "source": {
+        "segment": 4,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 4,
+      "token": 6,
+      "was": "Арқасына",
+      "now": "Аркасына",
+      "hypothesis": true,
+      "source": {
+        "segment": 4,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 4,
+      "token": 7,
+      "was": "сүйенсем",
+      "now": "суйенсем",
+      "hypothesis": true,
+      "source": {
+        "segment": 4,
+        "token": 7
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 4,
+      "token": 10,
+      "was": "кететін",
+      "now": "кететин",
+      "hypothesis": true,
+      "source": {
+        "segment": 4,
+        "token": 10
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 4,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 4,
+        "token": null
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 5,
+      "token": 0,
+      "was": "Менің",
+      "now": "Менин",
+      "hypothesis": true,
+      "source": {
+        "segment": 5,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 5,
+      "token": 4,
+      "was": "негізі.",
+      "now": "негізі",
+      "source": {
+        "segment": 5,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 5,
+      "token": 6,
+      "was": "дұрыс",
+      "now": "дурыс",
+      "hypothesis": true,
+      "source": {
+        "segment": 5,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 5,
+      "token": 8,
+      "was": "Кілемнің",
+      "now": "Килемнин",
+      "hypothesis": true,
+      "source": {
+        "segment": 5,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 5,
+      "token": 9,
+      "was": "үстінде",
+      "now": "устинде",
+      "hypothesis": true,
+      "source": {
+        "segment": 5,
+        "token": 9
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 5,
+      "token": 10,
+      "was": "жүрмейді",
+      "now": "журмейди",
+      "hypothesis": true,
+      "source": {
+        "segment": 5,
+        "token": 10
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 7,
+      "token": 2,
+      "was": "орындық",
+      "now": "орындык",
+      "hypothesis": true,
+      "source": {
+        "segment": 7,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 7,
+      "token": 3,
+      "was": "жоқ",
+      "now": "жок",
+      "hypothesis": true,
+      "source": {
+        "segment": 7,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 7,
+      "token": 6,
+      "was": "жалпы.",
+      "now": "жалпы",
+      "source": {
+        "segment": 7,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 8,
+      "token": 7,
+      "was": "подлокотников.",
+      "now": "подлокотников",
+      "source": {
+        "segment": 8,
+        "token": 7
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 8,
+      "token": 17,
+      "was": "кетеді",
+      "now": "кетеди",
+      "hypothesis": true,
+      "source": {
+        "segment": 8,
+        "token": 17
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 8,
+      "token": 18,
+      "was": "ғой.",
+      "now": "гой.",
+      "hypothesis": true,
+      "source": {
+        "segment": 8,
+        "token": 18
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 9,
+      "token": 0,
+      "was": "Түсінікті.",
+      "now": "Тусиникти.",
+      "hypothesis": true,
+      "source": {
+        "segment": 9,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 9,
+      "token": 0,
+      "was": "Тусиникти.",
+      "now": "Тусиникти",
+      "source": {
+        "segment": 9,
+        "token": 0
+      }
+    },
+    {
+      "operation": "entity_variant",
+      "segment": 9,
+      "token": 4,
+      "was": "Qamqor",
+      "now": "Камкор",
+      "source": {
+        "segment": 9,
+        "token": 4
+      }
+    },
+    {
+      "operation": "entity_variant",
+      "segment": 9,
+      "token": 7,
+      "was": "Санду",
+      "now": "Sandugash",
+      "source": {
+        "segment": 9,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 10,
+      "token": 2,
+      "was": "емес.",
+      "now": "емес",
+      "source": {
+        "segment": 10,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 10,
+      "token": 7,
+      "was": "әлі",
+      "now": "али",
+      "hypothesis": true,
+      "source": {
+        "segment": 10,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 10,
+      "token": 9,
+      "was": "шатасады.",
+      "now": "шатасады",
+      "source": {
+        "segment": 10,
+        "token": 9
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 11,
+      "token": 0,
+      "was": "Қандай",
+      "now": "Кандай",
+      "hypothesis": true,
+      "source": {
+        "segment": 11,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 11,
+      "token": 1,
+      "was": "сұрақтарда.",
+      "now": "сурактарда.",
+      "hypothesis": true,
+      "source": {
+        "segment": 11,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 12,
+      "token": 1,
+      "was": "екі",
+      "now": "еки",
+      "hypothesis": true,
+      "source": {
+        "segment": 12,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 12,
+      "token": 3,
+      "was": "құжатта",
+      "now": "кужатта",
+      "hypothesis": true,
+      "source": {
+        "segment": 12,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 12,
+      "token": 6,
+      "was": "болса.",
+      "now": "болса",
+      "source": {
+        "segment": 12,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 12,
+      "token": 13,
+      "was": "береді.",
+      "now": "береди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 12,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 13,
+      "token": 2,
+      "was": "бөлінбей",
+      "now": "болинбей",
+      "hypothesis": true,
+      "source": {
+        "segment": 13,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 13,
+      "token": 4,
+      "was": "сонда.",
+      "now": "сонда",
+      "source": {
+        "segment": 13,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 1,
+      "was": "дұрыс.",
+      "now": "дурыс.",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 4,
+      "was": "қай",
+      "now": "кай",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 5,
+      "was": "құжат",
+      "now": "кужат",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 8,
+      "was": "түсінбейді.",
+      "now": "тусинбейди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 8
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 14,
+      "token": 8,
+      "was": "тусинбейди.",
+      "now": "тусинбейди",
+      "source": {
+        "segment": 14,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 11,
+      "was": "екеуіне",
+      "now": "екеуине",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 11
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 13,
+      "was": "жоғары",
+      "now": "жогары",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 15,
+      "was": "береді",
+      "now": "береди",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 15
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 14,
+      "token": 20,
+      "was": "оқиды.",
+      "now": "окиды.",
+      "hypothesis": true,
+      "source": {
+        "segment": 14,
+        "token": 20
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 14,
+      "token": 20,
+      "was": "окиды.",
+      "now": "окиды",
+      "source": {
+        "segment": 14,
+        "token": 20
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 15,
+      "token": 6,
+      "was": "документа.",
+      "now": "документа",
+      "source": {
+        "segment": 15,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 1,
+      "was": "сілтеме",
+      "now": "силтеме",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 3,
+      "was": "Бірақ",
+      "now": "Бирак",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 5,
+      "was": "өзінде",
+      "now": "озинде",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 6,
+      "was": "логикалық",
+      "now": "логикалык",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 7,
+      "was": "қате",
+      "now": "кате",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 7
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 9,
+      "was": "мүмкін.",
+      "now": "мумкин.",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 9
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 12,
+      "was": "оқиды",
+      "now": "окиды",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 12
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 14,
+      "was": "сілтемеге",
+      "now": "силтемеге",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 14
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 15,
+      "was": "кірмей-ақ",
+      "now": "кирмей-ак",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 15
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 17,
+      "was": "ақпаратпен",
+      "now": "акпаратпен",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 17
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 16,
+      "token": 19,
+      "was": "береді.",
+      "now": "береди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 16,
+        "token": 19
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 16,
+      "token": 19,
+      "was": "береди.",
+      "now": "береди",
+      "source": {
+        "segment": 16,
+        "token": 19
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 17,
+      "token": 0,
+      "was": "Иә",
+      "now": "Иа",
+      "hypothesis": true,
+      "source": {
+        "segment": 17,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 17,
+      "token": 3,
+      "was": "негізі.",
+      "now": "негизи.",
+      "hypothesis": true,
+      "source": {
+        "segment": 17,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 18,
+      "token": 7,
+      "was": "вчера.",
+      "now": "вчера",
+      "source": {
+        "segment": 18,
+        "token": 7
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 19,
+      "token": 1,
+      "was": "оған",
+      "now": "оган",
+      "hypothesis": true,
+      "source": {
+        "segment": 19,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 19,
+      "token": 4,
+      "was": "ғой.",
+      "now": "гой.",
+      "hypothesis": true,
+      "source": {
+        "segment": 19,
+        "token": 4
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 19,
+      "token": 4,
+      "was": "гой.",
+      "now": "гой",
+      "source": {
+        "segment": 19,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 19,
+      "token": 11,
+      "was": "ең",
+      "now": "ен",
+      "hypothesis": true,
+      "source": {
+        "segment": 19,
+        "token": 11
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 19,
+      "token": 14,
+      "was": "іздейді",
+      "now": "издейди",
+      "hypothesis": true,
+      "source": {
+        "segment": 19,
+        "token": 14
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 21,
+      "token": 8,
+      "was": "дұрыс",
+      "now": "дурыс",
+      "hypothesis": true,
+      "source": {
+        "segment": 21,
+        "token": 8
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 21,
+      "token": 10,
+      "was": "береді.",
+      "now": "береді",
+      "source": {
+        "segment": 21,
+        "token": 10
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 22,
+      "token": 2,
+      "was": "қалай",
+      "now": "калай",
+      "hypothesis": true,
+      "source": {
+        "segment": 22,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 24,
+      "token": 1,
+      "was": "бе.",
+      "now": "бе",
+      "source": {
+        "segment": 24,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 25,
+      "token": 3,
+      "was": "юзаю.",
+      "now": "юзаю",
+      "source": {
+        "segment": 25,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 25,
+      "token": 13,
+      "was": "отдает.",
+      "now": "отдает",
+      "source": {
+        "segment": 25,
+        "token": 13
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 25,
+      "token": 18,
+      "was": "забыла.",
+      "now": "забыла",
+      "source": {
+        "segment": 25,
+        "token": 18
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 26,
+      "token": 6,
+      "was": "ллм-нің",
+      "now": "ллм-нин",
+      "hypothesis": true,
+      "source": {
+        "segment": 26,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 26,
+      "token": 10,
+      "was": "өзі.",
+      "now": "өзі",
+      "source": {
+        "segment": 26,
+        "token": 10
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 27,
+      "token": 13,
+      "was": "лету.",
+      "now": "лету",
+      "source": {
+        "segment": 27,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 28,
+      "token": 2,
+      "was": "ғой",
+      "now": "гой",
+      "hypothesis": true,
+      "source": {
+        "segment": 28,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 29,
+      "token": 3,
+      "was": "делать.",
+      "now": "делать",
+      "source": {
+        "segment": 29,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 29,
+      "token": 9,
+      "was": "юзеру.",
+      "now": "юзеру",
+      "source": {
+        "segment": 29,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 29,
+      "token": 13,
+      "was": "чанк.",
+      "now": "чанк",
+      "source": {
+        "segment": 29,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 30,
+      "token": 1,
+      "was": "тағы",
+      "now": "тагы",
+      "hypothesis": true,
+      "source": {
+        "segment": 30,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 30,
+      "token": 2,
+      "was": "бір",
+      "now": "бир",
+      "hypothesis": true,
+      "source": {
+        "segment": 30,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 30,
+      "token": 3,
+      "was": "мәселе",
+      "now": "маселе",
+      "hypothesis": true,
+      "source": {
+        "segment": 30,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 30,
+      "token": 7,
+      "was": "сұрағанда",
+      "now": "сураганда",
+      "hypothesis": true,
+      "source": {
+        "segment": 30,
+        "token": 7
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 31,
+      "token": 0,
+      "was": "Қалай",
+      "now": "Калай",
+      "hypothesis": true,
+      "source": {
+        "segment": 31,
+        "token": 0
+      }
+    },
+    {
+      "operation": "speaker_mislabel",
+      "segment": 31,
+      "token": null,
+      "was": "SPEAKER_00",
+      "now": "SPEAKER_01",
+      "source": {
+        "segment": 31,
+        "token": null
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 32,
+      "token": 3,
+      "was": "сұрасаң",
+      "now": "сурасан",
+      "hypothesis": true,
+      "source": {
+        "segment": 32,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 32,
+      "token": 8,
+      "was": "парағының",
+      "now": "парагынын",
+      "hypothesis": true,
+      "source": {
+        "segment": 32,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 32,
+      "token": 10,
+      "was": "қосып",
+      "now": "косып",
+      "hypothesis": true,
+      "source": {
+        "segment": 32,
+        "token": 10
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 32,
+      "token": 11,
+      "was": "жібереді.",
+      "now": "жибереди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 32,
+        "token": 11
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 32,
+      "token": 12,
+      "was": "Өйткені",
+      "now": "Ойткени",
+      "hypothesis": true,
+      "source": {
+        "segment": 32,
+        "token": 12
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 32,
+      "token": 15,
+      "was": "бір-біріне",
+      "now": "бир-бирине",
+      "hypothesis": true,
+      "source": {
+        "segment": 32,
+        "token": 15
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 32,
+      "token": 16,
+      "was": "жақын",
+      "now": "жакын",
+      "hypothesis": true,
+      "source": {
+        "segment": 32,
+        "token": 16
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 33,
+      "token": 9,
+      "was": "нравится.",
+      "now": "нравится",
+      "source": {
+        "segment": 33,
+        "token": 9
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 33,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 33,
+        "token": null
+      }
+    },
+    {
+      "operation": "entity_variant",
+      "segment": 34,
+      "token": 2,
+      "was": "Абду.",
+      "now": "Abdurahman.",
+      "source": {
+        "segment": 34,
+        "token": 2
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 34,
+      "token": 2,
+      "was": "Abdurahman.",
+      "now": "Abdurahman",
+      "source": {
+        "segment": 34,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 34,
+      "token": 4,
+      "was": "оған",
+      "now": "оган",
+      "hypothesis": true,
+      "source": {
+        "segment": 34,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 34,
+      "token": 9,
+      "was": "мәтінге",
+      "now": "матинге",
+      "hypothesis": true,
+      "source": {
+        "segment": 34,
+        "token": 9
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 34,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 34,
+        "token": null
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 35,
+      "token": 0,
+      "was": "Көмектесе",
+      "now": "Комектесе",
+      "hypothesis": true,
+      "source": {
+        "segment": 35,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 36,
+      "token": 0,
+      "was": "Кішкене.",
+      "now": "Кишкене.",
+      "hypothesis": true,
+      "source": {
+        "segment": 36,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 36,
+      "token": 1,
+      "was": "Бірақ",
+      "now": "Бирак",
+      "hypothesis": true,
+      "source": {
+        "segment": 36,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 36,
+      "token": 3,
+      "was": "күрделі",
+      "now": "курдели",
+      "hypothesis": true,
+      "source": {
+        "segment": 36,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 36,
+      "token": 6,
+      "was": "дұрыс",
+      "now": "дурыс",
+      "hypothesis": true,
+      "source": {
+        "segment": 36,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 38,
+      "token": 0,
+      "was": "Жоқ.",
+      "now": "Жок.",
+      "hypothesis": true,
+      "source": {
+        "segment": 38,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 38,
+      "token": 3,
+      "was": "эмоцияға",
+      "now": "эмоцияга",
+      "hypothesis": true,
+      "source": {
+        "segment": 38,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 38,
+      "token": 5,
+      "was": "бұйырдым.",
+      "now": "буйырдым.",
+      "hypothesis": true,
+      "source": {
+        "segment": 38,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 38,
+      "token": 8,
+      "was": "фактілермен",
+      "now": "фактилермен",
+      "hypothesis": true,
+      "source": {
+        "segment": 38,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 38,
+      "token": 10,
+      "was": "береді.",
+      "now": "береди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 38,
+        "token": 10
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 39,
+      "token": 6,
+      "was": "теста.",
+      "now": "теста",
+      "source": {
+        "segment": 39,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 40,
+      "token": 0,
+      "was": "Дұрыс.",
+      "now": "Дурыс.",
+      "hypothesis": true,
+      "source": {
+        "segment": 40,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 40,
+      "token": 0,
+      "was": "Дурыс.",
+      "now": "Дурыс",
+      "source": {
+        "segment": 40,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 40,
+      "token": 4,
+      "was": "керек.",
+      "now": "керек",
+      "source": {
+        "segment": 40,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 40,
+      "token": 9,
+      "was": "береді.",
+      "now": "береди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 40,
+        "token": 9
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 41,
+      "token": 17,
+      "was": "травить.",
+      "now": "травить",
+      "source": {
+        "segment": 41,
+        "token": 17
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 42,
+      "token": 0,
+      "was": "Иә",
+      "now": "Иа",
+      "hypothesis": true,
+      "source": {
+        "segment": 42,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 42,
+      "token": 7,
+      "was": "анық.",
+      "now": "анык.",
+      "hypothesis": true,
+      "source": {
+        "segment": 42,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 42,
+      "token": 7,
+      "was": "анык.",
+      "now": "анык",
+      "source": {
+        "segment": 42,
+        "token": 7
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 42,
+      "token": 12,
+      "was": "біреу",
+      "now": "биреу",
+      "hypothesis": true,
+      "source": {
+        "segment": 42,
+        "token": 12
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 42,
+      "token": 13,
+      "was": "оған",
+      "now": "оган",
+      "hypothesis": true,
+      "source": {
+        "segment": 42,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 42,
+      "token": 17,
+      "was": "маған",
+      "now": "маган",
+      "hypothesis": true,
+      "source": {
+        "segment": 42,
+        "token": 17
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 42,
+      "token": 18,
+      "was": "құпия",
+      "now": "купия",
+      "hypothesis": true,
+      "source": {
+        "segment": 42,
+        "token": 18
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 42,
+      "token": 22,
+      "was": "жазыпты.",
+      "now": "жазыпты",
+      "source": {
+        "segment": 42,
+        "token": 22
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 43,
+      "token": 2,
+      "was": "деді",
+      "now": "деди",
+      "hypothesis": true,
+      "source": {
+        "segment": 43,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 2,
+      "was": "берді.",
+      "now": "берди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 3,
+      "was": "Сіздің",
+      "now": "Сиздин",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 4,
+      "was": "сұрағыңыз",
+      "now": "сурагыныз",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 6,
+      "was": "жоқ",
+      "now": "жок",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 9,
+      "was": "жүйелік",
+      "now": "жуйелик",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 9
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 11,
+      "was": "қатты",
+      "now": "катты",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 11
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 14,
+      "was": "ғой.",
+      "now": "гой.",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 14
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 17,
+      "was": "рөлге",
+      "now": "ролге",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 17
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 44,
+      "token": 18,
+      "was": "кіруден",
+      "now": "кируден",
+      "hypothesis": true,
+      "source": {
+        "segment": 44,
+        "token": 18
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 45,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 45,
+        "token": null
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 46,
+      "token": 0,
+      "was": "Корпоративтік",
+      "now": "Корпоративтик",
+      "hypothesis": true,
+      "source": {
+        "segment": 46,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 46,
+      "token": 6,
+      "was": "негізі.",
+      "now": "негизи.",
+      "hypothesis": true,
+      "source": {
+        "segment": 46,
+        "token": 6
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 46,
+      "token": 6,
+      "was": "негизи.",
+      "now": "негизи",
+      "source": {
+        "segment": 46,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 2,
+      "was": "біз",
+      "now": "биз",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 3,
+      "was": "оның",
+      "now": "онын",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 48,
+      "token": 7,
+      "was": "отырмыз.",
+      "now": "отырмыз",
+      "source": {
+        "segment": 48,
+        "token": 7
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 10,
+      "was": "ішкі",
+      "now": "ишки",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 10
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 11,
+      "was": "нұсқаулықтар",
+      "now": "нускаулыктар",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 11
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 13,
+      "was": "ғана",
+      "now": "гана",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 15,
+      "was": "беруі",
+      "now": "беруи",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 15
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 18,
+      "was": "тақырыпқа",
+      "now": "такырыпка",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 18
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 19,
+      "was": "мүлдем",
+      "now": "мулдем",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 19
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 48,
+      "token": 20,
+      "was": "ауытқымау",
+      "now": "ауыткымау",
+      "hypothesis": true,
+      "source": {
+        "segment": 48,
+        "token": 20
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 49,
+      "token": 1,
+      "was": "қалай",
+      "now": "калай",
+      "hypothesis": true,
+      "source": {
+        "segment": 49,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 49,
+      "token": 2,
+      "was": "өзі",
+      "now": "ози",
+      "hypothesis": true,
+      "source": {
+        "segment": 49,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 49,
+      "token": 4,
+      "was": "нақты",
+      "now": "накты",
+      "hypothesis": true,
+      "source": {
+        "segment": 49,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 49,
+      "token": 10,
+      "was": "қалдыру",
+      "now": "калдыру",
+      "hypothesis": true,
+      "source": {
+        "segment": 49,
+        "token": 10
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 50,
+      "token": 3,
+      "was": "жақсы.",
+      "now": "жаксы.",
+      "hypothesis": true,
+      "source": {
+        "segment": 50,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 50,
+      "token": 8,
+      "was": "береді.",
+      "now": "береді",
+      "source": {
+        "segment": 50,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 50,
+      "token": 12,
+      "was": "түрде",
+      "now": "турде",
+      "hypothesis": true,
+      "source": {
+        "segment": 50,
+        "token": 12
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 50,
+      "token": 13,
+      "was": "сөйлейді.",
+      "now": "сойлейди.",
+      "hypothesis": true,
+      "source": {
+        "segment": 50,
+        "token": 13
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 50,
+      "token": 13,
+      "was": "сойлейди.",
+      "now": "сойлейди",
+      "source": {
+        "segment": 50,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 50,
+      "token": 14,
+      "was": "Өте",
+      "now": "Оте",
+      "hypothesis": true,
+      "source": {
+        "segment": 50,
+        "token": 14
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 50,
+      "token": 15,
+      "was": "құрғақ",
+      "now": "кургак",
+      "hypothesis": true,
+      "source": {
+        "segment": 50,
+        "token": 15
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 50,
+      "token": 16,
+      "was": "тілмен.",
+      "now": "тилмен.",
+      "hypothesis": true,
+      "source": {
+        "segment": 50,
+        "token": 16
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 51,
+      "token": 11,
+      "was": "звездочками.",
+      "now": "звездочками",
+      "source": {
+        "segment": 51,
+        "token": 11
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 52,
+      "token": 2,
+      "was": "түзетемін.",
+      "now": "түзетемін",
+      "source": {
+        "segment": 52,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 52,
+      "token": 3,
+      "was": "Ботқа",
+      "now": "Ботка",
+      "hypothesis": true,
+      "source": {
+        "segment": 52,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 52,
+      "token": 8,
+      "was": "көремін.",
+      "now": "коремин.",
+      "hypothesis": true,
+      "source": {
+        "segment": 52,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 54,
+      "token": 6,
+      "was": "ғана",
+      "now": "гана",
+      "hypothesis": true,
+      "source": {
+        "segment": 54,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 54,
+      "token": 7,
+      "was": "сақтап",
+      "now": "сактап",
+      "hypothesis": true,
+      "source": {
+        "segment": 54,
+        "token": 7
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 54,
+      "token": 8,
+      "was": "қойдым.",
+      "now": "қойдым",
+      "source": {
+        "segment": 54,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 54,
+      "token": 9,
+      "was": "Токендерді",
+      "now": "Токендерди",
+      "hypothesis": true,
+      "source": {
+        "segment": 54,
+        "token": 9
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 54,
+      "token": 10,
+      "was": "үнемдеу",
+      "now": "унемдеу",
+      "hypothesis": true,
+      "source": {
+        "segment": 54,
+        "token": 10
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 54,
+      "token": 14,
+      "was": "көп",
+      "now": "коп",
+      "hypothesis": true,
+      "source": {
+        "segment": 54,
+        "token": 14
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 54,
+      "token": 22,
+      "was": "қалады.",
+      "now": "қалады",
+      "source": {
+        "segment": 54,
+        "token": 22
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 55,
+      "token": 0,
+      "was": "Үш",
+      "now": "Уш",
+      "hypothesis": true,
+      "source": {
+        "segment": 55,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 55,
+      "token": 1,
+      "was": "сұрақ",
+      "now": "сурак",
+      "hypothesis": true,
+      "source": {
+        "segment": 55,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 55,
+      "token": 2,
+      "was": "жетеді",
+      "now": "жетеди",
+      "hypothesis": true,
+      "source": {
+        "segment": 55,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 55,
+      "token": 3,
+      "was": "ғой",
+      "now": "гой",
+      "hypothesis": true,
+      "source": {
+        "segment": 55,
+        "token": 3
+      }
+    },
+    {
+      "operation": "noise_tag",
+      "segment": 55,
+      "token": null,
+      "was": "",
+      "now": "[шум]",
+      "source": {
+        "segment": 55,
+        "token": null
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 56,
+      "token": 17,
+      "was": "вопросу.",
+      "now": "вопросу",
+      "source": {
+        "segment": 56,
+        "token": 17
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 56,
+      "token": 21,
+      "was": "поймет.",
+      "now": "поймет",
+      "source": {
+        "segment": 56,
+        "token": 21
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 57,
+      "token": 4,
+      "was": "иә.",
+      "now": "иә",
+      "source": {
+        "segment": 57,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 57,
+      "token": 5,
+      "was": "Бірақ",
+      "now": "Бирак",
+      "hypothesis": true,
+      "source": {
+        "segment": 57,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 57,
+      "token": 6,
+      "was": "біз",
+      "now": "биз",
+      "hypothesis": true,
+      "source": {
+        "segment": 57,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 57,
+      "token": 10,
+      "was": "сұрақ-жауап",
+      "now": "сурак-жауап",
+      "hypothesis": true,
+      "source": {
+        "segment": 57,
+        "token": 10
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 0,
+      "was": "Айтпақшы",
+      "now": "Айтпакшы",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 1,
+      "was": "тілдер",
+      "now": "тилдер",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 1
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 59,
+      "token": 2,
+      "was": "бойынша.",
+      "now": "бойынша",
+      "source": {
+        "segment": 59,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 4,
+      "was": "әзірше",
+      "now": "азирше",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 5,
+      "was": "қазақ",
+      "now": "казак",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 6,
+      "was": "және",
+      "now": "жане",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 6
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 8,
+      "was": "тілдерінде",
+      "now": "тилдеринде",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 9,
+      "was": "ғана",
+      "now": "гана",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 9
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 13,
+      "was": "ағылшын",
+      "now": "агылшын",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 59,
+      "token": 15,
+      "was": "кейінірек",
+      "now": "кейинирек",
+      "hypothesis": true,
+      "source": {
+        "segment": 59,
+        "token": 15
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 61,
+      "token": 1,
+      "was": "ағылшынша",
+      "now": "агылшынша",
+      "hypothesis": true,
+      "source": {
+        "segment": 61,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 61,
+      "token": 2,
+      "was": "құжаттар",
+      "now": "кужаттар",
+      "hypothesis": true,
+      "source": {
+        "segment": 61,
+        "token": 2
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 61,
+      "token": 3,
+      "was": "өте",
+      "now": "оте",
+      "hypothesis": true,
+      "source": {
+        "segment": 61,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 61,
+      "token": 5,
+      "was": "бізде,",
+      "now": "бизде,",
+      "hypothesis": true,
+      "source": {
+        "segment": 61,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 61,
+      "token": 8,
+      "was": "тестілеу",
+      "now": "тестилеу",
+      "hypothesis": true,
+      "source": {
+        "segment": 61,
+        "token": 8
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 61,
+      "token": 12,
+      "was": "оған",
+      "now": "оган",
+      "hypothesis": true,
+      "source": {
+        "segment": 61,
+        "token": 12
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 61,
+      "token": 13,
+      "was": "уақыт",
+      "now": "уакыт",
+      "hypothesis": true,
+      "source": {
+        "segment": 61,
+        "token": 13
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 62,
+      "token": 0,
+      "was": "Дұрыс.",
+      "now": "Дурыс.",
+      "hypothesis": true,
+      "source": {
+        "segment": 62,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 62,
+      "token": 0,
+      "was": "Дурыс.",
+      "now": "Дурыс",
+      "source": {
+        "segment": 62,
+        "token": 0
+      }
+    },
+    {
+      "operation": "entity_variant",
+      "segment": 62,
+      "token": 1,
+      "was": "Сандуғаш,",
+      "now": "Сандугаш,",
+      "source": {
+        "segment": 62,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 62,
+      "token": 3,
+      "was": "тоғызыншы",
+      "now": "тогызыншы",
+      "hypothesis": true,
+      "source": {
+        "segment": 62,
+        "token": 3
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 62,
+      "token": 4,
+      "was": "қазанға",
+      "now": "казанга",
+      "hypothesis": true,
+      "source": {
+        "segment": 62,
+        "token": 4
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 62,
+      "token": 5,
+      "was": "дейін",
+      "now": "дейин",
+      "hypothesis": true,
+      "source": {
+        "segment": 62,
+        "token": 5
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 63,
+      "token": 0,
+      "was": "Жақсы.",
+      "now": "Жаксы.",
+      "hypothesis": true,
+      "source": {
+        "segment": 63,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 65,
+      "token": 0,
+      "was": "Иә",
+      "now": "Иа",
+      "hypothesis": true,
+      "source": {
+        "segment": 65,
+        "token": 0
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 65,
+      "token": 3,
+      "was": "Бүгінге",
+      "now": "Бугинге",
+      "hypothesis": true,
+      "source": {
+        "segment": 65,
+        "token": 3
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 66,
+      "token": 1,
+      "was": "болыңдар.",
+      "now": "болыңдар",
+      "source": {
+        "segment": 66,
+        "token": 1
+      }
+    },
+    {
+      "operation": "kk_letter_loss",
+      "segment": 68,
+      "token": 0,
+      "was": "Көріскенше.",
+      "now": "Корискенше.",
+      "hypothesis": true,
+      "source": {
+        "segment": 68,
+        "token": 0
+      }
+    },
+    {
+      "operation": "sentence_end_drop",
+      "segment": 68,
+      "token": 0,
+      "was": "Корискенше.",
+      "now": "Корискенше",
+      "source": {
+        "segment": 68,
+        "token": 0
+      }
+    }
+  ],
+  "counters": {
+    "entity_mentions": 6,
+    "entity_mentions_changed": 5,
+    "entity_variant": 5,
+    "kk_letter_loss": 155,
+    "noise_tag": 6,
+    "sentence_end_drop": 49,
+    "speaker_mislabel": 1
+  }
+}

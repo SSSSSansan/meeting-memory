@@ -1,0 +1,78 @@
+{
+  "public_id": "d78207e9-246a-5ec4-a9eb-11cbfdbcdbbe",
+  "title": "Итоговая встреча перед релизом Zhol",
+  "language": "ru",
+  "started_at": "2026-10-26T10:02:51+05:00",
+  "ended_at": "2026-10-26T10:09:03+05:00",
+  "actual_duration_seconds": 371.56,
+  "transcription_provider": "synthetic",
+  "is_private": false,
+  "speaker_names": null,
+  "status": "READY",
+  "has_transcript": true,
+  "summary_count": 0,
+  "owner": {
+    "user": {
+      "full_name": "Амина",
+      "email": "amina@example.com",
+      "position": "Product manager"
+    }
+  },
+  "departments": [],
+  "participants": [
+    {
+      "user": {
+        "full_name": "Амина",
+        "email": "amina@example.com",
+        "position": "Product manager"
+      },
+      "role": "employee",
+      "added_at": "2026-10-26T10:02:51+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Нұралы",
+        "email": "nuraly@example.com",
+        "position": "Tech lead"
+      },
+      "role": "employee",
+      "added_at": "2026-10-26T10:02:51+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Николай",
+        "email": "nikolay@example.com",
+        "position": "Backend developer"
+      },
+      "role": "employee",
+      "added_at": "2026-10-26T10:02:51+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Абдурахман",
+        "email": "abdurakhman@example.com",
+        "position": "Fullstack developer"
+      },
+      "role": "employee",
+      "added_at": "2026-10-26T10:02:51+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Сандуғаш",
+        "email": "sandugash@example.com",
+        "position": "ML engineer"
+      },
+      "role": "employee",
+      "added_at": "2026-10-26T10:02:51+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Данияр",
+        "email": "daniyar@example.com",
+        "position": "Head of business development"
+      },
+      "role": "employee",
+      "added_at": "2026-10-26T10:02:51+05:00"
+    }
+  ]
+}
