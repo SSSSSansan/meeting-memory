@@ -67,7 +67,7 @@ def test_metrics_and_only_question_text_reaches_system(world):
     (row,) = run_with(system, [q()], world)
     assert seen == ["вопрос q_01"]  # ни эталона, ни id, ни source_meetings
     assert row.status == "ok" and row.correct_meetings is True and row.events_found == 1
-    assert row.citation_valid == 1.0 and row.abstained is False and row.accuracy == "n/a"
+    assert row.citation_valid == 1.0 and row.abstained is False and row.judge_score is None
     assert (row.prompt_tokens, row.completion_tokens, row.cost_usd, row.latency_ms) == (100, 20, 0.01, 12)
 
 
