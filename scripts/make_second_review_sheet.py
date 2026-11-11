@@ -5,13 +5,13 @@
 
 Выборка: max(4, ceil(10% от числа записей)), random.Random(42) по записям, отсортированным по id.
 Файлы в results/second_review/ (utf-8-sig, Excel открывает кириллицу и казахский):
-  sheet.csv       — review_id, meeting, quote, statement (из world.yaml), type (метка эталона),
-                    reviewer_type и reviewer_agrees заполняет второй рецензент:
-                    reviewer_type — decision/task/open_question/status_update/recap/non_decision,
-                    reviewer_agrees — 1, если согласен с типом эталона из колонки type, иначе 0.
-  key_private.csv — review_id, event_id, type: связь с эталоном для score_second_review.py.
-Листы идут в порядке выборки, не в порядке встреч. Расхождения потом разбираются и фиксируются
-в data/gold/what_is_a_decision.md.
+  sheet.csv       — слепой лист: review_id, meeting, quote, reviewer_type и reviewer_comment (пустые, их
+                    заполняет второй рецензент; reviewer_type — decision/task/open_question/status_update/
+                    recap/non_decision). Ни типа эталона, ни формулировки из world.yaml в листе нет.
+  key_private.csv — review_id, event_id, type (эталон), statement (из world.yaml): для score_second_review.py.
+  README.md       — инструкция рецензенту (прочитай цитату, выбери тип по what_is_a_decision.md).
+Рецензенту ключ не отдавать. Строки идут в порядке выборки, не в порядке встреч.
+Расхождения потом разбираются и фиксируются в data/gold/what_is_a_decision.md.
 """
 from __future__ import annotations
 
@@ -34,8 +34,18 @@ SEED = 42
 FRACTION = 0.10
 MIN_ROWS = 4
 TYPES = ("decision", "task", "open_question", "status_update", "recap", "non_decision")
-SHEET_COLUMNS = ["review_id", "meeting", "quote", "statement", "type", "reviewer_type", "reviewer_agrees"]
-KEY_COLUMNS = ["review_id", "event_id", "type"]
+SHEET_COLUMNS = ["review_id", "meeting", "quote", "reviewer_type", "reviewer_comment"]
+KEY_COLUMNS = ["review_id", "event_id", "type", "statement"]
+README_TEXT = """# Лист второго рецензента
+
+Файл `sheet.csv` (utf-8-sig, Excel открывает его без перекодировки).
+
+1. Прочитай цитату из колонки `quote` (встреча указана в `meeting`).
+2. Выбери тип записи по `data/gold/what_is_a_decision.md` и впиши его в `reviewer_type`:
+   `decision`, `task`, `open_question`, `status_update`, `recap` или `non_decision`.
+3. Если сомневаешься, напиши причину в `reviewer_comment` (необязательно).
+4. Других колонок не меняй. Файл `key_private.csv` не открывай: в нём ответы.
+"""
 
 
 def sample_size(n: int, fraction: float = FRACTION) -> int:
@@ -57,9 +67,9 @@ def build_tables(chosen: list[dict], statements: dict[str, str]) -> tuple[list[d
     for i, rec in enumerate(chosen, 1):
         rid = f"R{i:02d}"
         sheet.append({"review_id": rid, "meeting": rec["meeting"], "quote": rec["quote"],
-                      "statement": statements[rec["id"]], "type": rec["type"],
-                      "reviewer_type": "", "reviewer_agrees": ""})
-        key.append({"review_id": rid, "event_id": rec["id"], "type": rec["type"]})
+                      "reviewer_type": "", "reviewer_comment": ""})
+        key.append({"review_id": rid, "event_id": rec["id"], "type": rec["type"],
+                    "statement": statements[rec["id"]]})
     return sheet, key
 
 
@@ -89,6 +99,7 @@ def main(argv: list[str] | None = None) -> int:
     sheet, key = build_tables(select(records, args.seed, args.fraction), statements)
     write_csv(args.out_dir / "sheet.csv", SHEET_COLUMNS, sheet)
     write_csv(args.out_dir / "key_private.csv", KEY_COLUMNS, key)
+    (args.out_dir / "README.md").write_text(README_TEXT, encoding="utf-8")
     print(f"записей в эталоне: {len(records)}; в листе: {len(sheet)} (сид {args.seed})")
     print(f"записано: {args.out_dir / 'sheet.csv'}, {args.out_dir / 'key_private.csv'}")
     return 0

@@ -1,12 +1,11 @@
-"""РОЛЬ A. Согласие второго рецензента с эталоном. Модель не вызывается.
+"""РОЛЬ A. Совпадение слепой оценки второго рецензента с эталоном. Модель не вызывается.
 
     python scripts/score_second_review.py
     python scripts/score_second_review.py --sheet results/second_review/sheet.csv --out agreement.md
 
 Читает заполненный sheet.csv и key_private.csv (оба из make_second_review_sheet.py) и сравнивает
-reviewer_type с типом эталона из ключа. Показатель согласия — доля строк, где reviewer_type == тип эталона.
-Отдельно считается доля reviewer_agrees=1 и находятся противоречия в самом заполнении
-(reviewer_agrees=1, но тип другой, или 0, но тип совпал). Незаполненные строки в расчёт не идут.
+reviewer_type с типом эталона из ключа. Показатель — доля строк, где reviewer_type == тип эталона.
+Расхождения выводятся с формулировкой из ключа и обеими оценками. Незаполненные строки в расчёт не идут.
 Файл можно сохранять из Excel с разделителем «;». Результат: results/second_review/agreement.md.
 Код возврата: 0 — посчитано, 1 — ошибка данных или нет ни одной заполненной строки.
 """
@@ -49,53 +48,40 @@ def score(sheet: list[dict], key: list[dict]) -> dict:
     unknown = [r["review_id"] for r in sheet if r["review_id"] not in gold]
     if unknown:
         raise ScoreError(f"review_id нет в key_private.csv: {unknown}")
-    filled, empty, mismatches, inconsistent = [], [], [], []
+    filled, empty, mismatches = [], [], []
     for r in sheet:
         rtype = (r.get("reviewer_type") or "").strip().lower()
-        agrees = (r.get("reviewer_agrees") or "").strip()
-        if not rtype and not agrees:
+        if not rtype:
             empty.append(r["review_id"])
             continue
         if rtype not in TYPES:
             raise ScoreError(f"{r['review_id']}: reviewer_type «{rtype}» не из {', '.join(TYPES)}")
-        if agrees not in ("0", "1"):
-            raise ScoreError(f"{r['review_id']}: reviewer_agrees «{agrees}» должен быть 0 или 1")
         g = gold[r["review_id"]]
-        row = {**r, "reviewer_type": rtype, "event_id": g["event_id"], "gold_type": g["type"]}
+        row = {**r, "reviewer_type": rtype, "event_id": g["event_id"], "gold_type": g["type"],
+               "statement": g.get("statement", "")}
         filled.append(row)
         if rtype != g["type"]:
             mismatches.append(row)
-        if (agrees == "1") != (rtype == g["type"]):
-            inconsistent.append(row)
     n = len(filled)
-    return {
-        "total": len(sheet), "filled": n, "empty": empty, "mismatches": mismatches, "inconsistent": inconsistent,
-        "agreement": (n - len(mismatches)) / n if n else 0.0,
-        "agrees_flag": sum(r["reviewer_agrees"].strip() == "1" for r in filled) / n if n else 0.0,
-    }
+    return {"total": len(sheet), "filled": n, "empty": empty, "mismatches": mismatches,
+            "agreement": (n - len(mismatches)) / n if n else 0.0}
 
 
 def render(res: dict) -> str:
     n, bad = res["filled"], len(res["mismatches"])
     out = ["# Согласие второго рецензента с эталоном", "",
            f"- Строк в листе: {res['total']}; заполнено: {n}; не заполнено: {len(res['empty'])}.",
-           f"- **Согласие по типу (reviewer_type == эталон): {n - bad} из {n} = {pct(res['agreement'])}.**",
-           f"- Доля reviewer_agrees=1: {pct(res['agrees_flag'])}.",
-           f"- Расхождений: {bad}. Противоречий в заполнении (reviewer_agrees не соответствует reviewer_type): "
-           f"{len(res['inconsistent'])}.", ""]
+           f"- **Совпадение типа (reviewer_type == эталон): {n - bad} из {n} = {pct(res['agreement'])}.**",
+           f"- Расхождений: {bad}.", ""]
     if res["mismatches"]:
         out += ["## Расхождения", "",
-                "| review_id | Событие | Встреча | Эталон | Рецензент | Цитата | Формулировка |",
-                "|---|---|---|---|---|---|---|"]
+                "| review_id | Событие | Встреча | Эталон | Рецензент | Цитата | Формулировка | Комментарий |",
+                "|---|---|---|---|---|---|---|---|"]
         for r in res["mismatches"]:
             out.append(f"| {r['review_id']} | {r['event_id']} | {r['meeting']} | {r['gold_type']} | "
-                       f"{r['reviewer_type']} | {r['quote'].replace('|', '/')} | {r['statement'].replace('|', '/')} |")
+                       f"{r['reviewer_type']} | {r['quote'].replace('|', '/')} | {r['statement'].replace('|', '/')} | "
+                       f"{(r.get('reviewer_comment') or '').replace('|', '/')} |")
         out += ["", "Разобрать и зафиксировать итог в `data/gold/what_is_a_decision.md`.", ""]
-    if res["inconsistent"]:
-        out += ["## Противоречия в заполнении", ""]
-        out += [f"- {r['review_id']} ({r['event_id']}): reviewer_agrees={r['reviewer_agrees'].strip()}, "
-                f"reviewer_type={r['reviewer_type']}, эталон={r['gold_type']}" for r in res["inconsistent"]]
-        out.append("")
     return "\n".join(out)
 
 
@@ -116,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
     text = render(res)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(text, encoding="utf-8")
-    print(f"согласие: {res['filled'] - len(res['mismatches'])} из {res['filled']} = {pct(res['agreement'])}")
+    print(f"совпадение: {res['filled'] - len(res['mismatches'])} из {res['filled']} = {pct(res['agreement'])}")
     for r in res["mismatches"]:
         print(f"  расхождение {r['review_id']} ({r['event_id']}): "
               f"эталон {r['gold_type']}, рецензент {r['reviewer_type']}")
