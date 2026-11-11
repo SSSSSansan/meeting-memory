@@ -54,5 +54,30 @@
     "SPEAKER_01": "daniyar",
     "SPEAKER_02": "abdurakhman",
     "SPEAKER_03": "sandugash"
+  },
+  "m_011": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly",
+    "SPEAKER_02": "nikolay",
+    "SPEAKER_03": "abdurakhman"
+  },
+  "m_012": {
+    "SPEAKER_00": "nuraly",
+    "SPEAKER_01": "sandugash",
+    "SPEAKER_02": "abdurakhman"
+  },
+  "m_013": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "daniyar",
+    "SPEAKER_02": "nuraly",
+    "SPEAKER_03": "client_squad"
+  },
+  "m_015": {
+    "SPEAKER_00": "amina",
+    "SPEAKER_01": "nuraly",
+    "SPEAKER_02": "nikolay",
+    "SPEAKER_03": "abdurakhman",
+    "SPEAKER_04": "sandugash",
+    "SPEAKER_05": "daniyar"
   }
 }
