@@ -125,8 +125,17 @@ def test_missing_mandatory_question_fails(tmp_path, capsys, monkeypatch):
     assert "обязательных" in capsys.readouterr().err
 
 
-@pytest.mark.skipif(not mls.DEFAULT_EVAL_CSV.exists(), reason="eval-CSV не в git (results/ в .gitignore)")
+def _baseline_question_count() -> int:
+    """0, если результатов прогона нет; иначе число разных вопросов baseline в eval-CSV."""
+    if not list(mls.DEFAULT_EVAL_CSV.parent.glob("eval_*.csv")) or not mls.DEFAULT_EVAL_CSV.exists():
+        return 0
+    return len({r["question_id"] for r in _read(mls.DEFAULT_EVAL_CSV) if r["mode"] == "baseline"})
+
+
 def test_real_eval_file(tmp_path):
+    n = _baseline_question_count()
+    if n < 34:
+        pytest.skip(f"нужен полный прогон: results/eval_*.csv (не в git) с 34 вопросами baseline, найдено {n}")
     assert mls.main(["--out-dir", str(tmp_path)]) == 0
     key = _read(tmp_path / "key_private.csv")
     assert len(key) == 20
