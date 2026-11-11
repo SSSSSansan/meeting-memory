@@ -1,0 +1,11 @@
+# Оформление демо-приложения (app/streamlit_app.py).
+[theme]
+base = "light"
+primaryColor = "#4F46E5"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F4F5FA"
+textColor = "#1F2330"
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"   # без кнопки Deploy и меню разработчика

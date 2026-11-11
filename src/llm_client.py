@@ -118,8 +118,9 @@ def complete(messages: list[dict], *, json_schema: Optional[dict] = None,
 
     resp.latency_ms = int((time.perf_counter() - t0) * 1000)
     resp.model = model
-    resp.cost_usd = (resp.prompt_tokens * _price(model, "in")
-                     + resp.completion_tokens * _price(model, "out")) / 1_000_000
+    # stub бесплатен: иначе с ценами gpt-4o в .env каждый тест на заглушке «тратил» бюджет
+    resp.cost_usd = 0.0 if backend == "stub" else (resp.prompt_tokens * _price(model, "in")
+                                                   + resp.completion_tokens * _price(model, "out")) / 1_000_000
 
     cache_file.write_text(json.dumps(asdict(resp), ensure_ascii=False), encoding="utf-8")
     record_spend(resp.cost_usd)

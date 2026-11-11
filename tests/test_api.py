@@ -118,8 +118,10 @@ def test_timeline_is_chronological_with_statuses_and_links():
     first = t[0]
     assert (first["kind"], first["status"], first["meeting_title"]) == \
         ("Decision", "superseded", "Еженедельный статус — Атлас")
-    assert first["links"] == [{"type": "SUPERSEDES", "direction": "in", "other": "d_m002_01",
-                               "rationale": first["links"][0]["rationale"]}]
+    (link,) = first["links"]
+    assert (link["type"], link["direction"], link["other"]) == ("SUPERSEDES", "in", "d_m002_01")
+    assert (link["other_meeting"], link["other_date"]) == ("m_002", "2026-02-10") and link["rationale"]
+    assert link["other_statement"] == "Релиз Атласа переносится на 5 мая"
     assert t[1]["owner"] == "Айгерим Нурланова" and t[1]["due"] == "2026-02-10"
 
 
@@ -203,3 +205,16 @@ def test_graph_dot_marks_superseded_and_conflicts():
     assert "[заменено]" in dot and 'label="заменяет"' in dot
     assert '"d_m002_01" -> "d_m001_01" [color="#5F5E5A" style=bold label="заменяет"];' in dot
     assert '"project:Горизонт"' not in dot
+
+
+def test_overview_counts_on_sample_graph():
+    ov = api.overview()
+    assert (ov["decisions"], ov["tasks"], ov["open_tasks"], ov["graph_meetings"]) == (3, 2, 1, 2)
+    assert (ov["conflicts"], ov["replacements"], ov["meetings_indexed"]) == (0, 1, 0)
+
+
+def test_readable_ids_replace_internal_ids():
+    text = "Согласно решению d_m001_01 и задаче t_m001_01, а d_m099_01 в графе нет."
+    out = api.readable_ids(text)
+    assert "d_m001_01" not in out and "(m_001, 2026-02-03)" in out
+    assert "(решение m_099)" in out
