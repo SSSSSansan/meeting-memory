@@ -1,0 +1,21 @@
+{
+  "meeting_id": "m_011",
+  "projects_discussed": [
+    "Zhol"
+  ],
+  "decisions": [
+    {
+      "id": "d_m011_01",
+      "project": "Zhol",
+      "statement": "релиз Zhol переносится на десятое ноября вместо шестого октября",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:05:53",
+        "quote": "поэтому релиз Zhol переносится на десятое ноября вместо шестого октября"
+      }
+    }
+  ],
+  "tasks": [],
+  "open_questions": []
+}

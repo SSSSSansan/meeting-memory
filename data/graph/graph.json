@@ -201,7 +201,7 @@
       "ts": "00:05:21",
       "quote": "да, сложный эксель-экспорт делаем во второй версии.",
       "statement": "Сложный эксель-экспорт делаем во второй версии.",
-      "status": "active",
+      "status": "superseded",
       "in_conflict": false,
       "id": "d_m003_01"
     },
@@ -216,7 +216,7 @@
       "ts": "00:06:59",
       "quote": "ну давайте возьмём до тридцатого октября, Ержан, вам норм?",
       "statement": "Первая версия Squad будет готова до 30 октября.",
-      "status": "active",
+      "status": "superseded",
       "in_conflict": false,
       "id": "d_m003_02"
     },
@@ -385,7 +385,7 @@
       "ts": "00:06:02",
       "quote": "релиз Zhol переносится на пятого октября, нет, не пятого, шестого. шестого октября вместо пятнадцатого сентября.",
       "statement": "Релиз Zhol переносится на шестое октября вместо пятнадцатого сентября.",
-      "status": "active",
+      "status": "superseded",
       "in_conflict": false,
       "id": "d_m006_01"
     },
@@ -473,6 +473,272 @@
       "status": "active",
       "in_conflict": true,
       "id": "d_m008_02"
+    },
+    {
+      "type": "Meeting",
+      "label": "Qamqor: статус",
+      "meeting_id": "m_009",
+      "date": "2026-09-07",
+      "participants": [
+        "Амина",
+        "Нұралы",
+        "Сандуғаш"
+      ],
+      "id": "meeting:m_009"
+    },
+    {
+      "type": "Decision",
+      "label": "Интерфейс бота Qamqor делает Абду.",
+      "confidence": 0.9,
+      "made_by": null,
+      "project": "Qamqor",
+      "meeting_id": "m_009",
+      "date": "2026-09-07",
+      "ts": "00:03:27",
+      "quote": "интерфейс бота қамқор делает Абду.",
+      "statement": "Интерфейс бота Qamqor делает Абду.",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m009_01"
+    },
+    {
+      "type": "Meeting",
+      "label": "Boost: демо для бизнеса",
+      "meeting_id": "m_010",
+      "date": "2026-09-14",
+      "participants": [
+        "Амина",
+        "Данияр",
+        "Абдурахман",
+        "Сандуғаш"
+      ],
+      "id": "meeting:m_010"
+    },
+    {
+      "type": "Decision",
+      "label": "Добавить метрики продаж в панель Boost",
+      "confidence": 0.9,
+      "made_by": null,
+      "project": "Boost",
+      "meeting_id": "m_010",
+      "date": "2026-09-14",
+      "ts": "00:08:49",
+      "quote": "давай добавим эти метрики продаж в панель",
+      "statement": "Добавить метрики продаж в панель Boost",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m010_01"
+    },
+    {
+      "type": "Task",
+      "label": "Сделать блок метрик продаж в Boost",
+      "owner": "Абдурахман",
+      "due": null,
+      "status": "open",
+      "project": "Boost",
+      "meeting_id": "m_010",
+      "date": "2026-09-14",
+      "ts": "00:09:05",
+      "quote": "Абду, блок метрик продаж в Boost делаешь ты.",
+      "statement": "Сделать блок метрик продаж в Boost",
+      "id": "t_m010_01"
+    },
+    {
+      "type": "Meeting",
+      "label": "Zhol: еженедельный",
+      "meeting_id": "m_011",
+      "date": "2026-09-21",
+      "participants": [
+        "Амина",
+        "Нұралы",
+        "Николай",
+        "Абдурахман"
+      ],
+      "id": "meeting:m_011"
+    },
+    {
+      "type": "Decision",
+      "label": "релиз Zhol переносится на десятое ноября вместо шестого октября",
+      "confidence": 0.9,
+      "made_by": null,
+      "project": "Zhol",
+      "meeting_id": "m_011",
+      "date": "2026-09-21",
+      "ts": "00:05:53",
+      "quote": "поэтому релиз Zhol переносится на десятое ноября вместо шестого октября",
+      "statement": "релиз Zhol переносится на десятое ноября вместо шестого октября",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m011_01"
+    },
+    {
+      "type": "Meeting",
+      "label": "Qamqor: тесты",
+      "meeting_id": "m_012",
+      "date": "2026-09-28",
+      "participants": [
+        "Нұралы",
+        "Сандуғаш",
+        "Абдурахман"
+      ],
+      "id": "meeting:m_012"
+    },
+    {
+      "type": "Decision",
+      "label": "Бот әзірше қазақ және орыс тілдерінде ғана жұмыс істейді, ал ағылшын тілін кейінірек қосамыз",
+      "confidence": 0.9,
+      "made_by": "Нұралы",
+      "project": "Qamqor",
+      "meeting_id": "m_012",
+      "date": "2026-09-28",
+      "ts": "00:06:05",
+      "quote": "Қолдаймын.",
+      "statement": "Бот әзірше қазақ және орыс тілдерінде ғана жұмыс істейді, ал ағылшын тілін кейінірек қосамыз",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m012_01"
+    },
+    {
+      "type": "Task",
+      "label": "Сандуғаш жинап бітір тестовый выборканы",
+      "owner": "Сандуғаш",
+      "due": "2026-10-09",
+      "status": "open",
+      "project": "Qamqor",
+      "meeting_id": "m_012",
+      "date": "2026-09-28",
+      "ts": "00:06:16",
+      "quote": "Сандуғаш, сен тоғызыншы қазанға дейін осы тестовый выборканы жинап бітір.",
+      "statement": "Сандуғаш жинап бітір тестовый выборканы",
+      "id": "t_m012_01"
+    },
+    {
+      "type": "Meeting",
+      "label": "Squad: разбор с клиентом",
+      "meeting_id": "m_013",
+      "date": "2026-10-05",
+      "participants": [
+        "Амина",
+        "Данияр",
+        "Нұралы",
+        "Ержан"
+      ],
+      "id": "meeting:m_013"
+    },
+    {
+      "type": "Decision",
+      "label": "Экспорт в Excel возвращается в первую версию Squad.",
+      "confidence": 0.9,
+      "made_by": "Амина",
+      "project": "Squad",
+      "meeting_id": "m_013",
+      "date": "2026-10-05",
+      "ts": "00:06:07",
+      "quote": "ну раз без этого никак, эксель экспорт возвращается в первую версию Squad.",
+      "statement": "Экспорт в Excel возвращается в первую версию Squad.",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m013_01"
+    },
+    {
+      "type": "Decision",
+      "label": "Первая версия Squad теперь выходит двадцатого ноября вместо конца октября.",
+      "confidence": 0.9,
+      "made_by": "Амина",
+      "project": "Squad",
+      "meeting_id": "m_013",
+      "date": "2026-10-05",
+      "ts": "00:06:18",
+      "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября.",
+      "statement": "Первая версия Squad теперь выходит двадцатого ноября вместо конца октября.",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m013_02"
+    },
+    {
+      "type": "Meeting",
+      "label": "Итоговая встреча перед релизом Zhol",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "participants": [
+        "Амина",
+        "Нұралы",
+        "Николай",
+        "Абдурахман",
+        "Сандуғаш",
+        "Данияр"
+      ],
+      "id": "meeting:m_015"
+    },
+    {
+      "type": "Decision",
+      "label": "Релиз Zhol остается на 10 ноября.",
+      "confidence": 0.9,
+      "made_by": null,
+      "project": "Zhol",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "ts": "00:00:39",
+      "quote": "по Zhol мы все помним что релиз у нас десятого ноября остается.",
+      "statement": "Релиз Zhol остается на 10 ноября.",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m015_01"
+    },
+    {
+      "type": "Decision",
+      "label": "С 2 ноября новые функции в Zhol не добавляем.",
+      "confidence": 0.9,
+      "made_by": null,
+      "project": "Zhol",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "ts": "00:00:55",
+      "quote": "со второго ноября новые функции в Zhol мы не добавляем.",
+      "statement": "С 2 ноября новые функции в Zhol не добавляем.",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m015_02"
+    },
+    {
+      "type": "Decision",
+      "label": "Только критичные ошибки фиксируем, если вылезут.",
+      "confidence": 0.9,
+      "made_by": null,
+      "project": "Zhol",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "ts": "00:01:22",
+      "quote": "только критичные ошибки фиксим если вылезут.",
+      "statement": "Только критичные ошибки фиксируем, если вылезут.",
+      "status": "active",
+      "in_conflict": false,
+      "id": "d_m015_03"
+    },
+    {
+      "type": "Task",
+      "label": "Коля делает документацию API Squad до 6 ноября.",
+      "owner": "Николай",
+      "due": "2026-11-06",
+      "status": "open",
+      "project": "Zhol",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "ts": "00:05:48",
+      "quote": "Коля документацию апи Squad ты делаешь до шестого ноября.",
+      "statement": "Коля делает документацию API Squad до 6 ноября.",
+      "id": "t_m015_01"
+    },
+    {
+      "type": "OpenQuestion",
+      "label": "Кто проводит QA перед релизом Zhol?",
+      "project": "Zhol",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "ts": "00:01:30",
+      "quote": "и тут у нас открытый вопрос висит. кто вообще проводит qa перед релизом Zhol.",
+      "statement": "Кто проводит QA перед релизом Zhol?",
+      "id": "q_m015_01"
     }
   ],
   "edges": [
@@ -532,6 +798,36 @@
     },
     {
       "type": "PARTICIPATED_IN",
+      "source": "person:Амина",
+      "target": "meeting:m_009",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Амина",
+      "target": "meeting:m_010",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Амина",
+      "target": "meeting:m_011",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Амина",
+      "target": "meeting:m_013",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Амина",
+      "target": "meeting:m_015",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
       "source": "person:Нұралы",
       "target": "meeting:m_001",
       "key": "PARTICIPATED_IN"
@@ -580,6 +876,36 @@
     },
     {
       "type": "PARTICIPATED_IN",
+      "source": "person:Нұралы",
+      "target": "meeting:m_009",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Нұралы",
+      "target": "meeting:m_011",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Нұралы",
+      "target": "meeting:m_012",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Нұралы",
+      "target": "meeting:m_013",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Нұралы",
+      "target": "meeting:m_015",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
       "source": "person:Николай",
       "target": "meeting:m_001",
       "key": "PARTICIPATED_IN"
@@ -610,6 +936,18 @@
     },
     {
       "type": "PARTICIPATED_IN",
+      "source": "person:Николай",
+      "target": "meeting:m_011",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Николай",
+      "target": "meeting:m_015",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
       "source": "person:Абдурахман",
       "target": "meeting:m_001",
       "key": "PARTICIPATED_IN"
@@ -630,6 +968,30 @@
       "type": "PARTICIPATED_IN",
       "source": "person:Абдурахман",
       "target": "meeting:m_008",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Абдурахман",
+      "target": "meeting:m_010",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Абдурахман",
+      "target": "meeting:m_011",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Абдурахман",
+      "target": "meeting:m_012",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Абдурахман",
+      "target": "meeting:m_015",
       "key": "PARTICIPATED_IN"
     },
     {
@@ -684,6 +1046,30 @@
       "type": "PARTICIPATED_IN",
       "source": "person:Сандуғаш",
       "target": "meeting:m_002",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Сандуғаш",
+      "target": "meeting:m_009",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Сандуғаш",
+      "target": "meeting:m_010",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Сандуғаш",
+      "target": "meeting:m_012",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Сандуғаш",
+      "target": "meeting:m_015",
       "key": "PARTICIPATED_IN"
     },
     {
@@ -760,8 +1146,32 @@
     },
     {
       "type": "PARTICIPATED_IN",
+      "source": "person:Данияр",
+      "target": "meeting:m_010",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Данияр",
+      "target": "meeting:m_013",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Данияр",
+      "target": "meeting:m_015",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
       "source": "person:Ержан",
       "target": "meeting:m_003",
+      "key": "PARTICIPATED_IN"
+    },
+    {
+      "type": "PARTICIPATED_IN",
+      "source": "person:Ержан",
+      "target": "meeting:m_013",
       "key": "PARTICIPATED_IN"
     },
     {
@@ -1047,6 +1457,254 @@
       "source": "d_m008_02",
       "target": "d_m007_01",
       "key": "CONTRADICTS"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_009",
+      "target": "project:Qamqor",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m009_01",
+      "target": "project:Qamqor",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m009_01",
+      "target": "meeting:m_009",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_010",
+      "target": "project:Boost",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m010_01",
+      "target": "project:Boost",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m010_01",
+      "target": "meeting:m_010",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "REFINES",
+      "confidence": 0.8,
+      "rationale": "Решение A уточняет детали по добавлению метрик продаж в уже существующую внутреннюю панель метрик Boost, предложенную в решении B.",
+      "source": "d_m010_01",
+      "target": "d_m004_01",
+      "key": "REFINES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m010_01",
+      "target": "project:Boost",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m010_01",
+      "target": "meeting:m_010",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "ASSIGNED_TO",
+      "source": "t_m010_01",
+      "target": "person:Абдурахман",
+      "key": "ASSIGNED_TO"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_011",
+      "target": "project:Zhol",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m011_01",
+      "target": "project:Zhol",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m011_01",
+      "target": "meeting:m_011",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "SUPERSEDES",
+      "confidence": 0.9,
+      "rationale": "Решение A изменяет дату релиза Zhol, указанную в решении B, отменяя его.",
+      "source": "d_m011_01",
+      "target": "d_m006_01",
+      "key": "SUPERSEDES"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_012",
+      "target": "project:Qamqor",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m012_01",
+      "target": "project:Qamqor",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m012_01",
+      "target": "meeting:m_012",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m012_01",
+      "target": "project:Qamqor",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m012_01",
+      "target": "meeting:m_012",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "ASSIGNED_TO",
+      "source": "t_m012_01",
+      "target": "person:Сандуғаш",
+      "key": "ASSIGNED_TO"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_013",
+      "target": "project:Squad",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m013_01",
+      "target": "project:Squad",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m013_01",
+      "target": "meeting:m_013",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "SUPERSEDES",
+      "confidence": 0.9,
+      "rationale": "Решение A отменяет и заменяет решение B, так как оно возвращает экспорт в Excel к первой версии, изменяя содержание предыдущего решения.",
+      "source": "d_m013_01",
+      "target": "d_m003_01",
+      "key": "SUPERSEDES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m013_02",
+      "target": "project:Squad",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m013_02",
+      "target": "meeting:m_013",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "SUPERSEDES",
+      "confidence": 0.9,
+      "rationale": "Решение A изменяет дату выхода первой версии Squad, указанную в решении B, отменяя её.",
+      "source": "d_m013_02",
+      "target": "d_m003_02",
+      "key": "SUPERSEDES"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_015",
+      "target": "project:Zhol",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "DISCUSSES",
+      "source": "meeting:m_015",
+      "target": "project:Qamqor",
+      "key": "DISCUSSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m015_01",
+      "target": "project:Zhol",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m015_01",
+      "target": "meeting:m_015",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m015_02",
+      "target": "project:Zhol",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m015_02",
+      "target": "meeting:m_015",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "d_m015_03",
+      "target": "project:Zhol",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "d_m015_03",
+      "target": "meeting:m_015",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m015_01",
+      "target": "project:Zhol",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m015_01",
+      "target": "meeting:m_015",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "ASSIGNED_TO",
+      "source": "t_m015_01",
+      "target": "person:Николай",
+      "key": "ASSIGNED_TO"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "q_m015_01",
+      "target": "project:Zhol",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "q_m015_01",
+      "target": "meeting:m_015",
+      "key": "STATED_IN"
     }
   ]
 }

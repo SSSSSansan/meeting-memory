@@ -17,7 +17,10 @@ def test_node_types_and_meetings():
     G = load()
     types = {d["type"] for _, d in G.nodes(data=True)}
     assert {"Meeting", "Person", "Project", "Decision", "Task", "OpenQuestion"} <= types
-    assert sum(1 for _, d in G.nodes(data=True) if d["type"] == "Meeting") == 10
+    # Число встреч растёт по мере извлечения (data/raw без m_014) — сверяем с data/extracted_llm_raw,
+    # а не фиксируем число, чтобы тест не ломался при каждом новом extract.
+    n_extracted = len(list((Path(__file__).resolve().parent.parent / "data" / "extracted_llm_raw").glob("*.json")))
+    assert sum(1 for _, d in G.nodes(data=True) if d["type"] == "Meeting") == n_extracted
 
 
 def test_every_item_has_project_meeting_and_status():

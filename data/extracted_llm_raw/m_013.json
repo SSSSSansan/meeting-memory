@@ -1,0 +1,32 @@
+{
+  "meeting_id": "m_013",
+  "projects_discussed": [
+    "Squad"
+  ],
+  "decisions": [
+    {
+      "id": "d_m013_01",
+      "project": "Squad",
+      "statement": "Экспорт в Excel возвращается в первую версию Squad.",
+      "made_by": "Амина",
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:06:07",
+        "quote": "ну раз без этого никак, эксель экспорт возвращается в первую версию Squad."
+      }
+    },
+    {
+      "id": "d_m013_02",
+      "project": "Squad",
+      "statement": "Первая версия Squad теперь выходит двадцатого ноября вместо конца октября.",
+      "made_by": "Амина",
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:06:18",
+        "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября."
+      }
+    }
+  ],
+  "tasks": [],
+  "open_questions": []
+}
