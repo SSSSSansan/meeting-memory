@@ -217,5 +217,97 @@
     "owner": "abdurakhman",
     "quote": "Абду, блок метрик продаж в Boost делаешь ты",
     "start_s": 545.03
+  },
+  {
+    "id": "ev_m011_01",
+    "type": "decision",
+    "project": "zhol",
+    "meeting": "m_011",
+    "quote": "релиз Zhol переносится на десятое ноября вместо шестого октября",
+    "start_s": 353.23
+  },
+  {
+    "id": "ev_m011_02",
+    "type": "status_update",
+    "project": "zhol",
+    "meeting": "m_011",
+    "quote": "экран статистики готов",
+    "start_s": 48.23
+  },
+  {
+    "id": "ev_m012_01",
+    "type": "decision",
+    "project": "qamqor",
+    "meeting": "m_012",
+    "quote": "Бот әзірше қазақ және орыс тілдерінде ғана жұмыс істейді, ал ағылшын тілін кейінірек қосамыз",
+    "start_s": 357.57
+  },
+  {
+    "id": "ev_m012_02",
+    "type": "task",
+    "project": "qamqor",
+    "meeting": "m_012",
+    "owner": "sandugash",
+    "due": "2026-10-09",
+    "quote": "Сандуғаш, сен тоғызыншы қазанға дейін осы тестовый выборканы жинап бітір",
+    "start_s": 376.06
+  },
+  {
+    "id": "ev_m013_01",
+    "type": "decision",
+    "project": "squad",
+    "meeting": "m_013",
+    "quote": "эксель экспорт возвращается в первую версию Squad",
+    "start_s": 367.45
+  },
+  {
+    "id": "ev_m013_02",
+    "type": "decision",
+    "project": "squad",
+    "meeting": "m_013",
+    "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября",
+    "start_s": 378.85
+  },
+  {
+    "id": "ev_m015_01",
+    "type": "recap",
+    "project": "zhol",
+    "meeting": "m_015",
+    "quote": "по Zhol мы все помним что релиз у нас десятого ноября остается",
+    "start_s": 39.77
+  },
+  {
+    "id": "ev_m015_02",
+    "type": "task",
+    "project": "squad",
+    "meeting": "m_015",
+    "owner": "nikolay",
+    "due": "2026-11-06",
+    "quote": "Коля документацию апи Squad ты делаешь до шестого ноября",
+    "start_s": 348.2
+  },
+  {
+    "id": "ev_m015_03",
+    "type": "decision",
+    "project": "zhol",
+    "meeting": "m_015",
+    "quote": "со второго ноября новые функции в Zhol мы не добавляем",
+    "start_s": 55.47
+  },
+  {
+    "id": "ev_m015_04",
+    "type": "open_question",
+    "project": "zhol",
+    "meeting": "m_015",
+    "quote": "кто вообще проводит qa перед релизом Zhol",
+    "start_s": 90.22
+  },
+  {
+    "id": "ev_m015_05",
+    "type": "status_update",
+    "project": "qamqor",
+    "meeting": "m_015",
+    "quote": "по Qamqor тестовая выборка собрана полностью",
+    "start_s": 185.89
   }
 ]

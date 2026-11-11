@@ -1,0 +1,60 @@
+{
+  "public_id": "96a88528-b9bd-521f-8e92-f49708fe716d",
+  "title": "Squad: разбор с клиентом",
+  "language": "ru",
+  "started_at": "2026-10-05T13:26:31+05:00",
+  "ended_at": "2026-10-05T13:33:32+05:00",
+  "actual_duration_seconds": 420.82,
+  "transcription_provider": "synthetic",
+  "is_private": false,
+  "speaker_names": null,
+  "status": "READY",
+  "has_transcript": true,
+  "summary_count": 0,
+  "owner": {
+    "user": {
+      "full_name": "Амина",
+      "email": "amina@example.com",
+      "position": "Product manager"
+    }
+  },
+  "departments": [],
+  "participants": [
+    {
+      "user": {
+        "full_name": "Амина",
+        "email": "amina@example.com",
+        "position": "Product manager"
+      },
+      "role": "employee",
+      "added_at": "2026-10-05T13:26:31+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Данияр",
+        "email": "daniyar@example.com",
+        "position": "Head of business development"
+      },
+      "role": "employee",
+      "added_at": "2026-10-05T13:26:31+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Нұралы",
+        "email": "nuraly@example.com",
+        "position": "Tech lead"
+      },
+      "role": "employee",
+      "added_at": "2026-10-05T13:26:31+05:00"
+    },
+    {
+      "user": {
+        "full_name": "Ержан",
+        "email": "client_squad@example.com",
+        "position": "Представитель клиента Squad"
+      },
+      "role": "employee",
+      "added_at": "2026-10-05T13:26:31+05:00"
+    }
+  ]
+}

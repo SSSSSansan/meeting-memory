@@ -9,11 +9,13 @@
 Проверяет:
   1. Схема каждой записи (лишние и недостающие поля, значения type/split/lang/as_of).
   2. id вопросов уникальны.
-  3. Все source_meetings и as_of есть в world.yaml; source_meetings не позже as_of.
-  4. Все decision_ids есть в world.yaml; встреча каждого события входит в source_meetings
-     и не позже as_of.
+  3. Все source_meetings и as_of есть в world.yaml (номер встречи может отсутствовать,
+     например m_014 исключена); source_meetings не позже as_of. «Позже» считается
+     по дате встречи в world.yaml, а не по номеру.
+  4. Все decision_ids есть в world.yaml, без повторов; встреча каждого события входит
+     в source_meetings и не позже as_of.
   5. У вопросов answerable=false оба списка пусты, тип none; у остальных списки не пусты.
-  6. Вопросов на казахском (lang=kk) не меньше 3.
+  6. Вопросов на казахском (lang=kk) не меньше 3, в выборке test не меньше 12.
 
 Код возврата 1 и сообщение на каждую ошибку, если проверки не прошли.
 Модель вопроса живёт здесь, а не в src/schemas.py: эталон читают только оценка и роль A.
@@ -24,6 +26,7 @@ import json
 import re
 import sys
 from collections import Counter
+from datetime import date
 from pathlib import Path
 from typing import Any, Literal
 
@@ -35,6 +38,7 @@ DEFAULT_QUESTIONS = ROOT / "data" / "gold" / "questions.json"
 DEFAULT_WORLD = ROOT / "data" / "gold" / "world.yaml"
 
 MIN_KK_QUESTIONS = 3
+MIN_TEST_QUESTIONS = 12
 ID_RE = re.compile(r"^q_\d{2,}$")
 MEETING_RE = re.compile(r"^m_\d{3}$")
 EVENT_RE = re.compile(r"^ev_m\d{3}_\d{2}$")
@@ -119,7 +123,8 @@ def check(raw_questions: Any, world: dict) -> list[str]:
     if not isinstance(raw_questions, list):
         return ["questions.json: ожидался список записей"]
 
-    meeting_order = {m["id"]: i for i, m in enumerate(world["meetings"])}
+    # порядок встреч — по дате: нумерация может иметь пропуски (m_014 исключена)
+    meeting_order = {m["id"]: m["date"] for m in world["meetings"]}
     event_meeting = {e["id"]: e["meeting"] for e in world["events"]}
 
     errors: list[str] = []
@@ -140,10 +145,13 @@ def check(raw_questions: Any, world: dict) -> list[str]:
     kk = sum(1 for q in questions if q.lang == "kk")
     if kk < MIN_KK_QUESTIONS:
         errors.append(f"вопросов на казахском {kk}, нужно не меньше {MIN_KK_QUESTIONS}")
+    test = sum(1 for q in questions if q.split == "test")
+    if test < MIN_TEST_QUESTIONS:
+        errors.append(f"вопросов в выборке test {test}, нужно не меньше {MIN_TEST_QUESTIONS}")
     return errors
 
 
-def _reference_errors(q: Question, meeting_order: dict[str, int], event_meeting: dict[str, str]) -> list[str]:
+def _reference_errors(q: Question, meeting_order: dict[str, date], event_meeting: dict[str, str]) -> list[str]:
     errors: list[str] = []
     as_of_known = q.as_of in meeting_order
     if not as_of_known:
@@ -154,6 +162,9 @@ def _reference_errors(q: Question, meeting_order: dict[str, int], event_meeting:
             errors.append(f"{q.id}: встречи {m} нет в world.yaml")
         elif as_of_known and meeting_order[m] > meeting_order[q.as_of]:
             errors.append(f"{q.id}: source_meetings содержит {m}, это позже as_of {q.as_of}")
+
+    for ev in sorted(e for e, n in Counter(q.decision_ids).items() if n > 1):
+        errors.append(f"{q.id}: decision_ids содержит {ev} больше одного раза")
 
     for ev in q.decision_ids:
         meeting = event_meeting.get(ev)
