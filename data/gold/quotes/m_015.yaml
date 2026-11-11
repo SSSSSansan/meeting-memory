@@ -1,0 +1,24 @@
+# Цитаты эталона для m_015: дословный фрагмент из транскрипта в поле quote.
+# Проверка и сборка: python scripts/build_gold.py --build
+meeting: m_015
+events:
+- id: ev_m015_01
+  type: recap
+  description: 'Подтверждено: релиз Zhol 10 ноября'
+  quote: ''
+- id: ev_m015_02
+  type: task
+  description: Подготовить документацию API Squad (повторно)
+  quote: ''
+- id: ev_m015_03
+  type: decision
+  description: С 2 ноября 2026 новые функции в Zhol не добавляем
+  quote: ''
+- id: ev_m015_04
+  type: open_question
+  description: Кто проводит QA перед релизом Zhol
+  quote: ''
+- id: ev_m015_05
+  type: status_update
+  description: Тестовая выборка собрана
+  quote: ''

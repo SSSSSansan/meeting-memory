@@ -1,0 +1,12 @@
+# Цитаты эталона для m_012: дословный фрагмент из транскрипта в поле quote.
+# Проверка и сборка: python scripts/build_gold.py --build
+meeting: m_012
+events:
+- id: ev_m012_01
+  type: decision
+  description: Бот сначала работает на казахском и русском, английский позже
+  quote: ''
+- id: ev_m012_02
+  type: task
+  description: Собрать тестовую выборку для Qamqor
+  quote: ''
