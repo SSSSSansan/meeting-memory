@@ -38,10 +38,29 @@ def test_real_questions_have_no_errors(questions, world):
 
 
 def test_real_questions_shape(questions):
-    assert len(questions) == 18
+    assert len(questions) == 35
     assert {q["split"] for q in questions} == {"dev", "test"}
-    assert {q["as_of"] for q in questions} == {"m_008"}
+    assert {q["as_of"] for q in questions} == {"m_008", "m_015"}
+    # q_16 привязан к дате 2 сентября, q_17 остаётся на m_008; остальные — на m_015
+    assert {q["id"] for q in questions if q["as_of"] == "m_008"} == {"q_16", "q_17"}
     assert sum(q["lang"] == "kk" for q in questions) >= 3
+    assert sum(q["split"] == "test" for q in questions) >= 12
+
+
+def test_questions_use_only_existing_meetings(questions, world):
+    # m_014 исключена из набора: ни as_of, ни источники на неё не ссылаются
+    ids = {m["id"] for m in world["meetings"]}
+    assert "m_014" not in ids
+    for q in questions:
+        assert {q["as_of"], *q["source_meetings"]} <= ids
+
+
+def test_m008_copy_is_valid_for_incremental_check(world):
+    # копия вопросов на состояние m_008: все as_of m_008, ответы без встреч после неё
+    old = load_json(DEFAULT_QUESTIONS.with_name("questions_m008.json"))
+    assert len(old) == 18 and {q["as_of"] for q in old} == {"m_008"}
+    errors = [e for e in check(old, world) if "выборке test" not in e]
+    assert errors == []
 
 
 def test_broken_event_id_fails(questions, world):
@@ -64,6 +83,7 @@ def test_event_meeting_not_in_source_meetings_fails(questions, world):
 
 def test_event_after_as_of_fails(questions, world):
     q = _by_id(questions, "q_05")
+    q["as_of"] = "m_008"
     q["decision_ids"] = ["ev_m001_01", "ev_m011_01"]
     q["source_meetings"] = ["m_001", "m_011"]
     errors = check(questions, world)
@@ -71,9 +91,41 @@ def test_event_after_as_of_fails(questions, world):
 
 
 def test_source_meeting_after_as_of_fails(questions, world):
-    _by_id(questions, "q_05")["source_meetings"].append("m_010")
+    q = _by_id(questions, "q_05")
+    q["as_of"] = "m_008"
+    q["source_meetings"].append("m_010")
     errors = check(questions, world)
     assert any("q_05" in e and "m_010" in e and "позже as_of" in e for e in errors)
+
+
+def test_as_of_compared_by_date_not_number(questions, world):
+    # номер m_010 больше, чем у m_008, но по дате она раньше: источник допустим
+    for m in world["meetings"]:
+        if m["id"] == "m_010":
+            m["date"] = world["meetings"][0]["date"]
+    q = _by_id(questions, "q_01")
+    q["as_of"] = "m_008"
+    q["source_meetings"] = ["m_006", "m_010"]
+    assert check(questions, world) == []
+    # и наоборот: m_007 раньше m_008 по номеру, но по дате позже
+    for m in world["meetings"]:
+        if m["id"] == "m_007":
+            m["date"] = world["meetings"][-1]["date"]
+    q["source_meetings"] = ["m_006", "m_007"]
+    assert any("m_007" in e and "позже as_of" in e for e in check(questions, world))
+
+
+def test_as_of_of_excluded_meeting_fails(questions, world):
+    _by_id(questions, "q_01")["as_of"] = "m_014"
+    errors = check(questions, world)
+    assert any("q_01" in e and "m_014" in e and "нет в world.yaml" in e for e in errors)
+
+
+def test_duplicate_decision_ids_fail(questions, world):
+    q = _by_id(questions, "q_05")
+    q["decision_ids"] = [*q["decision_ids"], q["decision_ids"][0]]
+    errors = check(questions, world)
+    assert any("q_05" in e and "больше одного раза" in e for e in errors)
 
 
 def test_unknown_as_of_fails(questions, world):
@@ -138,10 +190,17 @@ def test_bad_field_value_fails(questions, world, field, value):
 
 def test_too_few_kk_questions_fails(questions, world):
     for q in questions:
-        if q["lang"] == "kk" and q["id"] != "q_04":
+        if q["lang"] == "kk" and q["id"] not in ("q_04", "q_11"):
             q["lang"] = "ru"
     errors = check(questions, world)
     assert any("казахском" in e for e in errors)
+
+
+def test_too_few_test_questions_fails(questions, world):
+    for q in [q for q in questions if q["split"] == "test"][11:]:
+        q["split"] = "dev"
+    errors = check(questions, world)
+    assert any("выборке test 11" in e for e in errors)
 
 
 def test_not_a_list_fails(world):
