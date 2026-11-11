@@ -14,15 +14,19 @@
 from __future__ import annotations
 
 import json
+import os
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Iterator, Optional
 
 from src.answer.answerer import answer
 from src.ingest.scribal_adapter import convert
+from src.ingest.speakers import apply_speakers
 from src.retrieval.baseline import DEFAULT_INDEX_DIR, ROOT, BaselineIndex
 from src.resolve.entities import resolve_projects
-from src.retrieval.graph_rag import SAMPLE_GRAPH_PATH, default_graph_path, get_aliases
+from src.retrieval.graph_rag import (B_GRAPH_PATH, GRAPH_PATH, SAMPLE_GRAPH_PATH, default_graph_path, get_aliases,
+                                     use_graph_path)
 from src.retrieval.graph_rag import get_graph as _load_graph
 from src.retrieval.router import Route
 from src.retrieval.router import route as _route
@@ -215,3 +219,150 @@ def get_graph(project: Optional[str] = None) -> dict:
     edges = [{"source": u, "target": v, **e} for u, v, e in G.edges(data=True)
              if u in keep and v in keep and e["type"] != "PARTICIPATED_IN"]
     return {"nodes": nodes, "edges": edges}
+
+
+# ---------- Демо-UI (C7): выбор графа, конфликты и замены, источник цитаты, рисунок ----------
+
+GRAPH_LABELS = {B_GRAPH_PATH: "полный: все встречи графа B (data/graph_raw)",
+                GRAPH_PATH: "для eval: встречи до m_008 (data/graph)",
+                SAMPLE_GRAPH_PATH: "заглушка: старый сюжет Атлас/Горизонт (data/sample)"}
+
+
+def available_graphs() -> list[dict]:
+    """Графы, которые есть на диске, — для выбора в UI. Полный граф B первым: для демо он нужнее."""
+    out = []
+    for path in (p for p in GRAPH_LABELS if p.exists()):
+        G = _load_graph(path)
+        meetings = sorted({d["meeting_id"] for _, d in G.nodes(data=True) if d.get("type") == "Meeting"})
+        out.append({"path": path, "label": GRAPH_LABELS[path], "meetings": meetings})
+    return out
+
+
+def demo_default_graph() -> Optional[Path]:
+    """Граф, выбранный в UI по умолчанию: MEETING_GRAPH, если задана, иначе самый полный из available_graphs()."""
+    env = os.environ.get("MEETING_GRAPH")
+    if env:
+        return default_graph_path()
+    graphs = available_graphs()
+    return graphs[0]["path"] if graphs else None
+
+
+def use_graph(path: Optional[Path]) -> None:
+    """Какой граф читают режим graph, таймлайн и рисунок; None — граф по умолчанию (тот же, что у eval)."""
+    use_graph_path(path)
+
+
+def _card(G, n: str) -> dict:
+    d = G.nodes[n]
+    meeting = G.nodes.get(f"meeting:{d.get('meeting_id')}", {})
+    return {"id": n, "project": d.get("project", ""), "statement": d.get("statement", ""),
+            "date": d.get("date", ""), "meeting_id": d.get("meeting_id", ""), "ts": d.get("ts", ""),
+            "meeting_title": meeting.get("label", ""), "quote": d.get("quote", ""), "status": d.get("status", "")}
+
+
+def get_changes(project: Optional[str] = None) -> dict:
+    """Конфликты и замены решений — то, ради чего нужен граф. Без проекта — по всему графу."""
+    G = _load_graph()
+    label = None
+    if project:
+        pid = _project_node(G, project)
+        if pid is None:
+            return {"conflicts": [], "replacements": []}
+        label = G.nodes[pid]["label"]
+    conflicts, replacements = [], []
+    for u, v, e in G.edges(data=True):
+        if label and label not in (G.nodes[u].get("project"), G.nodes[v].get("project")):
+            continue
+        if e["type"] == "CONTRADICTS":
+            a, b = sorted((_card(G, u), _card(G, v)), key=lambda c: (c["date"], c["id"]))  # раньше принятое — первым
+            conflicts.append({"a": a, "b": b, "rationale": e.get("rationale", "")})
+        elif e["type"] == "SUPERSEDES":
+            replacements.append({"new": _card(G, u), "old": _card(G, v), "rationale": e.get("rationale", "")})
+    conflicts.sort(key=lambda c: (c["a"]["date"], c["a"]["id"]))
+    replacements.sort(key=lambda r: (r["new"]["date"], r["new"]["id"]))
+    return {"conflicts": conflicts, "replacements": replacements}
+
+
+@lru_cache(maxsize=32)
+def _transcript(meeting_id: str, mtime: float) -> Optional[Transcript]:
+    paths = [DEMO_DIR / f"{meeting_id}.{kind}.json" for kind in ("transcript", "meeting")]
+    if not all(p.exists() for p in paths):
+        return None
+    # имена говорящих — где эвристика роли B уверена; иначе остаётся SPEAKER_XX
+    return apply_speakers(load_scribal(meeting_id, *(p.read_bytes() for p in paths)))
+
+
+def get_source(meeting_id: str, ts: str, quote: str, around: int = 1) -> Optional[dict]:
+    """Реплика, из которой взята цитата, и соседние реплики — чтобы показать цитату в контексте.
+
+    highlight — (начало, конец) цитаты в тексте реплики; совпадение без учёта регистра и пробелов.
+    Реплика ищется по таймкоду, а если цитаты там нет — по тексту всей встречи. Встречи нет — None.
+    """
+    path = DEMO_DIR / f"{meeting_id}.transcript.json"
+    t = _transcript(meeting_id, path.stat().st_mtime) if path.exists() else None
+    if t is None:
+        return None
+    words = re.findall(r"\w+", quote)
+    pattern = re.compile(r"\W+".join(map(re.escape, words)), re.I) if words else None
+
+    def span(i: int) -> Optional[tuple[int, int]]:
+        m = pattern.search(t.segments[i].text) if pattern else None
+        return (m.start(), m.end()) if m else None
+
+    at_ts = [i for i, s in enumerate(t.segments) if s.ts == ts]
+    found = [(i, span(i)) for i in at_ts + list(range(len(t.segments)))]
+    i, hl = next(((i, h) for i, h in found if h), (at_ts[0], None) if at_ts else (None, None))
+    if i is None:
+        return None
+
+    def seg(j: int) -> dict:
+        s = t.segments[j]
+        return {"ts": s.ts, "speaker": s.speaker, "text": s.text}
+
+    return {"meeting_id": meeting_id, "title": t.title, "date": t.date, **seg(i), "highlight": hl,
+            "before": [seg(j) for j in range(max(0, i - around), i)],
+            "after": [seg(j) for j in range(i + 1, min(len(t.segments), i + 1 + around))]}
+
+
+_NODE_STYLE = {"Project": 'shape=box style="rounded,filled" fillcolor="#E1F5EE" color="#0F6E56"',
+               "Meeting": 'shape=note style=filled fillcolor="#F1EFE8" color="#888780"',
+               "Person": 'shape=ellipse style=filled fillcolor="#EEEDFE" color="#534AB7"',
+               "Decision": 'shape=box style="rounded,filled" fillcolor="#E6F1FB" color="#185FA5"',
+               "Task": 'shape=box style="rounded,filled" fillcolor="#FAEEDA" color="#854F0B"',
+               "OpenQuestion": 'shape=box style="rounded,filled,dashed" fillcolor="#FBEAF0" color="#993556"'}
+_EDGE_STYLE = {"SUPERSEDES": 'color="#5F5E5A" style=bold label="заменяет"',
+               "CONTRADICTS": 'color="#E24B4A" style=bold penwidth=2 dir=both label="конфликт"',
+               "REFINES": 'color="#185FA5" style=dashed label="уточняет"',
+               "DEPENDS_ON": 'color="#854F0B" style=dashed label="зависит от"',
+               "SAME_TOPIC": 'color="#B4B2A9" style=dotted label="та же тема"',
+               "BELONGS_TO": 'color="#B4B2A9"', "STATED_IN": 'color="#D3D1C7" style=dotted',
+               "ASSIGNED_TO": 'color="#7F77DD" style=dashed', "DISCUSSES": 'color="#D3D1C7" style=dotted'}
+
+
+def graph_dot(project: Optional[str] = None, max_label: int = 38) -> str:
+    """Граф проекта (или весь) на языке DOT для st.graphviz_chart. Заменённые решения серые
+    и с пометкой, решения в конфликте — с красной рамкой, связь «конфликт» — красная."""
+    g = get_graph(project)
+
+    def esc(text: str) -> str:
+        text = text if len(text) <= max_label else text[:max_label - 1] + "…"
+        return text.replace("\\", "\\\\").replace('"', '\\"')
+
+    lines = ["digraph G {", '  rankdir=LR; bgcolor="transparent";',
+             '  node [fontname="Helvetica" fontsize=10]; edge [fontname="Helvetica" fontsize=9];']
+    linked = {e["source"] for e in g["edges"]} | {e["target"] for e in g["edges"]}
+    for n in (n for n in g["nodes"] if n["id"] in linked):  # люди без задач — одинокие кружки, только шум
+        style = _NODE_STYLE.get(n["type"], "")
+        label = n.get("label", n["id"])
+        if n["type"] in ITEM_TYPES:
+            label = f"{n.get('date', '')} · {label}"
+            if n.get("status") == "superseded":
+                style += ' fillcolor="#F1EFE8" fontcolor="#888780"'
+                label = f"[заменено] {label}"
+            if n.get("in_conflict"):
+                style += ' color="#E24B4A" penwidth=2'
+        lines.append(f'  "{esc(n["id"])}" [label="{esc(label)}" {style}];')
+    for e in g["edges"]:
+        lines.append(f'  "{esc(e["source"])}" -> "{esc(e["target"])}" [{_EDGE_STYLE.get(e["type"], "")}];')
+    lines.append("}")
+    return "\n".join(lines)

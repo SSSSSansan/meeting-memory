@@ -50,9 +50,18 @@ _NUMBERS = {"одн": 1, "две": 2, "двух": 2, "три": 3, "трех": 3,
 _LAST_N = re.compile(r"последн\w*\s+(\d+|[а-яё]+)\s+встреч", re.I)
 
 _cache: dict[Path, tuple[float, object]] = {}
+_override: Optional[Path] = None
+
+
+def use_graph_path(path: Optional[Path]) -> None:
+    """Выбор графа из UI; None — обычный порядок (MEETING_GRAPH, затем GRAPH_CANDIDATES)."""
+    global _override
+    _override = Path(path) if path else None
 
 
 def default_graph_path() -> Path:
+    if _override is not None:
+        return _override
     env = os.environ.get("MEETING_GRAPH")
     if env:
         return Path(env) if Path(env).is_absolute() else ROOT / env
