@@ -26,6 +26,7 @@ def _isolated(monkeypatch, tmp_path):
     monkeypatch.setenv("LLM_MODEL", "gpt-answer")
     monkeypatch.delenv("JUDGE_MODEL", raising=False)
     monkeypatch.setattr(answerer, "REPORT", tmp_path / "answer_report.jsonl")
+    monkeypatch.setattr(ev, "RESULTS", tmp_path / "results")  # не писать в настоящий results/
     yield
     api.use_index_dir(api.DEFAULT_INDEX_DIR)
 

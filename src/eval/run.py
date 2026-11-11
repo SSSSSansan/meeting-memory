@@ -1,20 +1,31 @@
 """РОЛЬ A. Eval-harness (черновик): прогон вопросов через src.api.ask и простые метрики, без судьи.
 
-    python -m src.eval.run --mode baseline|graph|both --split dev|test|all [--as-of m_008] [--repeats 1]
+    python -m src.eval.run --mode baseline|graph|both --split dev|test|all [--as-of m_008] [--repeats 1..5]
     python -m src.eval.run --mode both --split test --dry-run      # только план и оценка стоимости
-    python -m src.eval.run --mode both --split test --judge --dry-run   # то же вместе с судьёй
+    python -m src.eval.run --mode both --split test --repeats 3 --judge --dry-run   # то же с повторами и судьёй
+    python -m src.eval.run --mode both --as-of m_008 --questions-file data/gold/questions_m008.json   # m_008
 
 Вопросы — data/gold/questions.json; в систему уходит только текст вопроса, эталон она не видит.
 У каждого вопроса свой as_of: система видит встречи до него включительно (см. src/eval/systems.py).
 --as-of m_008 оставляет только вопросы с этим as_of (по умолчанию — все).
 
-Выход: results/eval_<дата>.csv (по вопросам) и results/summary_<дата>.md (по типам, режимы рядом,
-dev и test отдельно). Правило из memory.md: чиним по dev, в отчёт идёт test.
+Выход: results/eval_<дата>.csv (по вопросам) и results/summary_<дата>.md (по типам и по языку, режимы рядом,
+dev и test отдельно; вопросы as_of m_008 — отдельной секцией, в основные таблицы не входят). Если задан --as-of или
+нестандартный --questions-file, к имени файлов добавляется суффикс (eval_<дата>_m_008.csv), чтобы прогоны одного дня
+не затирали друг друга. Правило из memory.md: чиним по dev, в отчёт идёт test.
+Повторы (--repeats N, 1..5): ответы системы на каждом повторе идут мимо кэша llm_client (свой каталог кэша на повтор,
+src/llm_client.py не меняется); в таблицах mean ± std по повторам (std выборочное, n−1; по вопросам std не считается).
+Температура отвечающей системы 0.0 (зашита в src/answer/answerer.py): если ответы повторов совпали, std=0 и в сводке
+предупреждение, разброс не имитируется. Судья оценивает каждый повтор отдельно, но одинаковый вход — один раз.
+Задержка в таблицах — только по ответам без кэша (по строкам runs/calls.jsonl: from_cache); если определить нельзя,
+колонка помечена «может включать кэш».
+Для режима both и вопросов test (без --limit) дополнительно пишется results/final_table_<дата>.md (при stub — с
+суффиксом _stub, чтобы не затереть платный результат): T1–T5 и none, baseline и graph рядом, mean ± std.
 --judge (по умолчанию выключен): после каждого ответа судья v2 (src/eval/judge.py, с транскриптами) ставит
 judge_score 0/1/2 и judge_fabrication 0/1; в сводке accuracy = среднее judge_score/2, fabrication_rate = доля
 ответов с judge_fabrication=1. Судью зовут одинаково для всех режимов: ему уходят вопрос, эталон, ответ, answerable
 и тексты встреч, но не режим, тип и split. Одинаковый вход судья не получает дважды (хэш входа; плюс кэш llm_client
-на диске). Без --judge accuracy и fabrication_rate = n/a. Повторы (A9) не реализованы.
+на диске). Без --judge accuracy и fabrication_rate = n/a.
 
 Если LLM_BACKEND не stub, прогон платный: сначала печатается оценка (ответы + судья), запуск — только с --confirm-paid.
 Лимит расходов держит scripts/cost_guard через src/llm_client (complete/embed).
@@ -24,18 +35,21 @@ from __future__ import annotations
 import argparse
 import csv
 import datetime as dt
+import json
+import math
 import os
 import subprocess
 import sys
 import time
 from collections import Counter, defaultdict
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Callable, ContextManager, Iterator, Optional
 
-import src.llm_client  # noqa: F401  — читает .env до того, как мы смотрим на LLM_BACKEND
 from scripts import cost_guard
 from scripts.check_questions import Question, load_json
+from src import llm_client  # читает .env до того, как мы смотрим на LLM_BACKEND
 from src.eval import estimate as est_mod
 from src.eval import judge as judge_mod
 from src.eval import systems
@@ -50,6 +64,10 @@ RAW_DIR = ROOT / "data" / "raw"
 INDEX_ROOT = ROOT / "runs" / "eval_index"
 RESULTS = ROOT / "results"
 TYPES = ["T1", "T2", "T3", "T4", "T5", "none"]
+LANGS = ["ru", "mixed", "kk"]
+MAX_REPEATS = 5
+HISTORICAL_AS_OF = "m_008"      # вопросы на состояние m_008 (q_16, questions_m008.json) — отдельная секция
+ANSWER_TEMPERATURE = 0.0        # src/answer/answerer.py::generate зовёт complete(..., temperature=0.0)
 MODES = {"baseline": ["baseline"], "graph": ["graph"], "both": ["baseline", "graph"]}
 
 
@@ -85,6 +103,7 @@ class Row:
     completion_tokens: Optional[int] = None
     cost_usd: Optional[float] = None
     latency_ms: Optional[int] = None
+    from_cache: Optional[bool] = None   # хотя бы один вызов модели за ответ взят из кэша llm_client; None — не известно
     repeat: int = 1
 
 
@@ -151,22 +170,77 @@ def coerce_answer(result: Any) -> tuple[Optional[Answer], str, str]:
     return None, "invalid_format", f"ожидался Answer, пришёл {type(result).__name__}"
 
 
-def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTexts, backend: str) -> Row:
+class CallLog:
+    """Строки runs/calls.jsonl, которые llm_client дописал за время одного ответа: так видно, взят ли ответ из кэша.
+    Читаем только хвост файла с запомненной позиции; любой сбой чтения = «не известно» (None), а не «без кэша»."""
+
+    def __init__(self, path: Optional[Path] = None) -> None:
+        self.path = path
+
+    def _file(self) -> Path:
+        return self.path or (llm_client.RUNS / "calls.jsonl")
+
+    def mark(self) -> Optional[int]:
+        try:
+            f = self._file()
+            return f.stat().st_size if f.exists() else 0
+        except OSError:
+            return None
+
+    def answer_calls_since(self, mark: Optional[int]) -> Optional[list[dict]]:
+        """Вызовы чата отвечающей системы (purpose answer_*) после mark; судья и эмбеддинги не считаются."""
+        if mark is None:
+            return None
+        try:
+            f = self._file()
+            size = f.stat().st_size if f.exists() else 0
+            if size < mark:  # файл пересоздали
+                return None
+            if size == mark:
+                return []
+            with f.open("rb") as fh:
+                fh.seek(mark)
+                tail = fh.read().decode("utf-8")
+            rows = [json.loads(line) for line in tail.splitlines() if line.strip()]
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            return None
+        return [r for r in rows if r.get("kind", "chat") == "chat" and str(r.get("purpose", "")).startswith("answer")]
+
+
+@contextmanager
+def isolated_cache(path: Path) -> Iterator[None]:
+    """На время вызова подменяет каталог кэша llm_client. complete() читает llm_client.CACHE в момент вызова,
+    поэтому src/llm_client.py трогать не нужно; у каждого повтора свой каталог — ответ повтора не берётся из кэша."""
+    saved = llm_client.CACHE
+    llm_client.CACHE = Path(path)
+    try:
+        yield
+    finally:
+        llm_client.CACHE = saved
+
+
+def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTexts, backend: str,
+            repeat: int = 1, ask_ctx: Optional[Callable[[], ContextManager]] = None,
+            call_log: Optional[CallLog] = None) -> Row:
     row = Row(question_id=q.id, type=q.type, split=q.split, lang=q.lang, as_of=q.as_of, mode=system.mode,
               system="stub" if system.is_stub else "real", backend=backend, status="ok",
-              answerable=q.answerable, source_meetings=",".join(q.source_meetings))
+              answerable=q.answerable, source_meetings=",".join(q.source_meetings), repeat=repeat)
+    if system.is_stub:
+        row.status, row.error, row.answer = "stub", system.note, ""
+        return row
+    mark = call_log.mark() if call_log else None
     t0 = time.perf_counter()
     try:
-        result = system.ask(q.question)  # только текст вопроса
+        with (ask_ctx() if ask_ctx else _no_ctx()):
+            result = system.ask(q.question)  # только текст вопроса
     except cost_guard.BudgetExceeded:
         raise  # лимит расходов — стоп всего прогона, а не «ошибка вопроса»
     except Exception as e:
         result, row.status, row.error = None, "error", f"{type(e).__name__}: {e}"
     wall_ms = int((time.perf_counter() - t0) * 1000)
+    calls = call_log.answer_calls_since(mark) if call_log else None
+    row.from_cache = None if calls is None else any(bool(c.get("from_cache")) for c in calls)
 
-    if system.is_stub:
-        row.status, row.error, row.answer = "stub", system.note, ""
-        return row
     answer = None
     if row.status != "error":
         answer, row.status, row.error = coerce_answer(result)
@@ -190,9 +264,18 @@ def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTe
     return row
 
 
+@contextmanager
+def _no_ctx() -> Iterator[None]:
+    yield
+
+
 def run_eval(questions: list[Question], modes: list[str], build: Callable[[str, str], systems.System], *,
-             gold: dict, texts: MeetingTexts, backend: str, judge: Optional[JudgeRunner] = None) -> list[Row]:
-    """build(mode, as_of) → System. Каждая пара (as_of, режим) строится один раз и отвечает на все свои вопросы."""
+             gold: dict, texts: MeetingTexts, backend: str, judge: Optional[JudgeRunner] = None,
+             repeats: int = 1, repeat_cache: Optional[Callable[[int], ContextManager]] = None,
+             call_log: Optional[CallLog] = None) -> list[Row]:
+    """build(mode, as_of) → System. Каждая пара (as_of, режим) строится один раз и отвечает на все свои вопросы,
+    repeats раз. repeat_cache(n) — менеджер контекста, в котором идёт ответ n-го повтора (изоляция кэша).
+    Заглушка (stub) отвечает один раз: повторять нечего."""
     by_asof: dict[str, list[Question]] = defaultdict(list)
     for q in questions:
         by_asof[q.as_of].append(q)
@@ -204,75 +287,161 @@ def run_eval(questions: list[Question], modes: list[str], build: Callable[[str, 
             except cost_guard.BudgetExceeded:
                 raise
             except Exception as e:
+                for rep in range(1, repeats + 1):
+                    for q in qs:
+                        row = Row(question_id=q.id, type=q.type, split=q.split, lang=q.lang, as_of=as_of,
+                                  mode=mode, system="real", backend=backend, status="error",
+                                  error=f"{type(e).__name__}: {e}", answerable=q.answerable,
+                                  source_meetings=",".join(q.source_meetings), repeat=rep)
+                        if judge:
+                            judge.apply(row, q)
+                        rows.append(row)
+                continue
+            for rep in range(1, 2 if system.is_stub else repeats + 1):
+                ask_ctx = (lambda rep=rep: repeat_cache(rep)) if repeat_cache else None
                 for q in qs:
-                    row = Row(question_id=q.id, type=q.type, split=q.split, lang=q.lang, as_of=as_of,
-                              mode=mode, system="real", backend=backend, status="error",
-                              error=f"{type(e).__name__}: {e}", answerable=q.answerable,
-                              source_meetings=",".join(q.source_meetings))
-                    if judge:
+                    row = run_one(q, system, gold=gold, texts=texts, backend=backend, repeat=rep,
+                                  ask_ctx=ask_ctx, call_log=call_log)
+                    if judge and row.status != "stub":
                         judge.apply(row, q)
                     rows.append(row)
-                continue
-            for q in qs:
-                row = run_one(q, system, gold=gold, texts=texts, backend=backend)
-                if judge and row.status != "stub":
-                    judge.apply(row, q)
-                rows.append(row)
     return rows
 
 
 # ---------- сводка ----------
 
+KEYS = ("correct", "events", "cite", "abst", "acc", "fab", "pt", "ct", "cost", "lat")
+
+
+@dataclass
+class Stat:
+    """Метрика группы по повторам: mean и std (выборочное, n−1). text — «stub» / «n/a» вместо числа."""
+    mean: Optional[float] = None
+    std: Optional[float] = None
+    n: int = 0
+    text: Optional[str] = None
+
+
 def _mean(xs: list[float]) -> Optional[float]:
     return sum(xs) / len(xs) if xs else None
 
 
-def _fmt(x: Optional[float], spec: str = ".2f") -> str:
-    return "—" if x is None else format(x, spec)
+def _std(xs: list[float]) -> Optional[float]:
+    if len(xs) < 2:
+        return None
+    m = sum(xs) / len(xs)
+    return math.sqrt(sum((x - m) ** 2 for x in xs) / (len(xs) - 1))
 
 
-def _agg(rows: list[Row], qtype: str, judge_on: bool = False) -> dict[str, str]:
-    """Метрики группы строк одного режима, уже отформатированные."""
-    if rows and all(r.status == "stub" for r in rows):
-        return {k: "stub" for k in ("correct", "events", "cite", "abst", "acc", "fab", "pt", "ct", "cost", "lat")}
+def fmt_stat(st: Stat, spec: str = ".2f") -> str:
+    if st.text is not None:
+        return st.text
+    if st.mean is None:
+        return "—"
+    if st.n < 2 or st.std is None:
+        return format(st.mean, spec)
+    return f"{format(st.mean, spec)} ± {format(st.std, spec)}"
+
+
+def _agg_one(rows: list[Row], qtype: str, judge_on: bool) -> dict[str, Any]:
+    """Метрики группы строк одного режима и ОДНОГО повтора: число, None («—») или «n/a»."""
     judged = [r for r in rows if r.judge_score is not None]
     ans = [r for r in rows if r.answerable]
     ev_tot = sum(r.events_total or 0 for r in ans)
     cit_tot = sum(r.citations_total or 0 for r in rows)
     # abstained: для none — доля отказов (хорошо, когда высокая); для T1–T5 — ложные отказы (хорошо, когда низкая)
     abst_rows = rows if qtype == "none" else ans if qtype != "all" else []
+    cold = [r for r in rows if r.from_cache is False and r.latency_ms is not None]  # задержка — только без кэша
     return {
-        "correct": _fmt(_mean([float(bool(r.correct_meetings)) for r in ans])),
-        "events": _fmt(sum(r.events_found or 0 for r in ans) / ev_tot) if ev_tot else "—",
-        "cite": _fmt(sum(r.citations_valid or 0 for r in rows) / cit_tot) if cit_tot else "—",
-        "abst": _fmt(_mean([float(bool(r.abstained)) for r in abst_rows])),
+        "correct": _mean([float(bool(r.correct_meetings)) for r in ans]),
+        "events": sum(r.events_found or 0 for r in ans) / ev_tot if ev_tot else None,
+        "cite": sum(r.citations_valid or 0 for r in rows) / cit_tot if cit_tot else None,
+        "abst": _mean([float(bool(r.abstained)) for r in abst_rows]),
         # без судьи — n/a; с судьёй, но без вердиктов в группе — «—»
-        "acc": _fmt(_mean([r.judge_score / 2 for r in judged])) if judge_on else "n/a",
-        "fab": _fmt(_mean([float(r.judge_fabrication == 1) for r in judged])) if judge_on else "n/a",
-        "pt": _fmt(_mean([float(r.prompt_tokens or 0) for r in rows]), ".0f"),
-        "ct": _fmt(_mean([float(r.completion_tokens or 0) for r in rows]), ".0f"),
-        "cost": _fmt(sum(r.cost_usd or 0 for r in rows), ".4f"),
-        "lat": _fmt(_mean([float(r.latency_ms or 0) for r in rows]), ".0f"),
+        "acc": _mean([r.judge_score / 2 for r in judged]) if judge_on else "n/a",
+        "fab": _mean([float(r.judge_fabrication == 1) for r in judged]) if judge_on else "n/a",
+        "pt": _mean([float(r.prompt_tokens or 0) for r in rows]),
+        "ct": _mean([float(r.completion_tokens or 0) for r in rows]),
+        "cost": _mean([float(r.cost_usd or 0) for r in rows]),
+        "lat": _mean([float(r.latency_ms) for r in cold]),
     }
+
+
+def agg_repeats(rows: list[Row], qtype: str, judge_on: bool = False) -> dict[str, Stat]:
+    """Метрики группы строк одного режима: сначала по каждому повтору, затем mean ± std по повторам.
+    Если все строки — заглушка, вместо цифр «stub»; смешанные группы считаются без заглушек."""
+    if rows and all(r.status == "stub" for r in rows):
+        return {k: Stat(text="stub") for k in KEYS}
+    by_rep: dict[int, list[Row]] = defaultdict(list)
+    for r in rows:
+        if r.status != "stub":
+            by_rep[r.repeat].append(r)
+    per = [_agg_one(rs, qtype, judge_on) for _, rs in sorted(by_rep.items())]
+    out: dict[str, Stat] = {}
+    for k in KEYS:
+        vals = [p[k] for p in per]
+        strs = [v for v in vals if isinstance(v, str)]
+        nums = [v for v in vals if isinstance(v, float)]
+        out[k] = Stat(text=strs[0]) if strs else Stat(_mean(nums), _std(nums), len(nums)) if nums else Stat()
+    return out
 
 
 COLUMNS = [("correct", "correct_meetings"), ("events", "events_found"), ("cite", "citation_valid"),
            ("abst", "abstained*"), ("acc", "accuracy"), ("fab", "fabrication_rate"), ("pt", "prompt_tok"),
-           ("ct", "compl_tok"), ("cost", "cost_usd Σ"), ("lat", "latency_ms")]
+           ("ct", "compl_tok"), ("cost", "cost_usd/вопрос")]
+LAT_NO_CACHE = "latency_ms (без кэша)"
+LAT_MAY_CACHE = "latency_ms (может включать кэш)"
+SPECS = {"pt": ".0f", "ct": ".0f", "cost": ".4f", "lat": ".0f"}
 
 
-def split_table(rows: list[Row], modes: list[str], judge_on: bool = False) -> list[str]:
-    head = ["Тип", "n"] + [title for _, title in COLUMNS]
+def latency_title(rows: list[Row]) -> str:
+    """Колонка задержки честная, только если про каждую настоящую строку известно, брала ли она ответ из кэша."""
+    real = [r for r in rows if r.status != "stub"]
+    return LAT_MAY_CACHE if any(r.from_cache is None for r in real) else LAT_NO_CACHE
+
+
+def slice_table(rows: list[Row], modes: list[str], judge_on: bool = False, *, by: str = "type") -> list[str]:
+    """Таблица по типу вопроса (by="type") или по языку (by="lang"); режимы в ячейках через « / »."""
+    head = ["Тип" if by == "type" else "Язык", "n"] + [title for _, title in COLUMNS] + [latency_title(rows)]
     out = ["| " + " | ".join(head) + " |", "|" + "|".join(["---"] * len(head)) + "|"]
-    for qtype in TYPES + ["all"]:
-        group = [r for r in rows if qtype == "all" or r.type == qtype]
+    keys = [c[0] for c in COLUMNS] + ["lat"]
+    for value in (TYPES if by == "type" else LANGS) + ["all"]:
+        group = [r for r in rows if value == "all" or getattr(r, by) == value]
         n_q = len({r.question_id for r in group})
         if not n_q:
             continue
-        per_mode = [_agg([r for r in group if r.mode == m], qtype, judge_on) for m in modes]
-        out.append("| " + " | ".join([qtype, str(n_q)] + [" / ".join(a[k] for a in per_mode)
-                                                          for k, _ in COLUMNS]) + " |")
+        # в срезе по языку смешаны ответимые и нет: abstained* не определён
+        per_mode = [agg_repeats([r for r in group if r.mode == m], value if by == "type" else "all", judge_on)
+                    for m in modes]
+        cells = [" / ".join(fmt_stat(a[k], SPECS.get(k, ".2f")) for a in per_mode) for k in keys]
+        out.append("| " + " | ".join([value, str(n_q)] + cells) + " |")
     return out
+
+
+def split_table(rows: list[Row], modes: list[str], judge_on: bool = False) -> list[str]:
+    return slice_table(rows, modes, judge_on, by="type")
+
+
+def lang_notes(rows: list[Row]) -> list[str]:
+    n_by_lang = {lang: len({r.question_id for r in rows if r.lang == lang}) for lang in sorted({r.lang for r in rows})}
+    out = ["_Языки в вопросах этого раздела: " + ", ".join(f"{k} — {v}" for k, v in n_by_lang.items()) + "._"]
+    if "mixed" not in n_by_lang:
+        out.append("_Значения mixed в вопросах нет: срез ru / mixed / kk из TESTING.md здесь только ru и kk "
+                   "(смешанная речь есть во встречах, но не в языке вопроса)._")
+    small = [k for k, v in n_by_lang.items() if v < 3]
+    if small:
+        out.append("_В срезе " + ", ".join(small) + " меньше 3 вопросов: это иллюстрация, не статистика._")
+    return out
+
+
+def repeat_spread(rows: list[Row]) -> tuple[int, int]:
+    """(сколько пар «режим × as_of × вопрос» имеют ≥2 повторов, у скольких из них ответы повторов различаются)."""
+    groups: dict[tuple, dict[int, str]] = defaultdict(dict)
+    for r in rows:
+        if r.status != "stub":
+            groups[(r.mode, r.as_of, r.question_id)][r.repeat] = " ".join(r.answer.split())
+    multi = [g for g in groups.values() if len(g) > 1]
+    return len(multi), sum(1 for g in multi if len(set(g.values())) > 1)
 
 
 def _git_commit() -> str:
@@ -284,17 +453,33 @@ def _git_commit() -> str:
         return "n/a"
 
 
-def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, depth: int, notes: dict[str, str],
-                   splits: list[str], judge: Optional[JudgeInfo] = None) -> str:
+def _meta_lines(rows: list[Row], modes: list[str], *, k: int, depth: int, judge: Optional[JudgeInfo]) -> list[str]:
+    """Заголовок результатов (TESTING.md, правило 5) и всё, что нужно знать про повторы и судью."""
     backend = os.environ.get("LLM_BACKEND", "stub")
-    lines = [f"# Eval summary {date}", "",
-             f"- commit: {_git_commit()}, backend: {backend}, model: {os.environ.get('LLM_MODEL', 'stub-model')}, "
+    repeats = max((r.repeat for r in rows), default=1)
+    lines = [f"- commit: {_git_commit()}, backend: {backend}, model: {os.environ.get('LLM_MODEL', 'stub-model')}, "
              f"embed: {os.environ.get('EMBED_MODEL') or 'n/a'}",
              f"- PROMPT_VERSION: в коде не задан; k={k}, глубина обхода графа={depth}, "
-             f"чанк={WINDOW} реплик со сдвигом {STEP}",
-             f"- as_of в вопросах: {', '.join(sorted({r.as_of for r in rows})) or '—'}; "
-             "повторов: 1 (mean±std появится в A9)",
+             f"чанк={WINDOW} реплик со сдвигом {STEP}; температура отвечающей системы {ANSWER_TEMPERATURE} "
+             "(src/answer/answerer.py)",
+             f"- as_of в вопросах: {', '.join(sorted({r.as_of for r in rows})) or '—'}; повторов: {repeats}",
              f"- режимы (в ячейках через « / » в этом порядке): {' / '.join(modes)}"]
+    if repeats > 1:
+        real = [r for r in rows if r.status != "stub"]
+        cached = sum(1 for r in real if r.from_cache is True)
+        unknown = sum(1 for r in real if r.from_cache is None)
+        lines.append("- повторы: ответы системы идут мимо кэша llm_client (свой каталог кэша на повтор); "
+                     "mean ± std считается по повторам, не по вопросам, std выборочное (n−1). "
+                     f"Ответов из кэша: {cached} из {len(real)}" + (f", неизвестно: {unknown}" if unknown else ""))
+        n_cmp, n_diff = repeat_spread(rows)
+        if n_cmp and n_diff == 0:
+            lines.append(f"> **Предупреждение: ответы всех повторов совпали дословно ({n_cmp} пар режим × вопрос, "
+                         f"температура {ANSWER_TEMPERATURE}). Разброса нет, std = 0 — это не мера устойчивости "
+                         "системы, а следствие детерминированной генерации; разброс не имитируется.**")
+        elif n_cmp:
+            lines.append(f"- ответы повторов различаются в {n_diff} из {n_cmp} пар режим × вопрос")
+        if cached:
+            lines.append("> **Предупреждение: часть ответов повторов взята из кэша — это не независимые повторы.**")
     if judge is None:
         lines.append("- судья: выключен (--judge не задан), accuracy и fabrication_rate = n/a")
     else:
@@ -302,7 +487,16 @@ def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, dept
                 if judge.model == os.environ.get("LLM_MODEL", "stub-model") else "")
         lines.append(f"- судья: {judge.version} (с транскриптами встреч), модель {judge.model}{same}; "
                      f"вызовов {judge.calls}, повторных входов пропущено {judge.reused}, "
-                     f"без вердикта (ошибка формата) {judge.failed}")
+                     f"без вердикта (ошибка формата) {judge.failed}"
+                     + ("; каждый повтор оценивается отдельно, одинаковый вход — один вызов (кэш по хэшу)"
+                        if repeats > 1 else ""))
+    return lines
+
+
+def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, depth: int, notes: dict[str, str],
+                   splits: list[str], judge: Optional[JudgeInfo] = None) -> str:
+    backend = os.environ.get("LLM_BACKEND", "stub")
+    lines = [f"# Eval summary {date}", ""] + _meta_lines(rows, modes, k=k, depth=depth, judge=judge)
     if backend == "stub":
         lines += ["", "> **LLM_BACKEND=stub**: модель и эмбеддинги — заглушки. Таблица проверяет только "
                       "работу harness, цифры качества ничего не значат."]
@@ -313,25 +507,100 @@ def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, dept
     if errs:
         lines += ["", "> Строки без нормального ответа (считаются в n, метрики по ним нулевые): "
                       + ", ".join(f"{m}/{s}: {c}" for (m, s), c in sorted(errs.items()))]
+    real = [r for r in rows if r.status != "stub"]
+    n_cached, n_unknown = sum(1 for r in real if r.from_cache is True), sum(1 for r in real if r.from_cache is None)
     notes_md = [
         "correct_meetings — доля ответимых вопросов, где цитаты ссылаются только на встречи из source_meetings "
         "(цитата есть); events_found — найденные события эталона / всего (несколько цитат на событие = 1); "
         "citation_valid — цитаты, найденные в тексте встречи, / все цитаты.",
         "abstained*: для none — доля отказов «данных нет» (выше лучше); для T1–T5 — ложные отказы (ниже лучше). "
-        "Определяется по фразам, см. ABSTAIN_RE.",
+        "Определяется по фразам, см. ABSTAIN_RE; в срезе по языку — «—».",
         "accuracy — среднее judge_score / 2 (2 верно или честный отказ, 1 частично, 0 неверно или не ответили); "
         "fabrication_rate — доля ответов, где судья нашёл выдумку (judge_fabrication = 1); без --judge обе n/a. "
-        "Токены и латентность — среднее на вопрос, $ — сумма (стоимость судьи в $ не входит, она в runs/calls.jsonl, "
-        "purpose=judge)."]
+        "Токены, стоимость и задержка — среднее на вопрос (стоимость судьи не входит: она в runs/calls.jsonl, "
+        "purpose=judge).",
+        "Задержка — среднее только по ответам, где ни один вызов модели не взят из кэша llm_client "
+        f"(определяется по runs/calls.jsonl); исключено из-за кэша: {n_cached} из {len(real)} строк"
+        + (f"; про {n_unknown} строк известно не было — колонка помечена «может включать кэш»" if n_unknown else "")
+        + ".",
+        "Вопросы as_of m_008 (q_16, questions_m008.json) считаются отдельной секцией: у них другое состояние графа "
+        "и они не смешиваются с основной таблицей."]
+    main = [r for r in rows if r.as_of != HISTORICAL_AS_OF]
+    hist = [r for r in rows if r.as_of == HISTORICAL_AS_OF]
     for split, title in (("test", "test — цифры для отчёта"), ("dev", "dev — для отладки, в отчёт не идут")):
         if split not in splits:
             continue
-        part = [r for r in rows if r.split == split]
+        part = [r for r in main if r.split == split]
         lines += ["", f"## {title}", ""]
-        lines += split_table(part, modes, judge is not None) if part else ["_нет вопросов_"]
-        if split == "test" and part:
-            lines += ["", "_На каждый тип приходится 1–2 тестовых вопроса: это иллюстрация, не статистика._"]
+        if not part:
+            lines.append("_нет вопросов_")
+            continue
+        if split == "test":
+            lines += ["### По типу вопроса", ""]
+        lines += split_table(part, modes, judge is not None)
+        if split == "test":
+            lines += ["", "_На каждый тип приходится 1–2 тестовых вопроса: это иллюстрация, не статистика._",
+                      "", "### По языку вопроса", ""]
+            lines += slice_table(part, modes, judge is not None, by="lang") + [""] + lang_notes(part)
+    if hist:
+        lines += ["", f"## as_of {HISTORICAL_AS_OF} — отдельно, в основные таблицы не входит", ""]
+        for split in ("test", "dev"):
+            part = [r for r in hist if r.split == split]
+            if part and split in splits:
+                lines += [f"Раздел {HISTORICAL_AS_OF}, split={split}:", ""]
+                lines += split_table(part, modes, judge is not None) + [""]
     lines += [""] + [f"{i}. {t}" for i, t in enumerate(notes_md, 1)]
+    return "\n".join(lines) + "\n"
+
+
+FINAL_METRICS = [("acc", "accuracy"), ("fab", "fabrication_rate"), ("correct", "correct_meetings"),
+                 ("events", "events_found"), ("cost", "cost_usd/вопрос")]
+
+
+def final_rows(rows: list[Row]) -> list[Row]:
+    """Строки итоговой таблицы: только split=test и только основной as_of (m_008 отдельно)."""
+    return [r for r in rows if r.split == "test" and r.as_of != HISTORICAL_AS_OF]
+
+
+def render_final_table(rows: list[Row], modes: list[str], *, date: str, k: int, depth: int, notes: dict[str, str],
+                       judge: Optional[JudgeInfo] = None) -> str:
+    """Итоговая таблица для отчёта: split=test, T1–T5 и none, baseline и graph рядом, mean ± std по повторам.
+    Режим-заглушка — «stub» (цифр не выдумываем), режим, который не запускали, — «не запускался»."""
+    part = final_rows(rows)
+    judge_on = judge is not None
+    lat = latency_title(part)
+    columns = FINAL_METRICS + [("lat", lat)]
+    head = ["Тип", "n"]
+    for _, title in columns:
+        head += [f"{title}: baseline", f"{title}: graph"]
+    lines = [f"# Итоговая таблица {date} (split=test)", ""] + _meta_lines(part, modes, k=k, depth=depth, judge=judge)
+    if os.environ.get("LLM_BACKEND", "stub") == "stub":
+        lines += ["", "> **LLM_BACKEND=stub**: цифры ничего не значат, таблица проверяет только работу harness."]
+    for mode in ("baseline", "graph"):
+        if mode in notes:
+            lines += ["", f"> **{mode}: stub** — {notes[mode]}. В таблице «stub», цифры не приводятся."]
+        elif mode not in modes:
+            lines += ["", f"> **{mode}**: в этом прогоне не запускался."]
+    lines += ["", "| " + " | ".join(head) + " |", "|" + "|".join(["---"] * len(head)) + "|"]
+    for qtype in TYPES:
+        group = [r for r in part if r.type == qtype]
+        n_q = len({r.question_id for r in group})
+        if not n_q:
+            continue
+        per_mode = {m: (agg_repeats([r for r in group if r.mode == m], qtype, judge_on) if m in modes else None)
+                    for m in ("baseline", "graph")}
+        cells = ["не запускался" if per_mode[m] is None else fmt_stat(per_mode[m][key], SPECS.get(key, ".2f"))
+                 for key, _ in columns for m in ("baseline", "graph")]
+        lines.append("| " + " | ".join([qtype, str(n_q)] + cells) + " |")
+    real = [r for r in part if r.status != "stub"]
+    n_cached = sum(1 for r in real if r.from_cache is True)
+    lines += ["", "- mean ± std — по повторам (при одном повторе только среднее); на каждый тип приходится 1–2 "
+                  "вопроса, это иллюстрация, не статистика.",
+              "- cost_usd/вопрос — стоимость ответов системы; судья отдельно (runs/calls.jsonl, purpose=judge).",
+              "- latency — среднее только по ответам без кэша llm_client; исключено из-за кэша: "
+              f"{n_cached} из {len(real)} строк.",
+              "- Вопросы as_of m_008 (q_16, questions_m008.json) в таблицу не входят: отдельная секция сводки.",
+              "- accuracy/fabrication_rate — n/a, если прогон был без --judge."]
     return "\n".join(lines) + "\n"
 
 
@@ -354,8 +623,10 @@ def select_questions(path: Path, split: str, as_of: Optional[str], limit: Option
     return questions[:limit] if limit else questions
 
 
-def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], backend: str) -> None:
-    """Оценка прогона: ответы, судья, итог и сравнение с остатком бюджета."""
+def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], backend: str,
+               dry_run: bool = False) -> None:
+    """Оценка прогона: ответы, судья, итог и сравнение с остатком бюджета (в --dry-run — при любом backend:
+    план нужен, чтобы решить, запускать ли платный прогон)."""
     print("Оценка ответов системы:\n  " + "\n  ".join(est.lines()))
     if jest is None:
         return
@@ -364,7 +635,7 @@ def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], bac
     calls = f"{est.chat_calls_min}–{est.chat_calls_max} вызовов ответов + до {jest.calls} вызовов судьи"
     print(f"Итого (ответы + судья): {calls}; " + (
         f"≈${total[0]:.4f} без ретраев, до ≈${total[1]:.4f} с ретраями" if total else "стоимость не оценить (нет цен)"))
-    if total and backend != "stub":
+    if total and (backend != "stub" or dry_run):
         left = est_mod.remaining_budget()
         if total[0] > left:
             print(f"ВНИМАНИЕ: оценка ${total[0]:.4f} больше остатка бюджета ${left:.4f}: даже без ретраев не хватит, "
@@ -374,16 +645,35 @@ def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], bac
                   "при ретраях может не хватить.")
 
 
+def repeats_arg(value: str) -> int:
+    try:
+        n = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value!r}: нужно целое число от 1 до {MAX_REPEATS}") from None
+    if not 1 <= n <= MAX_REPEATS:
+        raise argparse.ArgumentTypeError(
+            f"{n}: допустимо от 1 до {MAX_REPEATS} (каждый повтор — полный платный проход)")
+    return n
+
+
+def out_suffix(questions_file: Path, as_of: Optional[str]) -> str:
+    """Суффикс имён результатов: прогоны одного дня с другим набором вопросов или as_of не затирают друг друга."""
+    parts = ([] if Path(questions_file) == QUESTIONS else [Path(questions_file).stem]) + ([as_of] if as_of else [])
+    return "_" + "_".join(parts) if parts else ""
+
+
 def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -> int:
-    ap = argparse.ArgumentParser(description="Eval-harness: вопросы → api.ask → простые метрики")
+    ap = argparse.ArgumentParser(description="Eval-harness: вопросы → api.ask → метрики, повторы, срезы")
     ap.add_argument("--mode", choices=list(MODES), default="both")
     ap.add_argument("--split", choices=["dev", "test", "all"], default="test")
     ap.add_argument("--as-of", dest="as_of", help="только вопросы с этим as_of (m_008); по умолчанию все")
-    ap.add_argument("--repeats", type=int, default=1, help="пока только 1")
+    ap.add_argument("--repeats", type=repeats_arg, default=1,
+                    help=f"повторов 1..{MAX_REPEATS}; ответы повторов идут мимо кэша llm_client и оплачиваются")
     ap.add_argument("--limit", type=int, help="первые N вопросов — для отладки")
     ap.add_argument("--k", type=int, default=5, help="чанков в baseline")
     ap.add_argument("--depth", type=int, default=2, help="глубина обхода графа")
-    ap.add_argument("--questions", type=Path, default=QUESTIONS)
+    ap.add_argument("--questions-file", "--questions", dest="questions", type=Path, default=QUESTIONS,
+                    help="файл вопросов (по умолчанию data/gold/questions.json; для m_008 — questions_m008.json)")
     ap.add_argument("--gold", type=Path, default=GOLD)
     ap.add_argument("--raw-dir", type=Path, default=RAW_DIR, help="встречи для baseline и проверки цитат")
     ap.add_argument("--index-dir", type=Path, default=INDEX_ROOT)
@@ -393,8 +683,6 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
     ap.add_argument("--dry-run", action="store_true", help="план и оценка стоимости, без прогона")
     ap.add_argument("--confirm-paid", action="store_true", help="разрешить прогон с платным backend")
     a = ap.parse_args(argv)
-    if a.repeats != 1:
-        ap.error("--repeats: пока поддерживается только 1 (повторы и mean±std — задача A9)")
 
     modes = MODES[a.mode]
     questions = select_questions(a.questions, a.split, a.as_of, a.limit)
@@ -407,11 +695,13 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
         for q in questions:
             plan[(m, q.as_of)].append(q.question)
 
-    print(f"Вопросов: {len(questions)} (split={a.split}), режимы: {', '.join(modes)}, backend: {backend}")
+    print(f"Вопросов: {len(questions)} (split={a.split}), режимы: {', '.join(modes)}, повторов: {a.repeats}, "
+          f"backend: {backend}")
     print(cost_guard.status())
-    estimate = est_mod.estimate_run(plan, raw_dir=a.raw_dir, k=a.k, depth=a.depth)
-    judge_estimate = est_mod.estimate_judge(questions, modes, raw_dir=a.raw_dir) if a.judge else None
-    print_plan(estimate, judge_estimate, backend)
+    estimate = est_mod.estimate_run(plan, raw_dir=a.raw_dir, k=a.k, depth=a.depth, repeats=a.repeats)
+    judge_estimate = (est_mod.estimate_judge(questions, modes, raw_dir=a.raw_dir, repeats=a.repeats)
+                      if a.judge else None)
+    print_plan(estimate, judge_estimate, backend, dry_run=a.dry_run)
     if a.dry_run:
         return 0
     if a.judge and backend == "stub" and judge_fn is None:
@@ -426,17 +716,23 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
     def build(mode: str, as_of: str) -> systems.System:
         return systems.build_system(mode, as_of, raw_dir=a.raw_dir, index_root=a.index_dir, k=a.k, depth=a.depth)
 
+    # Повторы без кэша: у каждого свой каталог (под runs/cache/, он в .gitignore), новый на каждый запуск.
+    cache_root = llm_client.CACHE / "eval_repeats" / dt.datetime.now().strftime("%Y%m%dT%H%M%S")
+    repeat_cache = (lambda rep: isolated_cache(cache_root / f"rep{rep}")) if a.repeats > 1 else None
+
     from src import api
     runner = JudgeRunner(raw_dir=a.raw_dir, fn=judge_fn or judge_mod.judge) if a.judge else None
     try:
         rows = run_eval(questions, modes, build, gold=load_gold_events(a.gold), texts=MeetingTexts(a.raw_dir),
-                        backend=backend, judge=runner)
+                        backend=backend, judge=runner, repeats=a.repeats, repeat_cache=repeat_cache,
+                        call_log=CallLog())
     finally:
         api.use_index_dir(api.DEFAULT_INDEX_DIR)  # UI-индекс не должен остаться подменённым
 
     date = dt.date.today().isoformat()
+    tag = out_suffix(a.questions, a.as_of)
     notes = {r.mode: r.error for r in rows if r.status == "stub"}
-    csv_path, md_path = a.out_dir / f"eval_{date}.csv", a.out_dir / f"summary_{date}.md"
+    csv_path, md_path = a.out_dir / f"eval_{date}{tag}.csv", a.out_dir / f"summary_{date}{tag}.md"
     write_csv(csv_path, rows)
     info = JudgeInfo(judge_mod.JUDGE_PROMPT_VERSION_V2, judge_mod.judge_model(), runner.calls, runner.reused,
                      runner.failed) if runner else None
@@ -444,6 +740,15 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
                              splits=["dev", "test"] if a.split == "all" else [a.split], judge=info)
     md_path.write_text(summary, encoding="utf-8")
     print(f"\n{summary}\nCSV: {csv_path}\nСводка: {md_path}")
+    # Итоговая таблица — только полный прогон both по test (отладка с --limit её не затирает); при stub — отдельное
+    # имя, чтобы заглушка не перезаписала платный результат того же дня.
+    if a.mode == "both" and not a.limit and final_rows(rows):
+        final_path = a.out_dir / f"final_table_{date}{'_stub' if backend == 'stub' else ''}.md"
+        final_path.write_text(render_final_table(rows, modes, date=date, k=a.k, depth=a.depth, notes=notes,
+                                                 judge=info), encoding="utf-8")
+        print(f"Итоговая таблица: {final_path}")
+    else:
+        print("Итоговая таблица не записана: нужны --mode both, вопросы split=test с основным as_of и без --limit.")
     return 0
 
 
