@@ -1,0 +1,67 @@
+{
+  "meeting_id": "m_015",
+  "projects_discussed": [
+    "Zhol",
+    "Qamqor"
+  ],
+  "decisions": [
+    {
+      "id": "d_m015_01",
+      "project": "Zhol",
+      "statement": "Релиз Zhol остается на 10 ноября.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:00:39",
+        "quote": "по Zhol мы все помним что релиз у нас десятого ноября остается."
+      }
+    },
+    {
+      "id": "d_m015_02",
+      "project": "Zhol",
+      "statement": "С 2 ноября новые функции в Zhol не добавляем.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:00:55",
+        "quote": "со второго ноября новые функции в Zhol мы не добавляем."
+      }
+    },
+    {
+      "id": "d_m015_03",
+      "project": "Zhol",
+      "statement": "Только критичные ошибки фиксируем, если вылезут.",
+      "made_by": null,
+      "confidence": 0.9,
+      "source": {
+        "ts": "00:01:22",
+        "quote": "только критичные ошибки фиксим если вылезут."
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t_m015_01",
+      "project": "Zhol",
+      "statement": "Коля делает документацию API Squad до 6 ноября.",
+      "owner": "Коля",
+      "due": "2026-11-06",
+      "status": "open",
+      "source": {
+        "ts": "00:05:48",
+        "quote": "Коля документацию апи Squad ты делаешь до шестого ноября."
+      }
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "q_m015_01",
+      "project": "Zhol",
+      "statement": "Кто проводит QA перед релизом Zhol?",
+      "source": {
+        "ts": "00:01:30",
+        "quote": "и тут у нас открытый вопрос висит. кто вообще проводит qa перед релизом Zhol."
+      }
+    }
+  ]
+}
