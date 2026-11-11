@@ -28,6 +28,7 @@ JUDGE_PRICE_IN_PER_M / JUDGE_PRICE_OUT_PER_M (по умолчанию PRICE_*). 
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -295,6 +296,17 @@ def build_messages(question: str, expected_answer: str, system_answer: str, answ
                 {"role": "user", "content": JUDGE_USER_TEMPLATE.format(**fields)}]
     user = JUDGE_USER_TEMPLATE_V2.format(transcripts=render_transcripts(meetings), **fields)
     return [{"role": "system", "content": JUDGE_SYSTEM_PROMPT_V2}, {"role": "user", "content": user}]
+
+
+def input_hash(question: str, expected_answer: str, system_answer: str, answerable: bool, *,
+               meetings: Optional[Sequence[MeetingDoc]] = None) -> str:
+    """Хэш всего, что видит судья: версия промпта, модель и сообщения. Один и тот же ответ на тот же вопрос с теми же
+    транскриптами даёт один хэш, поэтому harness не отправляет его судье дважды (llm_client кэширует по тому же входу
+    на диске, а хэш нужен harness, чтобы посчитать и пропустить повторы внутри прогона)."""
+    version = JUDGE_PROMPT_VERSION_V1 if meetings is None else JUDGE_PROMPT_VERSION_V2
+    messages = build_messages(question, expected_answer, system_answer, answerable, meetings=meetings)
+    blob = json.dumps([version, judge_model(), messages], ensure_ascii=False, sort_keys=True)
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()
 
 
 def _strip_fence(text: str) -> str:
