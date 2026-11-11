@@ -20,6 +20,7 @@ def _isolated(monkeypatch, tmp_path):
     monkeypatch.setenv("LLM_BACKEND", "stub")
     monkeypatch.setenv("EMBED_MODEL", "")
     monkeypatch.setattr(answerer, "REPORT", tmp_path / "answer_report.jsonl")
+    monkeypatch.setattr(ev, "RESULTS", tmp_path / "results")  # не писать в настоящий results/
     yield
     api.use_index_dir(api.DEFAULT_INDEX_DIR)
 
@@ -127,9 +128,10 @@ def test_summary_splits_dev_test_and_marks_stub(world):
     assert "1.00 / stub" in test_part and "graph: stub" in md and "n/a / stub" in test_part
 
 
-def test_repeats_other_than_one_rejected(capsys):
+@pytest.mark.parametrize("value", ["0", "6", "-1", "abc"])
+def test_repeats_outside_1_to_5_rejected(value, capsys):
     with pytest.raises(SystemExit):
-        ev.main(["--repeats", "3"])
+        ev.main(["--repeats", value])
     assert "--repeats" in capsys.readouterr().err
 
 
