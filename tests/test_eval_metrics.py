@@ -54,11 +54,19 @@ def test_events_found_by_timestamp_window_or_quote_not_other_meeting():
     assert events_found([cit()], ["ev_unknown"], GOLD) == 0
 
 
-def test_abstention_needs_phrase_and_no_citations():
-    assert is_abstention("В контексте нет информации о бюджете.", [])
-    assert is_abstention("Контексте жоқ мәлімет.", [])
-    assert not is_abstention("В контексте нет информации о бюджете.", [cit()])
-    assert not is_abstention("Релиз сдвинули на 4 сентября.", [])
+def test_abstention_is_decided_by_the_refusal_phrase():
+    assert is_abstention("В контексте нет информации о бюджете.")
+    assert is_abstention("Контексте жоқ мәлімет.")
+    assert not is_abstention("Релиз сдвинули на 4 сентября.")
+
+
+def test_abstention_with_attached_citation_is_still_abstention(texts):
+    # q_34: честный отказ, но система приложила цитату из встречи — раньше это считалось «не отказом»
+    refusal = "В контексте нет информации о дате выхода английской версии Qamqor бота."
+    m = _score(texts, [cit()], answer=refusal, answerable=False, source_meetings=[], decision_ids=[])
+    assert m.abstained is True and m.citations_total == 1
+    # ответ с фактом и цитатой отказом по-прежнему не считается
+    assert _score(texts, [cit()], answer="Релиз сдвинули на 4 сентября.").abstained is False
 
 
 def _score(texts, citations, **kw):

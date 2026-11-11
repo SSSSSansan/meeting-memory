@@ -7,7 +7,7 @@
                      ИЛИ её таймкод в пределах WINDOW_S от start_s эталона. Несколько цитат на одно
                      событие — одно совпадение;
   citation_valid   — цитата реально есть в тексте встречи (normalize_quote из scripts/build_gold.py);
-  abstained        — система сказала «данных нет» (эвристика по фразам, см. ABSTAIN_RE).
+  abstained        — система сказала «данных нет» (эвристика по фразам, см. ABSTAIN_RE; цитаты не важны).
 Точность содержания ответа здесь не считается: её посчитает судья (A8).
 """
 from __future__ import annotations
@@ -85,9 +85,10 @@ def events_found(citations: list[Citation], event_ids: list[str], gold: dict[str
     return found
 
 
-def is_abstention(answer: str, citations: list[Citation]) -> bool:
-    """«Данных нет»: фраза отказа и ни одной цитаты. Ответ с цитатами отказом не считаем."""
-    return not citations and ABSTAIN_RE.search(normalize(answer)) is not None
+def is_abstention(answer: str) -> bool:
+    """«Данных нет»: в ответе есть фраза отказа. Приложенные цитаты не мешают: система часто цитирует
+    ближайшую реплику, хотя честно пишет «нет информации» (q_34)."""
+    return ABSTAIN_RE.search(normalize(answer)) is not None
 
 
 @dataclass
@@ -111,7 +112,7 @@ def score_answer(*, answer: str, citations: list[Citation], answerable: bool, so
     after = sum(1 for c in citations if limit is not None and (meeting_number(c.meeting_id) or 0) > limit)
     valid = sum(1 for c in citations if citation_is_valid(c, texts))
     base = dict(cited_meetings=cited, cited_after_as_of=after, citations_total=len(citations),
-                citations_valid=valid, abstained=is_abstention(answer, citations))
+                citations_valid=valid, abstained=is_abstention(answer))
     if not answerable:
         return AnswerMetrics(correct_meetings=None, meetings_hit=None, events_found=None, events_total=None, **base)
     source = set(source_meetings)
