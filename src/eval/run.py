@@ -2,6 +2,7 @@
 
     python -m src.eval.run --mode baseline|graph|both --split dev|test|all [--as-of m_008] [--repeats 1]
     python -m src.eval.run --mode both --split test --dry-run      # только план и оценка стоимости
+    python -m src.eval.run --mode both --split test --judge --dry-run   # то же вместе с судьёй
 
 Вопросы — data/gold/questions.json; в систему уходит только текст вопроса, эталон она не видит.
 У каждого вопроса свой as_of: система видит встречи до него включительно (см. src/eval/systems.py).
@@ -9,9 +10,13 @@
 
 Выход: results/eval_<дата>.csv (по вопросам) и results/summary_<дата>.md (по типам, режимы рядом,
 dev и test отдельно). Правило из memory.md: чиним по dev, в отчёт идёт test.
-Точность содержания (accuracy) пока n/a — её посчитает судья (A8). Повторы (A9) не реализованы.
+--judge (по умолчанию выключен): после каждого ответа судья v2 (src/eval/judge.py, с транскриптами) ставит
+judge_score 0/1/2 и judge_fabrication 0/1; в сводке accuracy = среднее judge_score/2, fabrication_rate = доля
+ответов с judge_fabrication=1. Судью зовут одинаково для всех режимов: ему уходят вопрос, эталон, ответ, answerable
+и тексты встреч, но не режим, тип и split. Одинаковый вход судья не получает дважды (хэш входа; плюс кэш llm_client
+на диске). Без --judge accuracy и fabrication_rate = n/a. Повторы (A9) не реализованы.
 
-Если LLM_BACKEND не stub, прогон платный: сначала печатается оценка, запуск — только с --confirm-paid.
+Если LLM_BACKEND не stub, прогон платный: сначала печатается оценка (ответы + судья), запуск — только с --confirm-paid.
 Лимит расходов держит scripts/cost_guard через src/llm_client (complete/embed).
 """
 from __future__ import annotations
@@ -24,7 +29,7 @@ import subprocess
 import sys
 import time
 from collections import Counter, defaultdict
-from dataclasses import asdict, dataclass, fields
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 from typing import Any, Callable, Optional
 
@@ -32,6 +37,7 @@ import src.llm_client  # noqa: F401  — читает .env до того, как
 from scripts import cost_guard
 from scripts.check_questions import Question, load_json
 from src.eval import estimate as est_mod
+from src.eval import judge as judge_mod
 from src.eval import systems
 from src.eval.metrics import MeetingTexts, load_gold_events, score_answer
 from src.retrieval.baseline import STEP, WINDOW
@@ -72,7 +78,9 @@ class Row:
     citations_valid: Optional[int] = None
     citation_valid: Optional[float] = None
     abstained: Optional[bool] = None
-    accuracy: str = "n/a"           # судья
+    judge_score: Optional[int] = None          # 0 | 1 | 2; None — судья не запускался или не вернул вердикт
+    judge_fabrication: Optional[int] = None    # 0 | 1
+    judge_reason: str = ""
     prompt_tokens: Optional[int] = None
     completion_tokens: Optional[int] = None
     cost_usd: Optional[float] = None
@@ -81,6 +89,52 @@ class Row:
 
 
 CSV_FIELDS = [f.name for f in fields(Row)]
+
+JudgeFn = Callable[..., judge_mod.JudgeResult]
+
+
+@dataclass
+class JudgeRunner:
+    """Судья v2 в harness. Один вызов на уникальный вход; режим, тип и split судье не передаются."""
+    raw_dir: Path
+    fn: JudgeFn = judge_mod.judge
+    memo: dict[str, Any] = field(default_factory=dict)  # хэш входа → JudgeResult | текст ошибки формата
+    calls: int = 0      # разных входов с непустым ответом (пустой ответ судья оценивает без модели)
+    reused: int = 0     # вердикт взят из этого же прогона
+    failed: int = 0     # судья не вернул вердикт в нужном формате
+
+    def apply(self, row: "Row", q: Question) -> None:
+        if row.status != "ok":  # система не ответила: это неверный ответ, а не «пропуск»
+            row.judge_score, row.judge_fabrication, row.judge_reason = 0, 0, f"нет ответа системы ({row.status})"
+            return
+        cited = [m for m in row.cited_meetings.split(",") if m]
+        meetings = judge_mod.select_meetings(q.source_meetings, cited, q.as_of, self.raw_dir).docs
+        key = judge_mod.input_hash(q.question, q.expected_answer, row.answer, q.answerable, meetings=meetings)
+        if key in self.memo:
+            self.reused += 1
+        else:
+            if row.answer.strip():
+                self.calls += 1
+            try:
+                self.memo[key] = self.fn(q.question, q.expected_answer, row.answer, q.answerable,
+                                         with_transcripts=True, meetings=meetings)
+            except judge_mod.JudgeFormatError as e:
+                self.memo[key] = str(e)
+        verdict = self.memo[key]
+        if isinstance(verdict, str):
+            self.failed += 1
+            row.judge_reason = f"ОШИБКА ФОРМАТА: {verdict}"
+        else:
+            row.judge_score, row.judge_fabrication, row.judge_reason = verdict
+
+
+@dataclass
+class JudgeInfo:
+    version: str
+    model: str
+    calls: int
+    reused: int
+    failed: int
 
 
 def coerce_answer(result: Any) -> tuple[Optional[Answer], str, str]:
@@ -137,7 +191,7 @@ def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTe
 
 
 def run_eval(questions: list[Question], modes: list[str], build: Callable[[str, str], systems.System], *,
-             gold: dict, texts: MeetingTexts, backend: str) -> list[Row]:
+             gold: dict, texts: MeetingTexts, backend: str, judge: Optional[JudgeRunner] = None) -> list[Row]:
     """build(mode, as_of) → System. Каждая пара (as_of, режим) строится один раз и отвечает на все свои вопросы."""
     by_asof: dict[str, list[Question]] = defaultdict(list)
     for q in questions:
@@ -151,12 +205,19 @@ def run_eval(questions: list[Question], modes: list[str], build: Callable[[str, 
                 raise
             except Exception as e:
                 for q in qs:
-                    rows.append(Row(question_id=q.id, type=q.type, split=q.split, lang=q.lang, as_of=as_of,
-                                    mode=mode, system="real", backend=backend, status="error",
-                                    error=f"{type(e).__name__}: {e}", answerable=q.answerable,
-                                    source_meetings=",".join(q.source_meetings)))
+                    row = Row(question_id=q.id, type=q.type, split=q.split, lang=q.lang, as_of=as_of,
+                              mode=mode, system="real", backend=backend, status="error",
+                              error=f"{type(e).__name__}: {e}", answerable=q.answerable,
+                              source_meetings=",".join(q.source_meetings))
+                    if judge:
+                        judge.apply(row, q)
+                    rows.append(row)
                 continue
-            rows += [run_one(q, system, gold=gold, texts=texts, backend=backend) for q in qs]
+            for q in qs:
+                row = run_one(q, system, gold=gold, texts=texts, backend=backend)
+                if judge and row.status != "stub":
+                    judge.apply(row, q)
+                rows.append(row)
     return rows
 
 
@@ -170,10 +231,11 @@ def _fmt(x: Optional[float], spec: str = ".2f") -> str:
     return "—" if x is None else format(x, spec)
 
 
-def _agg(rows: list[Row], qtype: str) -> dict[str, str]:
+def _agg(rows: list[Row], qtype: str, judge_on: bool = False) -> dict[str, str]:
     """Метрики группы строк одного режима, уже отформатированные."""
     if rows and all(r.status == "stub" for r in rows):
-        return {k: "stub" for k in ("correct", "events", "cite", "abst", "acc", "pt", "ct", "cost", "lat")}
+        return {k: "stub" for k in ("correct", "events", "cite", "abst", "acc", "fab", "pt", "ct", "cost", "lat")}
+    judged = [r for r in rows if r.judge_score is not None]
     ans = [r for r in rows if r.answerable]
     ev_tot = sum(r.events_total or 0 for r in ans)
     cit_tot = sum(r.citations_total or 0 for r in rows)
@@ -184,7 +246,9 @@ def _agg(rows: list[Row], qtype: str) -> dict[str, str]:
         "events": _fmt(sum(r.events_found or 0 for r in ans) / ev_tot) if ev_tot else "—",
         "cite": _fmt(sum(r.citations_valid or 0 for r in rows) / cit_tot) if cit_tot else "—",
         "abst": _fmt(_mean([float(bool(r.abstained)) for r in abst_rows])),
-        "acc": "n/a",
+        # без судьи — n/a; с судьёй, но без вердиктов в группе — «—»
+        "acc": _fmt(_mean([r.judge_score / 2 for r in judged])) if judge_on else "n/a",
+        "fab": _fmt(_mean([float(r.judge_fabrication == 1) for r in judged])) if judge_on else "n/a",
         "pt": _fmt(_mean([float(r.prompt_tokens or 0) for r in rows]), ".0f"),
         "ct": _fmt(_mean([float(r.completion_tokens or 0) for r in rows]), ".0f"),
         "cost": _fmt(sum(r.cost_usd or 0 for r in rows), ".4f"),
@@ -193,11 +257,11 @@ def _agg(rows: list[Row], qtype: str) -> dict[str, str]:
 
 
 COLUMNS = [("correct", "correct_meetings"), ("events", "events_found"), ("cite", "citation_valid"),
-           ("abst", "abstained*"), ("acc", "accuracy"), ("pt", "prompt_tok"), ("ct", "compl_tok"),
-           ("cost", "cost_usd Σ"), ("lat", "latency_ms")]
+           ("abst", "abstained*"), ("acc", "accuracy"), ("fab", "fabrication_rate"), ("pt", "prompt_tok"),
+           ("ct", "compl_tok"), ("cost", "cost_usd Σ"), ("lat", "latency_ms")]
 
 
-def split_table(rows: list[Row], modes: list[str]) -> list[str]:
+def split_table(rows: list[Row], modes: list[str], judge_on: bool = False) -> list[str]:
     head = ["Тип", "n"] + [title for _, title in COLUMNS]
     out = ["| " + " | ".join(head) + " |", "|" + "|".join(["---"] * len(head)) + "|"]
     for qtype in TYPES + ["all"]:
@@ -205,7 +269,7 @@ def split_table(rows: list[Row], modes: list[str]) -> list[str]:
         n_q = len({r.question_id for r in group})
         if not n_q:
             continue
-        per_mode = [_agg([r for r in group if r.mode == m], qtype) for m in modes]
+        per_mode = [_agg([r for r in group if r.mode == m], qtype, judge_on) for m in modes]
         out.append("| " + " | ".join([qtype, str(n_q)] + [" / ".join(a[k] for a in per_mode)
                                                           for k, _ in COLUMNS]) + " |")
     return out
@@ -221,7 +285,7 @@ def _git_commit() -> str:
 
 
 def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, depth: int, notes: dict[str, str],
-                   splits: list[str]) -> str:
+                   splits: list[str], judge: Optional[JudgeInfo] = None) -> str:
     backend = os.environ.get("LLM_BACKEND", "stub")
     lines = [f"# Eval summary {date}", "",
              f"- commit: {_git_commit()}, backend: {backend}, model: {os.environ.get('LLM_MODEL', 'stub-model')}, "
@@ -231,6 +295,14 @@ def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, dept
              f"- as_of в вопросах: {', '.join(sorted({r.as_of for r in rows})) or '—'}; "
              "повторов: 1 (mean±std появится в A9)",
              f"- режимы (в ячейках через « / » в этом порядке): {' / '.join(modes)}"]
+    if judge is None:
+        lines.append("- судья: выключен (--judge не задан), accuracy и fabrication_rate = n/a")
+    else:
+        same = (" — та же модель, что у системы, возможное смещение в пользу своих ответов"
+                if judge.model == os.environ.get("LLM_MODEL", "stub-model") else "")
+        lines.append(f"- судья: {judge.version} (с транскриптами встреч), модель {judge.model}{same}; "
+                     f"вызовов {judge.calls}, повторных входов пропущено {judge.reused}, "
+                     f"без вердикта (ошибка формата) {judge.failed}")
     if backend == "stub":
         lines += ["", "> **LLM_BACKEND=stub**: модель и эмбеддинги — заглушки. Таблица проверяет только "
                       "работу harness, цифры качества ничего не значат."]
@@ -247,13 +319,16 @@ def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, dept
         "citation_valid — цитаты, найденные в тексте встречи, / все цитаты.",
         "abstained*: для none — доля отказов «данных нет» (выше лучше); для T1–T5 — ложные отказы (ниже лучше). "
         "Определяется по фразам, см. ABSTAIN_RE.",
-        "accuracy = n/a: содержание ответа проверит судья (A8). Токены и латентность — среднее на вопрос, $ — сумма."]
+        "accuracy — среднее judge_score / 2 (2 верно или честный отказ, 1 частично, 0 неверно или не ответили); "
+        "fabrication_rate — доля ответов, где судья нашёл выдумку (judge_fabrication = 1); без --judge обе n/a. "
+        "Токены и латентность — среднее на вопрос, $ — сумма (стоимость судьи в $ не входит, она в runs/calls.jsonl, "
+        "purpose=judge)."]
     for split, title in (("test", "test — цифры для отчёта"), ("dev", "dev — для отладки, в отчёт не идут")):
         if split not in splits:
             continue
         part = [r for r in rows if r.split == split]
         lines += ["", f"## {title}", ""]
-        lines += split_table(part, modes) if part else ["_нет вопросов_"]
+        lines += split_table(part, modes, judge is not None) if part else ["_нет вопросов_"]
         if split == "test" and part:
             lines += ["", "_На каждый тип приходится 1–2 тестовых вопроса: это иллюстрация, не статистика._"]
     lines += [""] + [f"{i}. {t}" for i, t in enumerate(notes_md, 1)]
@@ -279,7 +354,27 @@ def select_questions(path: Path, split: str, as_of: Optional[str], limit: Option
     return questions[:limit] if limit else questions
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], backend: str) -> None:
+    """Оценка прогона: ответы, судья, итог и сравнение с остатком бюджета."""
+    print("Оценка ответов системы:\n  " + "\n  ".join(est.lines()))
+    if jest is None:
+        return
+    print("Оценка судьи (judge-v2, модель " + judge_mod.judge_model() + "):\n  " + "\n  ".join(jest.lines()))
+    total = est_mod.total_cost(est, jest)
+    calls = f"{est.chat_calls_min}–{est.chat_calls_max} вызовов ответов + до {jest.calls} вызовов судьи"
+    print(f"Итого (ответы + судья): {calls}; " + (
+        f"≈${total[0]:.4f} без ретраев, до ≈${total[1]:.4f} с ретраями" if total else "стоимость не оценить (нет цен)"))
+    if total and backend != "stub":
+        left = est_mod.remaining_budget()
+        if total[0] > left:
+            print(f"ВНИМАНИЕ: оценка ${total[0]:.4f} больше остатка бюджета ${left:.4f}: даже без ретраев не хватит, "
+                  "cost_guard остановит прогон на лимите, и результаты не запишутся.")
+        elif total[1] > left:
+            print(f"ВНИМАНИЕ: оценка с ретраями ${total[1]:.4f} больше остатка бюджета ${left:.4f}: "
+                  "при ретраях может не хватить.")
+
+
+def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -> int:
     ap = argparse.ArgumentParser(description="Eval-harness: вопросы → api.ask → простые метрики")
     ap.add_argument("--mode", choices=list(MODES), default="both")
     ap.add_argument("--split", choices=["dev", "test", "all"], default="test")
@@ -293,6 +388,8 @@ def main(argv: Optional[list[str]] = None) -> int:
     ap.add_argument("--raw-dir", type=Path, default=RAW_DIR, help="встречи для baseline и проверки цитат")
     ap.add_argument("--index-dir", type=Path, default=INDEX_ROOT)
     ap.add_argument("--out-dir", type=Path, default=RESULTS)
+    ap.add_argument("--judge", action="store_true",
+                    help="оценить ответы судьёй v2: заполнить accuracy и fabrication_rate (платные вызовы)")
     ap.add_argument("--dry-run", action="store_true", help="план и оценка стоимости, без прогона")
     ap.add_argument("--confirm-paid", action="store_true", help="разрешить прогон с платным backend")
     a = ap.parse_args(argv)
@@ -313,9 +410,14 @@ def main(argv: Optional[list[str]] = None) -> int:
     print(f"Вопросов: {len(questions)} (split={a.split}), режимы: {', '.join(modes)}, backend: {backend}")
     print(cost_guard.status())
     estimate = est_mod.estimate_run(plan, raw_dir=a.raw_dir, k=a.k, depth=a.depth)
-    print("Оценка прогона:\n  " + "\n  ".join(estimate.lines()))
+    judge_estimate = est_mod.estimate_judge(questions, modes, raw_dir=a.raw_dir) if a.judge else None
+    print_plan(estimate, judge_estimate, backend)
     if a.dry_run:
         return 0
+    if a.judge and backend == "stub" and judge_fn is None:
+        print("--judge при LLM_BACKEND=stub: заглушка не оценивает ответы. Для проверки без денег — --dry-run; "
+              "для настоящего прогона поставьте LLM_BACKEND=openai.", file=sys.stderr)
+        return 2
     if backend != "stub" and not a.confirm_paid:
         print(f"\nLLM_BACKEND={backend} — прогон платный. Подтвердите числа выше и запустите с --confirm-paid.",
               file=sys.stderr)
@@ -325,9 +427,10 @@ def main(argv: Optional[list[str]] = None) -> int:
         return systems.build_system(mode, as_of, raw_dir=a.raw_dir, index_root=a.index_dir, k=a.k, depth=a.depth)
 
     from src import api
+    runner = JudgeRunner(raw_dir=a.raw_dir, fn=judge_fn or judge_mod.judge) if a.judge else None
     try:
         rows = run_eval(questions, modes, build, gold=load_gold_events(a.gold), texts=MeetingTexts(a.raw_dir),
-                        backend=backend)
+                        backend=backend, judge=runner)
     finally:
         api.use_index_dir(api.DEFAULT_INDEX_DIR)  # UI-индекс не должен остаться подменённым
 
@@ -335,8 +438,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     notes = {r.mode: r.error for r in rows if r.status == "stub"}
     csv_path, md_path = a.out_dir / f"eval_{date}.csv", a.out_dir / f"summary_{date}.md"
     write_csv(csv_path, rows)
+    info = JudgeInfo(judge_mod.JUDGE_PROMPT_VERSION_V2, judge_mod.judge_model(), runner.calls, runner.reused,
+                     runner.failed) if runner else None
     summary = render_summary(rows, modes, date=date, k=a.k, depth=a.depth, notes=notes,
-                             splits=["dev", "test"] if a.split == "all" else [a.split])
+                             splits=["dev", "test"] if a.split == "all" else [a.split], judge=info)
     md_path.write_text(summary, encoding="utf-8")
     print(f"\n{summary}\nCSV: {csv_path}\nСводка: {md_path}")
     return 0
