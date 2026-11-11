@@ -61,6 +61,10 @@ class AnswerStats:
     prompt_tokens: int = 0
     completion_tokens: int = 0
     cost_usd: float = 0.0
+    from_cache: bool = False     # все вызовы LLM пришли из кэша: такую задержку не сравнивать с живой
+    retrieval_ms: int = 0        # поиск: чанки (baseline) или подграф (graph), включая эмбеддинг вопроса
+    llm_ms: int = 0              # вызовы LLM, вместе с ретраем
+    latency_ms: int = 0          # весь ответ — то же, что Answer.latency_ms
 
 
 def default_index() -> BaselineIndex:
@@ -143,14 +147,22 @@ def generate(question: str, context: str, mode: str,
              stats: Optional[AnswerStats] = None) -> Answer:
     """context — строки вида «[meeting_id ts] Говорящий: текст»: по ним проверяются цитаты."""
     stats = stats or AnswerStats(mode=mode, question=question)
+    t0 = time.perf_counter()
+    result = _generate(question, context, mode, stats)
+    result.latency_ms = stats.latency_ms = int((time.perf_counter() - t0) * 1000)
+    _write_report(stats)
+    return result
+
+
+def _generate(question: str, context: str, mode: str, stats: AnswerStats) -> Answer:
     if not context.strip():
-        _write_report(stats)
         return Answer(answer=NO_CONTEXT_ANSWER, mode=mode)
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt(question, context)}]
     best: Optional[tuple[dict, list[Citation], list[Citation], int]] = None
     raw_text = ""
+    cached = []
     for attempt in (1, 2):
         stats.attempts = attempt
         r = complete(messages, json_schema={"type": "object"}, temperature=0.0, max_tokens=1500,
@@ -158,6 +170,8 @@ def generate(question: str, context: str, mode: str,
         stats.prompt_tokens += r.prompt_tokens
         stats.completion_tokens += r.completion_tokens
         stats.cost_usd += r.cost_usd
+        stats.llm_ms += r.latency_ms
+        cached.append(r.from_cache)
         raw_text = raw_text or r.text
 
         data, err = _parse(r.text)
@@ -175,11 +189,11 @@ def generate(question: str, context: str, mode: str,
             messages += [{"role": "assistant", "content": r.text},
                          {"role": "user", "content": retry_prompt([c.model_dump() for c in bad], err)}]
 
+    stats.from_cache = all(cached)
     usage = Usage(prompt_tokens=stats.prompt_tokens, completion_tokens=stats.completion_tokens,
                   cost_usd=stats.cost_usd)
     if best is None:
         # Ни разу не JSON — отдаём текст как есть, но без цитат: непроверяемая ссылка хуже отсутствующей.
-        _write_report(stats)
         return Answer(answer=raw_text.strip() or NO_CONTEXT_ANSWER, mode=mode, usage=usage)
 
     data, good, bad, relocated = best
@@ -187,7 +201,6 @@ def generate(question: str, context: str, mode: str,
     text = data["answer"].strip()
     if bad:
         text += f"\n\n(Удалено неподтверждённых цитат: {len(bad)} — их нет дословно в источниках.)"
-    _write_report(stats)
     return Answer(answer=text, citations=good, mode=mode, usage=usage)
 
 
@@ -222,8 +235,10 @@ def answer(question: str, mode: str = "baseline", k: int = 5,
     stats.mode, stats.requested_mode = mode, requested
     if chosen:
         stats.route_qtype, stats.route_reason = chosen.qtype, chosen.reason
-    result = generate(question, context, mode, stats)
-    result.latency_ms = int((time.perf_counter() - t0) * 1000)
+    stats.retrieval_ms = int((time.perf_counter() - t0) * 1000)
+    result = _generate(question, context, mode, stats)
+    result.latency_ms = stats.latency_ms = int((time.perf_counter() - t0) * 1000)
+    _write_report(stats)
     return result
 
 

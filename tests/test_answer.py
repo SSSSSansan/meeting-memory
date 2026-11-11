@@ -188,3 +188,23 @@ def test_graph_mode_uses_subgraph_context_and_same_verification(monkeypatch):
 def test_unknown_mode_rejected():
     with pytest.raises(ValueError):
         ans.answer("?", mode="hybrid", index=_index())
+
+
+def test_report_has_question_latency_and_its_parts(monkeypatch):
+    calls = _fake_llm(monkeypatch, json.dumps(GOOD, ensure_ascii=False))
+    a = ans.answer("Когда релиз Zhol?", index=_index())
+    row = _report_rows()[-1]
+    assert len(calls) == 1
+    assert row["latency_ms"] == a.latency_ms >= row["retrieval_ms"] >= 0
+    assert row["llm_ms"] == 0 and row["from_cache"] is False   # подменённая LLM: задержка 0, не из кэша
+    assert (row["mode"], row["requested_mode"]) == ("baseline", "baseline")
+
+
+def test_report_marks_fully_cached_answers(monkeypatch):
+    def cached(messages, **kw):
+        return LLMResponse(text=json.dumps({"answer": "ok", "citations": []}), latency_ms=7, from_cache=True)
+
+    monkeypatch.setattr(ans, "complete", cached)
+    ans.generate("?", "[m_001 00:00:01] А: текст", "graph")
+    row = _report_rows()[-1]
+    assert row["from_cache"] is True and row["llm_ms"] == 7 and row["latency_ms"] >= 0

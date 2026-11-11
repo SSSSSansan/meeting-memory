@@ -5,6 +5,8 @@
     transcripts = [api.load_scribal(*p) for p in pairs]
     for done, total in api.index_batches(transcripts): ...     # батчами по 5, индекс сохраняется после каждого
     api.ask("Когда релиз Zhol?")                              # → src.schemas.Answer
+    api.get_timeline("Zhol")                                  # пункты проекта по времени, статусы и связи
+    api.get_graph("Zhol")                                     # узлы и рёбра для рисунка графа
 
 Загрузка — пара файлов Scribal на встречу: `<meeting_id>.transcript.json` (raw) и
 `<meeting_id>.meeting.json` (ответ GET /meetings/{id}), как в data/raw/.
@@ -19,7 +21,9 @@ from typing import Iterator, Optional
 from src.answer.answerer import answer
 from src.ingest.scribal_adapter import convert
 from src.retrieval.baseline import DEFAULT_INDEX_DIR, ROOT, BaselineIndex
-from src.retrieval.graph_rag import SAMPLE_GRAPH_PATH, default_graph_path, get_aliases, get_graph
+from src.resolve.entities import resolve_projects
+from src.retrieval.graph_rag import SAMPLE_GRAPH_PATH, default_graph_path, get_aliases
+from src.retrieval.graph_rag import get_graph as _load_graph
 from src.retrieval.router import Route
 from src.retrieval.router import route as _route
 from src.schemas import Answer, ScribalMeeting, ScribalTranscript, Transcript
@@ -126,7 +130,88 @@ def route(question: str) -> Route:
 def graph_info() -> dict:
     """Какой граф читает режим graph и что в нём есть — чтобы в UI было видно расхождение с индексом."""
     path = default_graph_path()
-    G = get_graph(path)
+    G = _load_graph(path)
     meetings = sorted({d["meeting_id"] for _, d in G.nodes(data=True) if d.get("type") == "Meeting"})
     return {"path": path.relative_to(ROOT).as_posix(), "is_sample": path == SAMPLE_GRAPH_PATH, "meetings": meetings,
             "aliases": len(get_aliases(path))}
+
+
+# ---------- Граф для UI: таймлайн проекта и рисунок ----------
+
+ITEM_TYPES = ("Decision", "Task", "OpenQuestion")
+LINK_TYPES = ("SUPERSEDES", "CONTRADICTS", "DEPENDS_ON", "REFINES", "SAME_TOPIC")
+
+
+def list_projects() -> list[str]:
+    G = _load_graph()
+    return sorted(d["label"] for _, d in G.nodes(data=True) if d.get("type") == "Project")
+
+
+def _project_node(G, project: str) -> Optional[str]:
+    """Узел проекта по названию или его варианту: «zhol», «Жол», вариант из aliases.json."""
+    labels = {d["label"]: n for n, d in G.nodes(data=True) if d.get("type") == "Project"}
+    wanted = project.strip()
+    for label, n in labels.items():
+        if label.casefold() == wanted.casefold():
+            return n
+    canon = get_aliases().get(wanted)
+    if canon in labels:
+        return labels[canon]
+    canon = resolve_projects([wanted], sorted(labels)).get(wanted)
+    return labels.get(canon)
+
+
+def _links(G, n: str) -> list[dict]:
+    out = [{"type": e["type"], "direction": "out", "other": v, "rationale": e.get("rationale", "")}
+           for _, v, e in G.out_edges(n, data=True) if e["type"] in LINK_TYPES]
+    out += [{"type": e["type"], "direction": "in", "other": u, "rationale": e.get("rationale", "")}
+            for u, _, e in G.in_edges(n, data=True) if e["type"] in LINK_TYPES]
+    return out
+
+
+def get_timeline(project: str) -> list[dict]:
+    """Решения, задачи и открытые вопросы проекта по времени — для таймлайна в UI.
+
+    Пункт попадает в проект по своему полю project, а не по названию встречи, поэтому здесь есть
+    и то, что обсуждали на встречах про другие проекты. Статусы вычислены ролью B при сборке графа.
+    Неизвестный проект — пустой список.
+    """
+    G = _load_graph()
+    pid = _project_node(G, project)
+    if pid is None:
+        return []
+    items = [u for u, _, e in G.in_edges(pid, data=True)
+             if e["type"] == "BELONGS_TO" and G.nodes[u].get("type") in ITEM_TYPES]
+    out = []
+    for n in sorted(items, key=lambda n: (G.nodes[n].get("date", ""), G.nodes[n].get("ts", ""), n)):
+        d = G.nodes[n]
+        meeting = G.nodes.get(f"meeting:{d.get('meeting_id')}", {})
+        out.append({"id": n, "kind": d["type"], "date": d.get("date", ""), "meeting_id": d.get("meeting_id", ""),
+                    "meeting_title": meeting.get("label", ""), "ts": d.get("ts", ""),
+                    "statement": d.get("statement", ""), "quote": d.get("quote", ""),
+                    "status": d.get("status", ""), "in_conflict": bool(d.get("in_conflict")),
+                    "owner": d.get("owner"), "due": d.get("due"), "made_by": d.get("made_by"),
+                    "links": _links(G, n)})
+    return out
+
+
+def get_graph(project: Optional[str] = None) -> dict:
+    """Узлы и рёбра для рисунка. Без проекта — весь граф без рёбер «участвовал во встрече»
+    (их больше всех остальных вместе, рисунок превращается в кашу). С проектом — проект, его пункты,
+    связанные с ними решения, встречи, где пункты прозвучали, и исполнители задач."""
+    G = _load_graph()
+    if project is None:
+        keep = set(G.nodes)
+    else:
+        pid = _project_node(G, project)
+        if pid is None:
+            return {"nodes": [], "edges": []}
+        items = {u for u, _, e in G.in_edges(pid, data=True) if e["type"] == "BELONGS_TO"}
+        items |= {link["other"] for n in list(items) for link in _links(G, n)}
+        keep = {pid} | items
+        for n in items:
+            keep |= {v for _, v, e in G.out_edges(n, data=True) if e["type"] in ("STATED_IN", "ASSIGNED_TO")}
+    nodes = [{"id": n, **{k: v for k, v in G.nodes[n].items() if k != "participants"}} for n in sorted(keep)]
+    edges = [{"source": u, "target": v, **e} for u, v, e in G.edges(data=True)
+             if u in keep and v in keep and e["type"] != "PARTICIPATED_IN"]
+    return {"nodes": nodes, "edges": edges}
