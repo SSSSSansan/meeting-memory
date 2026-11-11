@@ -19,7 +19,9 @@ def _isolated(monkeypatch, tmp_path):
     monkeypatch.setenv("MEETING_GRAPH", "data/sample/graph.json")
     monkeypatch.setattr(answerer, "REPORT", tmp_path / "answer_report.jsonl")
     api.use_index_dir(tmp_path / "index")
+    api.use_graph(None)  # выбор графа в UI живёт в модуле — между тестами сбрасываем
     yield
+    api.use_graph(None)
     api.use_index_dir(api.DEFAULT_INDEX_DIR)
 
 
@@ -150,3 +152,54 @@ def test_whole_graph_skips_participation_edges():
     g = api.get_graph()
     assert any(n["type"] == "Person" for n in g["nodes"])
     assert all(e["type"] != "PARTICIPATED_IN" for e in g["edges"])
+
+
+# ---------- C7: выбор графа, конфликты и замены, источник цитаты, рисунок ----------
+
+def test_available_graphs_and_switching():
+    paths = [g["path"] for g in api.available_graphs()]
+    assert api.SAMPLE_GRAPH_PATH in paths
+    assert api.demo_default_graph() == api.SAMPLE_GRAPH_PATH          # MEETING_GRAPH задана в фикстуре
+    api.use_graph(api.SAMPLE_GRAPH_PATH)
+    assert api.graph_info()["is_sample"]
+    if api.B_GRAPH_PATH.exists():
+        api.use_graph(api.B_GRAPH_PATH)
+        assert api.graph_info()["path"] == "data/graph_raw/graph.json"
+        assert "Zhol" in api.list_projects()
+    api.use_graph(None)
+    assert api.graph_info()["is_sample"]
+
+
+def test_demo_default_graph_prefers_full_graph_without_env(monkeypatch):
+    monkeypatch.delenv("MEETING_GRAPH")
+    assert api.demo_default_graph() == api.available_graphs()[0]["path"]
+
+
+def test_changes_on_sample_graph():
+    ch = api.get_changes()
+    assert ch["conflicts"] == []
+    (r,) = ch["replacements"]
+    assert (r["new"]["id"], r["old"]["id"]) == ("d_m002_01", "d_m001_01")
+    assert r["old"]["status"] == "superseded" and r["rationale"]
+    assert api.get_changes("Горизонт")["replacements"] == [] and api.get_changes("Марс")["conflicts"] == []
+
+
+def test_source_highlights_quote_in_replica():
+    files = {k: v for k, v in api.demo_files().items() if k.startswith("m_001.")}
+    (mid, tr, meta), = api.pair_scribal_files(files)[0]
+    t = api.load_scribal(mid, tr, meta)
+    seg = next(s for s in t.segments if len(s.text.split()) >= 8)
+    quote = " ".join(seg.text.split()[2:7]).upper()                    # регистр и пробелы не важны
+    src = api.get_source("m_001", seg.ts, quote)
+    a, b = src["highlight"]
+    assert src["ts"] == seg.ts and src["text"][a:b].upper().split() == quote.split()
+    assert api.get_source("m_001", "99:99:99", quote)["ts"] == seg.ts   # неверный таймкод — ищем по тексту
+    assert api.get_source("m_404", seg.ts, quote) is None
+
+
+def test_graph_dot_marks_superseded_and_conflicts():
+    dot = api.graph_dot("Атлас")
+    assert dot.startswith("digraph G {") and dot.rstrip().endswith("}")
+    assert "[заменено]" in dot and 'label="заменяет"' in dot
+    assert '"d_m002_01" -> "d_m001_01" [color="#5F5E5A" style=bold label="заменяет"];' in dot
+    assert '"project:Горизонт"' not in dot

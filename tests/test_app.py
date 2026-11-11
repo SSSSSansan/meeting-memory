@@ -19,7 +19,9 @@ def _isolated(monkeypatch, tmp_path):
     monkeypatch.setenv("MEETING_GRAPH", "data/sample/graph.json")
     monkeypatch.setattr(answerer, "REPORT", tmp_path / "answer_report.jsonl")
     api.use_index_dir(tmp_path / "index")
+    api.use_graph(None)  # выбор графа в UI живёт в модуле — между тестами сбрасываем
     yield
+    api.use_graph(None)
     api.use_index_dir(api.DEFAULT_INDEX_DIR)
 
 
@@ -78,3 +80,41 @@ def test_auto_mode_shows_route_decision(monkeypatch):
     _button(at, "Спросить").click().run()
     assert not at.exception
     assert any(c.value.startswith("auto → graph (T2)") for c in at.caption)
+
+
+def test_all_tabs_render_on_sample_graph():
+    at = AppTest.from_file(APP, default_timeout=30).run()
+    assert not at.exception
+    assert any("Граф: data/sample/graph.json" in c.value for c in at.sidebar.caption)
+    shown = " ".join(m.value for m in at.markdown)
+    assert "~~Релиз Атласа переносится на 20 апреля~~" in shown          # таймлайн: заменённое зачёркнуто
+    assert "Замены решений: 1" in [s.value for s in at.subheader]
+    assert at.get("graphviz_chart")
+
+
+def test_compare_mode_shows_both_branches(monkeypatch):
+    monkeypatch.setattr(answerer, "complete", lambda messages, **kw: LLMResponse(
+        text=json.dumps({"answer": "ok", "citations": []})))
+    at = AppTest.from_file(APP, default_timeout=60).run()
+    _button(at, "Демо-встречи").click().run()
+    at.radio[0].set_value("сравнить").run()
+    at.text_input[0].input("Как менялся срок релиза Атласа?").run()
+    _button(at, "Спросить").click().run()
+    assert not at.exception
+    assert {"baseline", "graph"} <= {s.value for s in at.subheader}
+
+
+def test_sources_are_highlighted_in_transcript(monkeypatch):
+    from src.schemas import Answer, Citation
+    files = {k: v for k, v in api.demo_files().items() if k.startswith("m_001.")}
+    (mid, tr, meta), = api.pair_scribal_files(files)[0]
+    seg = next(s for s in api.load_scribal(mid, tr, meta).segments if len(s.text.split()) >= 8)
+    quote = " ".join(seg.text.split()[1:6])
+    monkeypatch.setattr(api, "ask", lambda q, mode="baseline", **kw: Answer(
+        answer="ответ", mode="graph", citations=[Citation(meeting_id="m_001", ts=seg.ts, quote=quote)]))
+    at = AppTest.from_file(APP, default_timeout=30).run()
+    at.radio[0].set_value("graph").run()
+    at.text_input[0].input("Что решили?").run()
+    _button(at, "Спросить").click().run()
+    assert not at.exception
+    assert any("<mark>" in m.value for m in at.markdown)
