@@ -104,3 +104,49 @@ def test_graph_info_points_to_sample_until_role_b_builds_graph():
 def test_route_is_exposed_for_ui():
     r = api.route("Что по Атласу ещё не закрыто?")
     assert (r.mode, r.qtype) == ("graph", "T5")
+
+
+def test_list_projects():
+    assert api.list_projects() == ["Атлас", "Горизонт"]
+
+
+def test_timeline_is_chronological_with_statuses_and_links():
+    t = api.get_timeline("Атлас")
+    assert [i["id"] for i in t] == ["d_m001_01", "t_m001_01", "d_m002_01", "t_m002_01"]
+    first = t[0]
+    assert (first["kind"], first["status"], first["meeting_title"]) == \
+        ("Decision", "superseded", "Еженедельный статус — Атлас")
+    assert first["links"] == [{"type": "SUPERSEDES", "direction": "in", "other": "d_m002_01",
+                               "rationale": first["links"][0]["rationale"]}]
+    assert t[1]["owner"] == "Айгерим Нурланова" and t[1]["due"] == "2026-02-10"
+
+
+@pytest.mark.parametrize("name", ["атлас", "Атласу", " Атлас "])
+def test_timeline_accepts_name_variants(name):
+    assert [i["id"] for i in api.get_timeline(name)][:1] == ["d_m001_01"]
+
+
+def test_timeline_includes_items_from_meetings_about_other_project():
+    t = api.get_timeline("Горизонт")
+    assert {i["id"] for i in t} == {"q_m001_01", "d_m002_02"}
+    assert all("Атлас" in i["meeting_title"] for i in t)
+
+
+def test_unknown_project_gives_empty_results():
+    assert api.get_timeline("Марс") == [] and api.get_graph("Марс") == {"nodes": [], "edges": []}
+
+
+def test_project_graph_for_drawing():
+    g = api.get_graph("Атлас")
+    ids = {n["id"] for n in g["nodes"]}
+    assert {"project:Атлас", "d_m001_01", "d_m002_01", "meeting:m_001", "person:Айгерим Нурланова"} <= ids
+    assert "project:Горизонт" not in ids
+    types = {e["type"] for e in g["edges"]}
+    assert "SUPERSEDES" in types and "PARTICIPATED_IN" not in types
+    assert all(e["source"] in ids and e["target"] in ids for e in g["edges"])
+
+
+def test_whole_graph_skips_participation_edges():
+    g = api.get_graph()
+    assert any(n["type"] == "Person" for n in g["nodes"])
+    assert all(e["type"] != "PARTICIPATED_IN" for e in g["edges"])

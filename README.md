@@ -78,6 +78,9 @@ for done, total in api.index_batches(transcripts): ...    # батчи по 5, �
 api.ask("Как менялся срок релиза Zhol?", mode="auto")     # → src.schemas.Answer (формат 4.6)
 api.route("Что по Qamqor ещё не закрыто?")                # какую ветку выберет auto и почему
 api.graph_info()                                           # какой граф читает режим graph
+api.list_projects()                                        # проекты в графе
+api.get_timeline("Жол")                                   # пункты проекта по времени: статус, связи, цитата
+api.get_graph("Zhol")                                      # {"nodes", "edges"} для рисунка; без проекта — весь граф
 ```
 
 | Функция | Что делает |
@@ -88,6 +91,8 @@ api.graph_info()                                           # какой граф
 | `src.retrieval.baseline.BaselineIndex` | `add(transcripts)`, `search(question, k)`, `save()` / `load()` |
 | `src.retrieval.graph_rag.retrieve_subgraph(question, depth=2) -> dict` | подграф по вопросу и контекст для модели |
 | `src.retrieval.router.route(question) -> Route` | выбор ветки для `auto` |
+| `src.api.get_timeline(project) -> list[dict]` | решения, задачи и открытые вопросы проекта по времени; у каждого `status`, `in_conflict`, `links` (SUPERSEDES, CONTRADICTS, …), цитата и встреча |
+| `src.api.get_graph(project=None) -> dict` | узлы и рёбра графа для рисунка (без рёбер «участвовал во встрече») |
 
 Командная строка:
 
