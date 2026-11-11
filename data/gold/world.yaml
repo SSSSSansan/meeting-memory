@@ -1,3 +1,4 @@
+# m_014 исключена из набора из-за нехватки времени, номера не менялись
 version: 1
 
 # Сюжет синтетического набора. Источник для эталона, вопросов и сценариев демо.
@@ -38,8 +39,7 @@ meetings:
   - {id: m_011, date: 2026-09-21, title: "Zhol: еженедельный", main_project: zhol, projects_discussed: [zhol], participants: [amina, nuraly, nikolay, abdurakhman], language_profile: ru, target_minutes: 15, scenarios: [evolution_deadline]}
   - {id: m_012, date: 2026-09-28, title: "Qamqor: тесты", main_project: qamqor, projects_discussed: [qamqor], participants: [nuraly, sandugash, abdurakhman], language_profile: kk, target_minutes: 10, scenarios: [language_kk]}
   - {id: m_013, date: 2026-10-05, title: "Squad: разбор с клиентом", main_project: squad, projects_discussed: [squad], participants: [amina, daniyar, nuraly, client_squad], language_profile: ru, target_minutes: 20, scenarios: [replaced_decision]}
-  - {id: m_014, date: 2026-10-12, title: "Общая встреча по всем проектам", main_project: null, projects_discussed: [zhol, squad, qamqor, boost], participants: [amina, nuraly, nikolay, abdurakhman, sandugash, daniyar], language_profile: mixed, target_minutes: 25, scenarios: [cross_project, recap, thinking_aloud, language_mix, noise]}
-  - {id: m_015, date: 2026-10-26, title: "Итоговая встреча перед релизом Zhol", main_project: zhol, projects_discussed: [zhol, squad], participants: [amina, nuraly, nikolay, abdurakhman, sandugash, daniyar], language_profile: ru, target_minutes: 20, scenarios: [forgotten_promise, recap]}
+  - {id: m_015, date: 2026-10-26, title: "Итоговая встреча перед релизом Zhol", main_project: zhol, projects_discussed: [zhol, squad, qamqor], participants: [amina, nuraly, nikolay, abdurakhman, sandugash, daniyar], language_profile: ru, target_minutes: 20, scenarios: [forgotten_promise, recap]}
 
 events:
   # m_001
@@ -87,18 +87,12 @@ events:
   # m_013
   - {id: ev_m013_01, meeting: m_013, type: decision, project: squad, statement: "Экспорт в Excel возвращается в первую версию Squad", made_by: amina, note: требование клиента}
   - {id: ev_m013_02, meeting: m_013, type: decision, project: squad, statement: "Первая версия Squad выходит 20 ноября 2026", made_by: amina}
-  # m_014
-  - {id: ev_m014_01, meeting: m_014, type: recap, project: zhol, statement: "Напоминание: релиз Zhol 10 ноября", said_by: amina, recaps: ev_m011_01}
-  - {id: ev_m014_02, meeting: m_014, type: recap, project: squad, statement: "Напоминание: первая версия Squad 20 ноября", said_by: daniyar, recaps: ev_m013_02}
-  - {id: ev_m014_03, meeting: m_014, type: open_question, project: zhol, statement: "Кто проводит QA перед релизом Zhol"}
-  - {id: ev_m014_04, meeting: m_014, type: non_decision, kind: thinking_aloud, project: zhol, statement: "Нұралы вслух думает, не перенести ли релиз Zhol на декабрь; никто не согласился", said_by: nuraly}
-  - {id: ev_m014_05, meeting: m_014, type: decision, project: zhol, statement: "Еженедельный созвон по Zhol переносится на вторник с 20 октября 2026", made_by: amina}
-  - {id: ev_m014_06, meeting: m_014, type: status_update, project: qamqor, statement: "Тестовая выборка собрана", reported_by: sandugash}
   # m_015
   - {id: ev_m015_01, meeting: m_015, type: recap, project: zhol, statement: "Подтверждено: релиз Zhol 10 ноября", said_by: amina, recaps: ev_m011_01}
   - {id: ev_m015_02, meeting: m_015, type: task, project: squad, statement: "Подготовить документацию API Squad (повторно)", owner: nikolay, due: 2026-11-06, reissues: ev_m003_03, note: "Николай признаёт, что не сделал"}
   - {id: ev_m015_03, meeting: m_015, type: decision, project: zhol, statement: "С 2 ноября 2026 новые функции в Zhol не добавляем", made_by: amina}
-  - {id: ev_m015_04, meeting: m_015, type: open_question, project: zhol, statement: "Кто проводит QA перед релизом Zhol", repeats: ev_m014_03}
+  - {id: ev_m015_04, meeting: m_015, type: open_question, project: zhol, statement: "Кто проводит QA перед релизом Zhol"}
+  - {id: ev_m015_05, meeting: m_015, type: status_update, project: qamqor, statement: "Тестовая выборка собрана", reported_by: sandugash}
 
 # Связи между решениями. Направление: от более позднего к более раннему.
 links:
@@ -119,4 +113,4 @@ closures:
   - {from: ev_m009_01, closes: ev_m002_03}
   - {from: ev_m009_02, closes: ev_m002_02}
   - {from: ev_m011_02, closes: ev_m006_02}
-  - {from: ev_m014_06, closes: ev_m012_02}
+  - {from: ev_m015_05, closes: ev_m012_02}
