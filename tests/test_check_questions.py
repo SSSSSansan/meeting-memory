@@ -41,8 +41,8 @@ def test_real_questions_shape(questions):
     assert len(questions) == 35
     assert {q["split"] for q in questions} == {"dev", "test"}
     assert {q["as_of"] for q in questions} == {"m_008", "m_015"}
-    # q_16 привязан к дате 2 сентября, q_17 остаётся на m_008; остальные — на m_015
-    assert {q["id"] for q in questions if q["as_of"] == "m_008"} == {"q_16", "q_17"}
+    # q_16 привязан к дате 2 сентября и остаётся на m_008; остальные — на m_015
+    assert {q["id"] for q in questions if q["as_of"] == "m_008"} == {"q_16"}
     assert sum(q["lang"] == "kk" for q in questions) >= 3
     assert sum(q["split"] == "test" for q in questions) >= 12
 
