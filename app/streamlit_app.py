@@ -2,7 +2,7 @@
 
 Только отображение: загрузка, индексация, ответы, таймлайн и граф — в src/api.py.
 Шапка со счётчиками; вкладки: вопросы (примеры, режимы и сравнение, источники с подсветкой),
-таймлайн проекта, рисунок графа, конфликты и замены решений.
+таймлайн проекта, рисунок графа, конфликты и замены решений, метрики прогона eval (только чтение results/).
 """
 import html
 import os
@@ -186,9 +186,9 @@ def pick_example(question: str) -> None:
 
 # ---------- Вкладки ----------
 
-tab_qa, tab_timeline, tab_graph, tab_changes = st.tabs(
+tab_qa, tab_timeline, tab_graph, tab_changes, tab_metrics = st.tabs(
     [":material/forum: Вопросы", ":material/timeline: Таймлайн проекта", ":material/hub: Граф",
-     ":material/warning: Конфликты и замены"])
+     ":material/warning: Конфликты и замены", ":material/leaderboard: Метрики"])
 
 with tab_qa:
     st.markdown("**Примеры вопросов** — нажмите, чтобы спросить")
@@ -278,3 +278,66 @@ with tab_changes:
                         f"→ **{r['new']['statement']}** ({r['new']['date']}, {r['new']['meeting_id']})")
             if r["rationale"]:
                 st.caption(r["rationale"])
+
+with tab_metrics:
+    runs = api.eval_runs()
+    if not runs:
+        st.info("В results/ нет eval_*.json. Прогон: `python -m src.eval.run --mode both --judge-facts …`")
+    else:
+        run = st.selectbox("Прогон", runs, format_func=lambda r: r["label"], key="metrics_run")
+        result = api.load_eval(run["path"])
+        cfg = result.get("config") or {}
+        st.caption(f"{result.get('timestamp', '')} · модель {cfg.get('model')} · эмбеддинги {cfg.get('embed_model')}"
+                   f" · судья {cfg.get('judge_model')} ({cfg.get('JUDGE_FACTS_PROMPT_VERSION')}) · "
+                   f"split {cfg.get('split')} · вопросов {cfg.get('n_questions')} · as_of {cfg.get('as_of')} · "
+                   f"commit {cfg.get('commit')}")
+        if cfg.get("fixture"):
+            st.warning("Фикстура роли A: числа выдуманы, это не результат системы. "
+                       "Вкладка покажет настоящий прогон, как только в results/ появится eval_*.json.",
+                       icon=":material/science:")
+        if cfg.get("split") == "dev":
+            st.info("Split dev: разбивка по типам разведочная — на каждый тип по несколько вопросов. "
+                    "Итоговые утверждения — по прогону на test.", icon=":material/info:")
+
+        for col, card in zip(st.columns(3), api.metric_cards()):
+            col.metric(card["title"], card["value"] or "—", help=card["hint"], border=True)
+            if card["value"] is None:
+                col.caption(card["hint"])
+
+        st.subheader("Качество ответа по типам вопросов")
+        metric = st.radio("Метрика", list(api.QUALITY_METRICS), horizontal=True, key="metrics_metric",
+                          format_func=lambda k: api.QUALITY_METRICS[k])
+        table = api.quality_table(result, metric)
+        if not table["measured"]:
+            st.info(f"«{api.QUALITY_METRICS[metric]}» в этом прогоне не измерена (нет значений, а не нули). "
+                    "Факты считает судья: прогон с --judge-facts.")
+        st.dataframe(table["rows"], hide_index=True, width="stretch")
+        st.caption("Ячейка: среднее [95% интервал] n — число вопросов. Интервал — бутстрап по вопросам: "
+                   "показывает зависимость от набора вопросов, а не разброс повторов. «—» — не измерено."
+                   + (" * — " + "; ".join(table["notes"]) if table["notes"] else ""))
+        if table["paired"]:
+            st.markdown("**Разность graph − baseline** (парный бутстрап: одни и те же вопросы в обоих режимах)")
+            st.dataframe(table["paired"], hide_index=True, width="stretch")
+
+        st.subheader("Источники и поиск")
+        st.dataframe(api.sources_table(result), hide_index=True, width="stretch")
+        st.caption("По встречам-источникам из эталона, без модели. Полнота поиска — эталонные встречи в контексте "
+                   "ещё до генерации: отделяет «поиск не нашёл» от «модель не использовала».")
+
+        st.subheader("Стоимость и задержка ответа")
+        cl = api.cost_latency(result)
+        left, mid, right = st.columns(3)
+        left.markdown("**$ за ответ**")
+        left.bar_chart({r["режим"]: r["cost_usd"] or 0 for r in cl}, horizontal=True, height=160)
+        mid.markdown("**Задержка, мс**")
+        mid.bar_chart({r["режим"]: r["latency_ms"] or 0 for r in cl}, horizontal=True, height=160)
+        right.markdown("**Токены промпта**")
+        right.bar_chart({r["режим"]: r["context_tokens"] or 0 for r in cl}, horizontal=True, height=160)
+        st.caption("Средние по ответам со статусом ok"
+                   + ", n = " + ", ".join(f"{r['режим']}: {r['n']}" for r in cl)
+                   + ". Токены промпта — контекст, системный промпт и вопрос вместе.")
+
+        with st.expander("Срез по языку вопроса"):
+            st.dataframe(api.lang_table(result, metric), hide_index=True, width="stretch")
+        with st.expander("Отказы отвечать"):
+            st.dataframe(api.abstention_table(result), hide_index=True, width="stretch")

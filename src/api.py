@@ -402,3 +402,184 @@ def graph_dot(project: Optional[str] = None, max_label: int = 38) -> str:
         lines.append(f'  "{esc(e["source"])}" -> "{esc(e["target"])}" [{_EDGE_STYLE.get(e["type"], "")}];')
     lines.append("}")
     return "\n".join(lines)
+
+
+# ---------- Метрики (вкладка «Метрики») ----------
+# Только чтение results/eval_<run_id>.json роли A: агрегаты и интервалы считает харнес (src/eval/results_v2.py),
+# здесь они лишь раскладываются по таблицам. Пересчитывать бутстрап в UI нельзя: цифры разошлись бы с отчётом.
+
+RESULTS_DIR = ROOT / "results"
+EVAL_FIXTURE = ROOT / "tests" / "fixtures" / "eval_fixture.json"
+QUESTION_TYPES = ("T1", "T2", "T3", "T4", "T5", "all")
+QUALITY_METRICS = {"fact_f1": "F1 по фактам", "fact_recall": "полнота по фактам",
+                   "fact_precision": "точность по фактам", "citation_recall": "полнота по встречам-источникам",
+                   "retrieval_recall": "полнота поиска (до генерации)"}
+SOURCE_METRICS = {"citation_recall": "полнота по источникам", "citation_precision": "точность по источникам",
+                  "quote_validity": "цитаты найдены в транскрипте", "retrieval_recall": "полнота поиска"}
+# Файлы для плашек над таблицами; формат описан в memory.md (2026-11-13, C5).
+EXTRACTION_QUALITY = "extraction_quality.json"   # B: {"hallucination_rate", "n_meetings"}
+INDEXING_COST = "indexing_cost.json"             # B: {"full_corpus": {"meetings", "cost_usd"}}
+JUDGE_AGREEMENT = "judge_agreement.json"         # A: {"accuracy", "kappa", "n"}
+
+
+def _read_json(path: Path) -> Optional[dict]:
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def _run_info(path: Path, data: dict) -> dict:
+    cfg = data.get("config") or {}
+    fixture = bool(cfg.get("fixture"))
+    label = f"{data.get('run_id', path.stem)} · {cfg.get('split', '?')} · {cfg.get('n_questions', '?')} вопросов"
+    return {"path": str(path), "run_id": data.get("run_id", path.stem), "timestamp": data.get("timestamp") or "",
+            "split": cfg.get("split"), "modes": cfg.get("modes") or [], "fixture": fixture,
+            "label": label + (" · ФИКСТУРА, числа выдуманы" if fixture else "")}
+
+
+def eval_runs(results_dir: Optional[Path] = None) -> list[dict]:
+    """Прогоны eval из results/, свежие первыми. Если настоящих нет — фикстура роли A с пометкой."""
+    runs = []
+    for p in Path(results_dir or RESULTS_DIR).glob("eval_*.json"):
+        data = _read_json(p)
+        if data and "aggregate" in data:
+            runs.append(_run_info(p, data))
+    runs.sort(key=lambda r: (r["timestamp"], r["run_id"]), reverse=True)
+    if not runs and EVAL_FIXTURE.exists():
+        data = _read_json(EVAL_FIXTURE)
+        if data:
+            runs.append(_run_info(EVAL_FIXTURE, data))
+    return runs
+
+
+def load_eval(path: str | Path) -> dict:
+    data = _read_json(Path(path))
+    if data is None or "aggregate" not in data:
+        raise ValueError(f"{path}: не json-результат eval (нет aggregate)")
+    return data
+
+
+def fmt_interval(cell: Optional[dict], spec: str = ".2f") -> str:
+    """{mean, ci_low, ci_high, n, note} → «0.61 [0.33; 0.85] n=8». «—» — не измерено (null), а не ноль."""
+    if not cell or cell.get("mean") is None:
+        return "—"
+    out = format(cell["mean"], spec)
+    if cell.get("ci_low") is not None and cell.get("ci_high") is not None:
+        out += f" [{format(cell['ci_low'], spec)}; {format(cell['ci_high'], spec)}]"
+    return out + f" n={cell.get('n', '?')}" + (" *" if cell.get("note") else "")
+
+
+def _fmt_diff(cell: Optional[dict]) -> str:
+    if not cell or cell.get("diff_mean") is None:
+        return "—"
+    return f"{cell['diff_mean']:+.2f} [{cell['ci_low']:+.2f}; {cell['ci_high']:+.2f}]"
+
+
+def _modes(result: dict, section: dict) -> list[str]:
+    return (result.get("config") or {}).get("modes") or list(section)
+
+
+def _type_title(t: str) -> str:
+    return "все типы" if t == "all" else t
+
+
+def quality_table(result: dict, metric: str = "fact_f1") -> dict:
+    """Главная таблица: режимы по строкам, типы вопросов по колонкам, в ячейке среднее [95% интервал].
+
+    rows — по режиму; paired — разность graph − baseline по типам с выводом бутстрапа; measured — есть ли хоть
+    одно значение (без --judge-facts факты не измерены, и это надо сказать словами, а не нулями).
+    """
+    agg = result["aggregate"]
+    by = agg.get("by_mode_type") or {}
+    present = {t for groups in by.values() for t in groups}
+    types = [t for t in QUESTION_TYPES if t in present]
+    rows, measured, notes = [], False, set()
+    for mode in _modes(result, by):
+        row = {"режим": mode}
+        for t in types:
+            cell = (by.get(mode) or {}).get(t, {}).get(metric)
+            measured |= bool(cell and cell.get("mean") is not None)
+            if cell and cell.get("note"):
+                notes.add(cell["note"])
+            row[_type_title(t)] = fmt_interval(cell)
+        rows.append(row)
+    paired = []
+    for t in types:
+        cell = (agg.get("paired") or {}).get(t, {}).get(metric)
+        if cell:
+            paired.append({"тип": _type_title(t), "graph − baseline": _fmt_diff(cell),
+                           "пар вопросов": cell.get("n"), "вывод": cell.get("verdict") or ""})
+    return {"rows": rows, "paired": paired, "measured": measured, "notes": sorted(notes)}
+
+
+def sources_table(result: dict, qtype: str = "all") -> list[dict]:
+    by = result["aggregate"].get("by_mode_type") or {}
+    return [{"режим": m, **{title: fmt_interval((by.get(m) or {}).get(qtype, {}).get(k))
+                            for k, title in SOURCE_METRICS.items()}} for m in _modes(result, by)]
+
+
+def cost_latency(result: dict) -> list[dict]:
+    """Стоимость и задержка ответа по режимам.
+
+    Если харнес положил aggregate.cost_latency[mode] = {cost_usd, latency_ms} (ячейки с mean) — берём его.
+    Иначе простое среднее по ответам со статусом ok: это арифметика над записанными числами, не оценка качества,
+    интервал к ней не заявляется. Токены промпта — aggregate.by_mode_type[mode]["all"]["context_tokens"].
+    """
+    agg = result["aggregate"]
+    by = agg.get("by_mode_type") or {}
+    given = agg.get("cost_latency") or {}
+    out = []
+    for m in _modes(result, by):
+        if m in given:
+            cost = (given[m].get("cost_usd") or {}).get("mean")
+            lat = (given[m].get("latency_ms") or {}).get("mean")
+            n = (given[m].get("cost_usd") or {}).get("n")
+        else:
+            rows = [r for r in result.get("per_question") or [] if r.get("mode") == m and r.get("status") == "ok"]
+            costs = [r["usage"]["cost_usd"] for r in rows if (r.get("usage") or {}).get("cost_usd") is not None]
+            lats = [r["latency_ms"] for r in rows if r.get("latency_ms") is not None]
+            cost = sum(costs) / len(costs) if costs else None
+            lat = sum(lats) / len(lats) if lats else None
+            n = len(rows)
+        ctx = ((by.get(m) or {}).get("all") or {}).get("context_tokens") or {}
+        out.append({"режим": m, "cost_usd": cost, "latency_ms": lat, "context_tokens": ctx.get("mean"), "n": n})
+    return out
+
+
+def lang_table(result: dict, metric: str = "fact_f1") -> list[dict]:
+    by = result["aggregate"].get("by_mode_lang") or {}
+    modes = _modes(result, by)
+    langs = sorted({g for m in modes for g in (by.get(m) or {})})
+    return [{"язык": g, **{m: fmt_interval((by.get(m) or {}).get(g, {}).get(metric)) for m in modes}}
+            for g in langs]
+
+
+def abstention_table(result: dict) -> list[dict]:
+    ab = result["aggregate"].get("abstention") or {}
+    titles = {"abstain_rate_unanswerable": "честные отказы, когда ответа нет в данных (выше лучше)",
+              "false_abstain_rate": "ложные отказы, когда ответ есть (ниже лучше)"}
+    return [{"метрика": title, **{m: fmt_interval((ab.get(m) or {}).get(k)) for m in _modes(result, ab)}}
+            for k, title in titles.items()]
+
+
+def metric_cards(results_dir: Optional[Path] = None) -> list[dict]:
+    """Плашки над таблицами: {title, value | None, hint}. None — файла ещё нет, в hint сказано, чей он."""
+    folder = Path(results_dir or RESULTS_DIR)
+    ext = _read_json(folder / EXTRACTION_QUALITY) or {}
+    cost = (_read_json(folder / INDEXING_COST) or {}).get("full_corpus") or {}
+    judge = _read_json(folder / JUDGE_AGREEMENT) or {}
+    hal, idx = ext.get("hallucination_rate"), cost.get("cost_usd")
+    acc, kappa = judge.get("accuracy"), judge.get("kappa")
+    return [
+        {"title": "Выдуманные цитаты извлечения", "value": None if hal is None else f"{hal:.1%}",
+         "hint": (f"по {ext.get('n_meetings', '?')} встречам" if hal is not None
+                  else f"нет results/{EXTRACTION_QUALITY} (роль B, validate_extraction)")},
+        {"title": "Индексация графа, весь корпус", "value": None if idx is None else f"${idx:.3f}",
+         "hint": (f"{cost.get('meetings', '?')} встреч: извлечение и связи" if idx is not None
+                  else f"нет results/{INDEXING_COST} (роль B, B8)")},
+        {"title": "Судья совпадает с человеком", "value": None if acc is None else f"{acc:.0%}",
+         "hint": (f"каппа {kappa:.2f}, n={judge.get('n', '?')}" if kappa is not None
+                  else f"нет results/{JUDGE_AGREEMENT} (роль A, A8)")},
+    ]

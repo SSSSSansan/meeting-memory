@@ -1,0 +1,490 @@
+[
+  {
+    "id": "q_36",
+    "type": "T2",
+    "split": "test",
+    "lang": "ru",
+    "question": "Какие сроки Zhol и Squad сдвигались и на какие даты?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Релиз Zhol: 15 сентября, затем 6 октября, затем 10 ноября. Первая версия Squad: до 30 октября, затем 20 ноября",
+    "source_meetings": ["m_001", "m_003", "m_006", "m_011", "m_013"],
+    "decision_ids": ["ev_m001_01", "ev_m006_01", "ev_m011_01", "ev_m003_02", "ev_m013_02"],
+    "answerable": true,
+    "required_facts": [
+      "релиз Zhol 15 сентября",
+      "затем 6 октября",
+      "затем 10 ноября",
+      "первая версия Squad до 30 октября",
+      "затем 20 ноября"
+    ],
+    "forbidden_facts": [
+      "релиз Zhol действует 15 сентября или 6 октября",
+      "Squad выходит 30 октября"
+    ]
+  },
+  {
+    "id": "q_37",
+    "type": "T3",
+    "split": "test",
+    "lang": "ru",
+    "question": "Кто работает и над Zhol, и над Squad?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Николай: Zhol (миграция БД, хотфикс 14-18 сентября), Squad (документация API, работа 14-18 сентября)",
+    "source_meetings": ["m_001", "m_003", "m_007", "m_008", "m_015"],
+    "decision_ids": ["ev_m001_03", "ev_m003_03", "ev_m007_01", "ev_m008_01", "ev_m015_02"],
+    "answerable": true,
+    "required_facts": [
+      "Николай",
+      "Zhol: миграция БД и хотфикс",
+      "Squad: документация API и работа 14-18 сентября"
+    ],
+    "forbidden_facts": [
+      "Абдурахман работает над Squad",
+      "Николай занят только Zhol"
+    ]
+  },
+  {
+    "id": "q_38",
+    "type": "T3",
+    "split": "test",
+    "lang": "ru",
+    "question": "Какие решения по Squad принимали на встрече по Qamqor?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Подключение бота Qamqor к Squad возможно только на готовой модели без дообучения (m_009)",
+    "source_meetings": ["m_009"],
+    "decision_ids": ["ev_m009_03"],
+    "answerable": true,
+    "required_facts": [
+      "подключение бота Qamqor к Squad возможно только на готовой модели без дообучения",
+      "решение прозвучало на встрече по Qamqor"
+    ],
+    "forbidden_facts": [
+      "дообученную модель к Squad подключать можно",
+      "решение принято на встрече по Squad"
+    ]
+  },
+  {
+    "id": "q_39",
+    "type": "T3",
+    "split": "test",
+    "lang": "ru",
+    "question": "Что решали по Boost на встречах, которые были не про Boost?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "На еженедельной по Zhol: делаем панель, интеграцию ведёт Абдурахман (m_004). На встрече один на один: сначала для Zhol, для Squad позже (m_005)",
+    "source_meetings": ["m_004", "m_005"],
+    "decision_ids": ["ev_m004_01", "ev_m004_02", "ev_m005_02"],
+    "answerable": true,
+    "required_facts": [
+      "делаем панель Boost",
+      "интеграцию ведёт Абдурахман",
+      "Boost сначала для Zhol, для Squad позже"
+    ],
+    "forbidden_facts": [
+      "названы сроки Boost",
+      "интеграцию ведёт Николай"
+    ]
+  },
+  {
+    "id": "q_40",
+    "type": "T5",
+    "split": "test",
+    "lang": "ru",
+    "question": "Какие задачи остались без срока?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Блок метрик продаж в Boost, исполнитель Абдурахман, срок не назван (m_010)",
+    "source_meetings": ["m_010"],
+    "decision_ids": ["ev_m010_02"],
+    "answerable": true,
+    "required_facts": [
+      "блок метрик продаж в Boost",
+      "исполнитель Абдурахман",
+      "срок не назван"
+    ],
+    "forbidden_facts": [
+      "у блока метрик продаж есть срок",
+      "задача выполнена"
+    ]
+  },
+  {
+    "id": "q_41",
+    "type": "T5",
+    "split": "test",
+    "lang": "ru",
+    "question": "Какие задачи, выданные в августе, к 26 октября так и не выполнены?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Документация API Squad у Николая: срок 21 августа прошёл, выдана повторно до 6 ноября (m_003, m_015)",
+    "source_meetings": ["m_003", "m_015"],
+    "decision_ids": ["ev_m003_03", "ev_m015_02"],
+    "answerable": true,
+    "required_facts": [
+      "документация API Squad у Николая",
+      "срок 21 августа прошёл",
+      "выдана повторно до 6 ноября"
+    ],
+    "forbidden_facts": [
+      "миграция БД не выполнена",
+      "прототип Qamqor не готов",
+      "коммерческое предложение клиенту не отправлено"
+    ]
+  },
+  {
+    "id": "q_42",
+    "type": "T5",
+    "split": "test",
+    "lang": "ru",
+    "question": "Какие вопросы по Zhol остаются открытыми перед релизом?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Кто проводит QA перед релизом, никто не назначен (m_015)",
+    "source_meetings": ["m_015"],
+    "decision_ids": ["ev_m015_04"],
+    "answerable": true,
+    "required_facts": [
+      "кто проводит QA перед релизом",
+      "никто не назначен"
+    ],
+    "forbidden_facts": [
+      "QA назначен на конкретного человека"
+    ]
+  },
+  {
+    "id": "q_43",
+    "type": "none",
+    "split": "test",
+    "lang": "ru",
+    "question": "Когда Ержан подписал договор по Squad?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "В данных нет ответа",
+    "source_meetings": [],
+    "decision_ids": [],
+    "answerable": false,
+    "required_facts": [
+      "система сообщает, что в данных этого нет"
+    ],
+    "forbidden_facts": [
+      "любая конкретная дата подписания"
+    ]
+  },
+  {
+    "id": "q_44",
+    "type": "none",
+    "split": "test",
+    "lang": "ru",
+    "question": "Кто заменил Николая на хотфиксе Zhol 14-18 сентября?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "В данных нет ответа: Николая никто не заменял",
+    "source_meetings": [],
+    "decision_ids": [],
+    "answerable": false,
+    "required_facts": [
+      "в данных нет ответа, замены не было"
+    ],
+    "forbidden_facts": [
+      "названо чьё-либо имя"
+    ]
+  },
+  {
+    "id": "q_45",
+    "type": "T4",
+    "split": "test",
+    "lang": "ru",
+    "question": "Кто назначен на два проекта в одну и ту же неделю?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Николай, 14-18 сентября: Squad (m_007) и хотфикс Zhol (m_008)",
+    "source_meetings": ["m_007", "m_008"],
+    "decision_ids": ["ev_m007_01", "ev_m008_01"],
+    "answerable": true,
+    "required_facts": [
+      "Николай",
+      "14-18 сентября",
+      "Squad",
+      "хотфикс Zhol"
+    ],
+    "forbidden_facts": [
+      "назван Абдурахман",
+      "сказано, что конфликт обсуждали на встречах"
+    ]
+  },
+  {
+    "id": "q_46",
+    "type": "T4",
+    "split": "test",
+    "lang": "ru",
+    "question": "Какие решения были заменены другими?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Срок релиза Zhol (m_001, m_006, m_011); Excel и срок первой версии Squad (m_003, m_013)",
+    "source_meetings": ["m_001", "m_003", "m_006", "m_008", "m_011", "m_013"],
+    "decision_ids": ["ev_m001_01", "ev_m006_01", "ev_m011_01", "ev_m003_01", "ev_m013_01", "ev_m003_02", "ev_m013_02", "ev_m008_02"],
+    "answerable": true,
+    "required_facts": [
+      "срок релиза Zhol заменялся",
+      "Excel-экспорт Squad заменён",
+      "срок первой версии Squad заменён",
+      "push-уведомления отменены без замены (m_008)"
+    ],
+    "forbidden_facts": [
+      "push-уведомления заменены другой функцией или остались",
+      "решение по Qamqor заменено"
+    ]
+  },
+  {
+    "id": "q_47",
+    "type": "T4",
+    "split": "test",
+    "lang": "ru",
+    "question": "Есть ли конфликты по загрузке Абдурахмана?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Явных конфликтов по датам нет",
+    "source_meetings": ["m_004", "m_006", "m_009", "m_010", "m_011"],
+    "decision_ids": ["ev_m004_02", "ev_m006_02", "ev_m009_01", "ev_m010_02"],
+    "answerable": true,
+    "required_facts": [
+      "явных конфликтов нет"
+    ],
+    "forbidden_facts": [
+      "назван конфликт по загрузке Абдурахмана"
+    ]
+  },
+  {
+    "id": "q_48",
+    "type": "T4",
+    "split": "test",
+    "lang": "ru",
+    "question": "Чем занят Николай с 14 по 18 сентября?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Два назначения: Squad (m_007) и хотфикс Zhol (m_008), они конфликтуют",
+    "source_meetings": ["m_007", "m_008"],
+    "decision_ids": ["ev_m007_01", "ev_m008_01"],
+    "answerable": true,
+    "required_facts": [
+      "полная работа на Squad",
+      "хотфикс Zhol",
+      "назначения конфликтуют"
+    ],
+    "forbidden_facts": [
+      "названо только одно назначение",
+      "сказано, что конфликта нет"
+    ]
+  },
+  {
+    "id": "q_49",
+    "type": "T2",
+    "split": "test",
+    "lang": "ru",
+    "question": "Как менялся срок первой версии Squad?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "До 30 октября (m_003), затем 20 ноября (m_013)",
+    "source_meetings": ["m_003", "m_013"],
+    "decision_ids": ["ev_m003_02", "ev_m013_02"],
+    "answerable": true,
+    "required_facts": [
+      "до 30 октября",
+      "затем 20 ноября"
+    ],
+    "forbidden_facts": [
+      "срок остался 30 октября",
+      "назван срок в декабре"
+    ]
+  },
+  {
+    "id": "q_50",
+    "type": "T1",
+    "split": "test",
+    "lang": "ru",
+    "question": "Почему Excel-экспорт вернули в первую версию Squad?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Требование клиента: без экспорта руководители откажутся от системы (m_013)",
+    "source_meetings": ["m_013"],
+    "decision_ids": ["ev_m013_01"],
+    "answerable": true,
+    "required_facts": [
+      "требование клиента",
+      "без экспорта руководители откажутся от системы"
+    ],
+    "forbidden_facts": [
+      "Excel остался во второй версии",
+      "причина в решении команды без клиента"
+    ]
+  },
+  {
+    "id": "q_51",
+    "type": "T1",
+    "split": "test",
+    "lang": "ru",
+    "question": "Что решили на итоговой встрече перед релизом Zhol?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Релиз остаётся 10 ноября; со 2 ноября новые функции не добавляем (m_015)",
+    "source_meetings": ["m_015"],
+    "decision_ids": ["ev_m015_01", "ev_m015_03"],
+    "answerable": true,
+    "required_facts": [
+      "релиз остаётся 10 ноября",
+      "со 2 ноября новые функции не добавляем"
+    ],
+    "forbidden_facts": [
+      "релиз перенесён",
+      "назначен QA"
+    ]
+  },
+  {
+    "id": "q_52",
+    "type": "T2",
+    "split": "test",
+    "lang": "ru",
+    "question": "Как решался вопрос, кто делает интерфейс бота Qamqor?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "На m_002 вопрос остался открытым; на m_009 назначен Абдурахман",
+    "source_meetings": ["m_002", "m_009"],
+    "decision_ids": ["ev_m002_03", "ev_m009_01"],
+    "answerable": true,
+    "required_facts": [
+      "на m_002 вопрос остался открытым",
+      "на m_009 назначен Абдурахман"
+    ],
+    "forbidden_facts": [
+      "интерфейс делает Сандуғаш",
+      "вопрос открыт и сейчас"
+    ]
+  },
+  {
+    "id": "q_53",
+    "type": "T2",
+    "split": "test",
+    "lang": "kk",
+    "question": "Zhol релизі қандай күндерге ауыстырылды?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "15 сентября, затем 6 октября, затем 10 ноября",
+    "source_meetings": ["m_001", "m_006", "m_011"],
+    "decision_ids": ["ev_m001_01", "ev_m006_01", "ev_m011_01"],
+    "answerable": true,
+    "required_facts": [
+      "15 сентября",
+      "6 октября",
+      "10 ноября"
+    ],
+    "forbidden_facts": [
+      "релиз 20 ноября",
+      "релиз остался 15 сентября"
+    ]
+  },
+  {
+    "id": "q_54",
+    "type": "T1",
+    "split": "test",
+    "lang": "kk",
+    "question": "Squad үшін API құжаттамасын кім жасауы керек?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Николай, срок 6 ноября; первоначально 21 августа",
+    "source_meetings": ["m_003", "m_015"],
+    "decision_ids": ["ev_m003_03", "ev_m015_02"],
+    "answerable": true,
+    "required_facts": [
+      "Николай",
+      "срок 6 ноября",
+      "первоначально 21 августа"
+    ],
+    "forbidden_facts": [
+      "Абдурахман",
+      "документация готова"
+    ]
+  },
+  {
+    "id": "q_55",
+    "type": "none",
+    "split": "test",
+    "lang": "ru",
+    "question": "Когда Qamqor выйдет для клиентов?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "В данных нет ответа",
+    "source_meetings": [],
+    "decision_ids": [],
+    "answerable": false,
+    "required_facts": [
+      "система сообщает, что в данных этого нет"
+    ],
+    "forbidden_facts": [
+      "любая дата выпуска"
+    ]
+  },
+  {
+    "id": "q_56",
+    "type": "none",
+    "split": "test",
+    "lang": "kk",
+    "question": "Squad бағасы Ержанға қанша болды?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "В данных нет ответа",
+    "source_meetings": [],
+    "decision_ids": [],
+    "answerable": false,
+    "required_facts": [
+      "система сообщает, что в данных этого нет"
+    ],
+    "forbidden_facts": [
+      "любая сумма"
+    ]
+  },
+  {
+    "id": "q_57",
+    "type": "T1",
+    "split": "test",
+    "lang": "ru",
+    "question": "Кому и до какого срока повторно выдана документация API Squad?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Николаю до 6 ноября; он признал, что не сделал (m_015)",
+    "source_meetings": ["m_015"],
+    "decision_ids": ["ev_m015_02"],
+    "answerable": true,
+    "required_facts": [
+      "Николай",
+      "до 6 ноября",
+      "признал, что не сделал"
+    ],
+    "forbidden_facts": [
+      "срок 21 августа считается действующим",
+      "выдана Абдурахману"
+    ]
+  },
+  {
+    "id": "q_58",
+    "type": "T5",
+    "split": "test",
+    "lang": "ru",
+    "question": "Какие задачи по Zhol уже выполнены?",
+    "as_of": "m_015",
+    "as_of_date": "2026-10-26",
+    "expected_answer": "Миграция БД (m_004); экран статистики (m_011)",
+    "source_meetings": ["m_004", "m_011"],
+    "decision_ids": ["ev_m004_03", "ev_m011_02"],
+    "answerable": true,
+    "required_facts": [
+      "миграция БД",
+      "экран статистики"
+    ],
+    "forbidden_facts": [
+      "документация API Squad выполнена",
+      "хотфикс выполнен"
+    ]
+  }
+]
