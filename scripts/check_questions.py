@@ -15,7 +15,17 @@
   4. Все decision_ids есть в world.yaml, без повторов; встреча каждого события входит
      в source_meetings и не позже as_of.
   5. У вопросов answerable=false оба списка пусты, тип none; у остальных списки не пусты.
-  6. Вопросов на казахском (lang=kk) не меньше 3, в выборке test не меньше 12.
+  6. as_of_date совпадает с датой встречи as_of в world.yaml (ISO); поля as_of_date,
+     required_facts, forbidden_facts есть у каждой записи.
+  7. У вопросов split=test required_facts не пусты; у answerable=false в test они тоже есть
+     (смысл эталона — «система сообщает, что данных нет»). В dev пустые required_facts допустимы,
+     скрипт печатает предупреждение с их числом.
+  8. Набор целиком: 58 вопросов, test 23, dev 35; kk не меньше 3 и в dev, и в test;
+     в test не меньше 3 вопросов каждого типа T1..T5 и none.
+
+Пункты 6 (наличие полей) и 7–8 — «строгий» режим, он включён по умолчанию. Исторические копии
+(questions_m008.json, записаны до новых полей) проверяются с strict=False: схема, ссылки на
+world.yaml и answerable, без требований к полному набору.
 
 Код возврата 1 и сообщение на каждую ошибку, если проверки не прошли.
 Модель вопроса живёт здесь, а не в src/schemas.py: эталон читают только оценка и роль A.
@@ -37,8 +47,13 @@ ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_QUESTIONS = ROOT / "data" / "gold" / "questions.json"
 DEFAULT_WORLD = ROOT / "data" / "gold" / "world.yaml"
 
-MIN_KK_QUESTIONS = 3
-MIN_TEST_QUESTIONS = 12
+EXPECTED_TOTAL = 58
+EXPECTED_TEST = 23
+EXPECTED_DEV = 35
+MIN_KK_PER_SPLIT = 3
+MIN_TEST_PER_TYPE = 3
+QUESTION_TYPES = ("T1", "T2", "T3", "T4", "T5", "none")
+NEW_FIELDS = ("as_of_date", "required_facts", "forbidden_facts")
 ID_RE = re.compile(r"^q_\d{2,}$")
 MEETING_RE = re.compile(r"^m_\d{3}$")
 EVENT_RE = re.compile(r"^ev_m\d{3}_\d{2}$")
@@ -57,6 +72,11 @@ class Question(BaseModel):
     source_meetings: list[str]
     decision_ids: list[str]
     answerable: bool
+    # Поля добавлены позже (только добавление): у исторической копии questions_m008.json их нет,
+    # поэтому в модели они необязательны, а наличие в questions.json проверяет check(strict=True).
+    as_of_date: str | None = None
+    required_facts: list[str] = Field(default_factory=list)
+    forbidden_facts: list[str] = Field(default_factory=list)
 
     @field_validator("id")
     @classmethod
@@ -77,6 +97,24 @@ class Question(BaseModel):
     def _as_of_format(cls, v: str) -> str:
         if not MEETING_RE.match(v):
             raise ValueError("as_of должен быть вида m_008")
+        return v
+
+    @field_validator("as_of_date")
+    @classmethod
+    def _as_of_date_format(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        try:
+            date.fromisoformat(v)
+        except ValueError:
+            raise ValueError("as_of_date должна быть ISO-датой вида 2026-10-26") from None
+        return v
+
+    @field_validator("required_facts", "forbidden_facts")
+    @classmethod
+    def _facts_not_blank(cls, v: list[str]) -> list[str]:
+        if any(not f.strip() for f in v):
+            raise ValueError("пустая строка в списке фактов")
         return v
 
     @field_validator("source_meetings")
@@ -118,8 +156,11 @@ def _schema_errors(index: int, raw: Any) -> tuple[Question | None, list[str]]:
         return None, errors
 
 
-def check(raw_questions: Any, world: dict) -> list[str]:
-    """Возвращает список ошибок; пустой список — всё в порядке."""
+def check(raw_questions: Any, world: dict, *, strict: bool = True) -> list[str]:
+    """Возвращает список ошибок; пустой список — всё в порядке.
+
+    strict=False — для исторических копий без новых полей: без пунктов 6–8 из описания модуля.
+    """
     if not isinstance(raw_questions, list):
         return ["questions.json: ожидался список записей"]
 
@@ -134,6 +175,8 @@ def check(raw_questions: Any, world: dict) -> list[str]:
         errors += errs
         if q is not None:
             questions.append(q)
+            if strict:
+                errors += _new_field_errors(q, raw, meeting_order)
 
     ids = Counter(q.id for q in questions)
     errors += [f"дубль id вопроса: {qid}" for qid, n in ids.items() if n > 1]
@@ -141,13 +184,65 @@ def check(raw_questions: Any, world: dict) -> list[str]:
     for q in questions:
         errors += _reference_errors(q, meeting_order, event_meeting)
         errors += _answerable_errors(q)
+        if strict:
+            errors += _test_facts_errors(q)
 
-    kk = sum(1 for q in questions if q.lang == "kk")
-    if kk < MIN_KK_QUESTIONS:
-        errors.append(f"вопросов на казахском {kk}, нужно не меньше {MIN_KK_QUESTIONS}")
-    test = sum(1 for q in questions if q.split == "test")
-    if test < MIN_TEST_QUESTIONS:
-        errors.append(f"вопросов в выборке test {test}, нужно не меньше {MIN_TEST_QUESTIONS}")
+    if strict:
+        errors += _set_errors(questions)
+    return errors
+
+
+def warnings(raw_questions: Any) -> list[str]:
+    """Предупреждения (не ошибки): dev-вопросы без required_facts. Пока их дописывают отдельной порцией."""
+    if not isinstance(raw_questions, list):
+        return []
+    empty = [
+        q["id"] for q in raw_questions
+        if isinstance(q, dict) and q.get("split") == "dev" and not q.get("required_facts")
+    ]
+    if not empty:
+        return []
+    return [f"у {len(empty)} вопросов dev пустые required_facts (допустимо для dev, нужно дописать)"]
+
+
+def _new_field_errors(q: Question, raw: dict, meeting_order: dict[str, date]) -> list[str]:
+    errors = [f"{q.id}: нет поля {f}" for f in NEW_FIELDS if f not in raw]
+    if "as_of_date" in raw and q.as_of in meeting_order:
+        expected = meeting_order[q.as_of].isoformat()
+        if q.as_of_date != expected:
+            errors.append(
+                f"{q.id}: as_of_date {q.as_of_date} не совпадает с датой встречи {q.as_of} ({expected}) в world.yaml"
+            )
+    return errors
+
+
+def _test_facts_errors(q: Question) -> list[str]:
+    # в dev пустые required_facts допустимы (см. warnings), в test — нет: по ним считается таблица отчёта
+    if q.split == "test" and not q.required_facts:
+        return [f"{q.id}: split=test, но required_facts пусты"]
+    return []
+
+
+def _set_errors(questions: list[Question]) -> list[str]:
+    errors: list[str] = []
+    total = len(questions)
+    by_split = Counter(q.split for q in questions)
+    if total != EXPECTED_TOTAL:
+        errors.append(f"вопросов всего {total}, ожидалось {EXPECTED_TOTAL}")
+    if by_split["test"] != EXPECTED_TEST:
+        errors.append(f"вопросов в выборке test {by_split['test']}, ожидалось {EXPECTED_TEST}")
+    if by_split["dev"] != EXPECTED_DEV:
+        errors.append(f"вопросов в выборке dev {by_split['dev']}, ожидалось {EXPECTED_DEV}")
+
+    for split in ("dev", "test"):
+        kk = sum(1 for q in questions if q.split == split and q.lang == "kk")
+        if kk < MIN_KK_PER_SPLIT:
+            errors.append(f"вопросов на казахском в {split} {kk}, нужно не меньше {MIN_KK_PER_SPLIT}")
+
+    by_type = Counter(q.type for q in questions if q.split == "test")
+    for t in QUESTION_TYPES:
+        if by_type[t] < MIN_TEST_PER_TYPE:
+            errors.append(f"вопросов типа {t} в выборке test {by_type[t]}, нужно не меньше {MIN_TEST_PER_TYPE}")
     return errors
 
 
@@ -209,9 +304,12 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     errors = check(raw, world)
+    notes = warnings(raw)
     if errors:
         for e in errors:
             print(f"ОШИБКА: {e}", file=sys.stderr)
+        for w in notes:
+            print(f"ПРЕДУПРЕЖДЕНИЕ: {w}", file=sys.stderr)
         print(f"Ошибок: {len(errors)}", file=sys.stderr)
         return 1
 
@@ -222,6 +320,8 @@ def main(argv: list[str] | None = None) -> int:
     print("По типам: " + ", ".join(f"{k} {v}" for k, v in sorted(by_type.items())))
     print("По выборкам: " + ", ".join(f"{k} {v}" for k, v in sorted(by_split.items())))
     print("По языкам: " + ", ".join(f"{k} {v}" for k, v in sorted(by_lang.items())))
+    for w in notes:
+        print(f"ПРЕДУПРЕЖДЕНИЕ: {w}")
     print("Все проверки пройдены.")
     return 0
 
