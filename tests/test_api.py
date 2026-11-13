@@ -44,6 +44,16 @@ def test_load_scribal_uses_adapter():
     assert [s.speaker_raw for s in t.segments] == ["SPEAKER_00", "SPEAKER_01"]  # пустой сегмент выброшен
 
 
+def test_load_scribal_names_speakers_like_the_graph_pipeline():
+    """Индекс baseline видит те же имена, что и извлечение для графа (apply_speakers роли B)."""
+    pairs = dict((mid, (tr, meta)) for mid, tr, meta in api.pair_scribal_files(api.demo_files())[0])
+    named = api.load_scribal("m_002", *pairs["m_002"])
+    raw = api.load_scribal("m_002", *pairs["m_002"], speakers=False)
+    assert any(not s.speaker.startswith("SPEAKER_") for s in named.segments)
+    assert all(s.speaker.startswith("SPEAKER_") for s in raw.segments)
+    assert [s.speaker_raw for s in named.segments] == [s.speaker_raw for s in raw.segments]
+
+
 def _demo_transcripts():
     pairs, errors = api.pair_scribal_files(api.demo_files())
     assert not errors

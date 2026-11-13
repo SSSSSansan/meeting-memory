@@ -62,10 +62,14 @@ def pair_scribal_files(files: dict[str, bytes]) -> tuple[list[tuple[str, bytes, 
 
 
 def load_scribal(meeting_id: str, transcript_json: bytes, meeting_json: bytes,
-                 source: str = "scribal") -> Transcript:
+                 source: str = "scribal", speakers: bool = True) -> Transcript:
+    """Scribal → канонический транскрипт. speakers=True — имена вместо SPEAKER_XX там, где эвристика
+    роли B уверена (src/ingest/speakers.py). Граф строится с теми же именами, поэтому и индекс baseline
+    должен их видеть: иначе на вопросах «кто…» baseline проигрывает не из-за архитектуры."""
     raw = ScribalTranscript.model_validate(json.loads(transcript_json))
     meta = ScribalMeeting.model_validate(json.loads(meeting_json))
-    return convert(raw, meta, meeting_id, source)
+    t = convert(raw, meta, meeting_id, source)
+    return apply_speakers(t) if speakers else t
 
 
 def demo_files() -> dict[str, bytes]:
@@ -325,8 +329,7 @@ def _transcript(meeting_id: str, mtime: float) -> Optional[Transcript]:
     paths = [DEMO_DIR / f"{meeting_id}.{kind}.json" for kind in ("transcript", "meeting")]
     if not all(p.exists() for p in paths):
         return None
-    # имена говорящих — где эвристика роли B уверена; иначе остаётся SPEAKER_XX
-    return apply_speakers(load_scribal(meeting_id, *(p.read_bytes() for p in paths)))
+    return load_scribal(meeting_id, *(p.read_bytes() for p in paths))
 
 
 def get_source(meeting_id: str, ts: str, quote: str, around: int = 1) -> Optional[dict]:
