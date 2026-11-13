@@ -44,6 +44,16 @@ def test_load_scribal_uses_adapter():
     assert [s.speaker_raw for s in t.segments] == ["SPEAKER_00", "SPEAKER_01"]  # пустой сегмент выброшен
 
 
+def test_load_scribal_names_speakers_like_the_graph_pipeline():
+    """Индекс baseline видит те же имена, что и извлечение для графа (apply_speakers роли B)."""
+    pairs = dict((mid, (tr, meta)) for mid, tr, meta in api.pair_scribal_files(api.demo_files())[0])
+    named = api.load_scribal("m_002", *pairs["m_002"])
+    raw = api.load_scribal("m_002", *pairs["m_002"], speakers=False)
+    assert any(not s.speaker.startswith("SPEAKER_") for s in named.segments)
+    assert all(s.speaker.startswith("SPEAKER_") for s in raw.segments)
+    assert [s.speaker_raw for s in named.segments] == [s.speaker_raw for s in raw.segments]
+
+
 def _demo_transcripts():
     pairs, errors = api.pair_scribal_files(api.demo_files())
     assert not errors
@@ -205,6 +215,31 @@ def test_graph_dot_marks_superseded_and_conflicts():
     assert "[заменено]" in dot and 'label="заменяет"' in dot
     assert '"d_m002_01" -> "d_m001_01" [color="#5F5E5A" style=bold label="заменяет"];' in dot
     assert '"project:Горизонт"' not in dot
+
+
+def test_context_subgraph_matches_answer_context():
+    ctx = api.context_subgraph("Как менялся срок релиза Атласа?")
+    assert ctx["items"] == ["d_m001_01", "t_m001_01", "d_m002_01", "t_m002_01"]
+    assert ctx["entities"] == ["project:Атлас"] and not ctx["fallback"]
+    assert api.context_subgraph("Как менялся срок релиза Атласа?", as_of="2026-02-05")["items"] == \
+        ["d_m001_01", "t_m001_01"]
+
+
+def test_graph_dot_highlights_context_and_fades_the_rest():
+    ctx = api.context_subgraph("Как менялся срок релиза Атласа?")
+    dot = api.graph_dot(None, highlight=ctx)
+    line = {ln.split('"')[1]: ln for ln in dot.splitlines() if ln.startswith('  "') and "->" not in ln}
+    assert "penwidth=3" in line["d_m002_01"] and "penwidth=3" in line["project:Атлас"]
+    assert 'fontcolor="#B4B2A9"' in line["d_m002_02"]                       # пункт Горизонта приглушён
+    assert '"d_m002_01" -> "d_m001_01" [color="#5F5E5A" style=bold label="заменяет"];' in dot
+
+
+def test_graph_dot_focus_draws_only_context_and_its_projects():
+    ctx = api.context_subgraph("Как менялся срок релиза Атласа?")
+    dot = api.graph_dot(highlight=ctx, focus=True)
+    assert '"d_m001_01"' in dot and '"project:Атлас"' in dot
+    assert '"d_m002_02"' not in dot and '"project:Горизонт"' not in dot
+    assert 'fillcolor="#FAFAF8"' not in dot                              # в фокусе приглушать нечего
 
 
 def test_overview_counts_on_sample_graph():

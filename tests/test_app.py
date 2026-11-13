@@ -69,6 +69,13 @@ def test_graph_mode_answers_without_index(monkeypatch):
     assert not at.exception
     shown = " ".join(m.value for m in at.markdown)
     assert "Срок — 5 мая" in shown and "m_002 · 00:01:05" in shown
+    # C6: под ответом — подграф, ушедший в контекст; на вкладке «Граф» — его подсветка
+    assert any(e.label == "Из графа в контекст: 4 пунктов" for e in at.expander)
+    toggle = next(t for t in at.toggle if t.key == "graph_highlight")
+    assert toggle.value is True
+    assert any("4 пунктов из контекста ответа" in c.value for c in at.caption)
+    toggle.set_value(False).run()
+    assert not at.exception
 
 
 def test_auto_mode_shows_route_decision(monkeypatch):

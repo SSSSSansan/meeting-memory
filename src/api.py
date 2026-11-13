@@ -62,10 +62,14 @@ def pair_scribal_files(files: dict[str, bytes]) -> tuple[list[tuple[str, bytes, 
 
 
 def load_scribal(meeting_id: str, transcript_json: bytes, meeting_json: bytes,
-                 source: str = "scribal") -> Transcript:
+                 source: str = "scribal", speakers: bool = True) -> Transcript:
+    """Scribal → канонический транскрипт. speakers=True — имена вместо SPEAKER_XX там, где эвристика
+    роли B уверена (src/ingest/speakers.py). Граф строится с теми же именами, поэтому и индекс baseline
+    должен их видеть: иначе на вопросах «кто…» baseline проигрывает не из-за архитектуры."""
     raw = ScribalTranscript.model_validate(json.loads(transcript_json))
     meta = ScribalMeeting.model_validate(json.loads(meeting_json))
-    return convert(raw, meta, meeting_id, source)
+    t = convert(raw, meta, meeting_id, source)
+    return apply_speakers(t) if speakers else t
 
 
 def demo_files() -> dict[str, bytes]:
@@ -222,10 +226,26 @@ def get_graph(project: Optional[str] = None) -> dict:
         keep = {pid} | items
         for n in items:
             keep |= {v for _, v, e in G.out_edges(n, data=True) if e["type"] in ("STATED_IN", "ASSIGNED_TO")}
+    return _graph_of(G, keep)
+
+
+def _graph_of(G, keep: set[str]) -> dict:
     nodes = [{"id": n, **{k: v for k, v in G.nodes[n].items() if k != "participants"}} for n in sorted(keep)]
     edges = [{"source": u, "target": v, **e} for u, v, e in G.edges(data=True)
              if u in keep and v in keep and e["type"] != "PARTICIPATED_IN"]
     return {"nodes": nodes, "edges": edges}
+
+
+def context_subgraph(question: str, depth: int = 2, as_of: Optional[str] = None) -> dict:
+    """Что из графа уходит в контекст на этот вопрос (режимы graph и hybrid) — для подсветки на рисунке.
+
+    Тот же retrieve_subgraph, что и при ответе: детерминированно и без LLM, поэтому пересчёт совпадает с
+    контекстом ответа. {"items": [id пунктов], "entities": [id стартовых сущностей], "fallback": bool}.
+    """
+    from src.retrieval.graph_rag import retrieve_subgraph
+
+    sub = retrieve_subgraph(question, depth=depth, G=_load_graph(), as_of=as_of)
+    return {"items": sub["items"], "entities": sub["entities"], "fallback": sub["fallback"]}
 
 
 # ---------- Демо-UI (C7): выбор графа, конфликты и замены, источник цитаты, рисунок ----------
@@ -325,8 +345,7 @@ def _transcript(meeting_id: str, mtime: float) -> Optional[Transcript]:
     paths = [DEMO_DIR / f"{meeting_id}.{kind}.json" for kind in ("transcript", "meeting")]
     if not all(p.exists() for p in paths):
         return None
-    # имена говорящих — где эвристика роли B уверена; иначе остаётся SPEAKER_XX
-    return apply_speakers(load_scribal(meeting_id, *(p.read_bytes() for p in paths)))
+    return load_scribal(meeting_id, *(p.read_bytes() for p in paths))
 
 
 def get_source(meeting_id: str, ts: str, quote: str, around: int = 1) -> Optional[dict]:
@@ -376,10 +395,29 @@ _EDGE_STYLE = {"SUPERSEDES": 'color="#5F5E5A" style=bold label="заменяет
                "ASSIGNED_TO": 'color="#7F77DD" style=dashed', "DISCUSSES": 'color="#D3D1C7" style=dotted'}
 
 
-def graph_dot(project: Optional[str] = None, max_label: int = 38) -> str:
+_FADED_NODE = ' fillcolor="#FAFAF8" color="#E0DED6" fontcolor="#B4B2A9" penwidth=1'
+_FADED_EDGE = 'color="#E8E6DF" fontcolor="#D3D1C7"'
+_CONTEXT_NODE = ' penwidth=3'
+
+
+def graph_dot(project: Optional[str] = None, max_label: int = 38, highlight: Optional[dict] = None,
+              focus: bool = False) -> str:
     """Граф проекта (или весь) на языке DOT для st.graphviz_chart. Заменённые решения серые
-    и с пометкой, решения в конфликте — с красной рамкой, связь «конфликт» — красная."""
-    g = get_graph(project)
+    и с пометкой, решения в конфликте — с красной рамкой, связь «конфликт» — красная.
+
+    highlight — результат context_subgraph(): пункты, ушедшие в контекст, и стартовые сущности обведены
+    жирно, остальное приглушено. focus=True — рисуются только они и проекты этих пунктов.
+    """
+    lit: set[str] = set()
+    if highlight:
+        lit = set(highlight["items"]) | set(highlight["entities"])
+    if focus and lit:
+        G = _load_graph()
+        lit &= set(G.nodes)
+        keep = lit | {v for n in lit for _, v, e in G.out_edges(n, data=True) if e["type"] == "BELONGS_TO"}
+        g = _graph_of(G, keep)
+    else:
+        g = get_graph(project)
 
     def esc(text: str) -> str:
         text = text if len(text) <= max_label else text[:max_label - 1] + "…"
@@ -398,9 +436,14 @@ def graph_dot(project: Optional[str] = None, max_label: int = 38) -> str:
                 label = f"[заменено] {label}"
             if n.get("in_conflict"):
                 style += ' color="#E24B4A" penwidth=2'
+        if lit:
+            style += _CONTEXT_NODE if n["id"] in lit else ("" if focus else _FADED_NODE)
         lines.append(f'  "{esc(n["id"])}" [label="{esc(label)}" {style}];')
     for e in g["edges"]:
-        lines.append(f'  "{esc(e["source"])}" -> "{esc(e["target"])}" [{_EDGE_STYLE.get(e["type"], "")}];')
+        style = _EDGE_STYLE.get(e["type"], "")
+        if lit and not focus and not (e["source"] in lit and e["target"] in lit):
+            style = _FADED_EDGE
+        lines.append(f'  "{esc(e["source"])}" -> "{esc(e["target"])}" [{style}];')
     lines.append("}")
     return "\n".join(lines)
 
