@@ -16,12 +16,16 @@ from typing import Optional, Sequence
 from scripts import cost_guard
 from src.answer.prompts import SYSTEM_PROMPT
 from src.eval import judge as judge_mod
+from src.eval import judge_facts as facts_mod
 from src.eval import systems
 from src.retrieval.baseline import EMBED_BATCH, chunk_transcript
 
 CHARS_PER_TOKEN = 3
 ANSWER_TOKENS = 300
 JUDGE_COMPLETION_TOKENS = 100   # JSON с reason до ~200 символов
+FACTS_CLAIMS_GUESS = 6          # атомарных утверждений в среднем ответе (ответ ≈ 300 токенов)
+FACTS_TOKENS_PER_FLAG = 15      # {"id": "R1", "present": true} ≈ 15 токенов
+FACTS_TOKENS_PER_CLAIM = 30     # {"text": "...", "label": "..."} ≈ 30 токенов
 JUDGE_MIN_MEETINGS = 3          # ответ может сослаться на встречи вне source_meetings: добираем до трёх (≈7000 токенов)
 
 
@@ -161,14 +165,69 @@ def estimate_judge(questions: Sequence, modes: Sequence[str], *, raw_dir: Path, 
     return est
 
 
-def total_cost(answers: Estimate, judge: Optional[JudgeEstimate]) -> Optional[tuple[float, float]]:
-    """(без ретраев, с ретраями) ответы + судья; None, если какой-то из цен нет."""
-    if not answers.priced() or (judge is not None and judge.cost_lo is None):
+def total_cost(answers: Estimate, judge: Optional[JudgeEstimate],
+               facts: Optional["FactsJudgeEstimate"] = None) -> Optional[tuple[float, float]]:
+    """(без ретраев, с ретраями) ответы + судья (v2 и/или по фактам); None, если какой-то из цен нет."""
+    judges = [j for j in (judge, facts) if j is not None]
+    if not answers.priced() or any(j.cost_lo is None for j in judges):
         return None
     lo, hi = answers.cost_usd()
-    if judge is not None:
-        lo, hi = lo + judge.cost_lo, hi + judge.cost_hi
+    for j in judges:
+        lo, hi = lo + j.cost_lo, hi + j.cost_hi
     return lo, hi
+
+
+# ---------- судья по фактам (--judge-facts) ----------
+
+@dataclass
+class FactsJudgeEstimate(JudgeEstimate):
+    """Судья по фактам: без транскриптов, вход — вопрос, ответ и списки фактов; выход — флаги и claims."""
+
+    def lines(self) -> list[str]:
+        again = (f"; повторов ответов и судьи вместе {self.repeats}, каждый повтор судьи идёт мимо кэша и оплачивается"
+                 if self.repeats > 1 else "")
+        out = [f"вызовов судьи по фактам: до {self.calls} (ответы × повторы ответов × повторы судьи{again}; "
+               "одинаковые ответы судья берёт из памяти прогона, так что это верхняя граница)",
+               f"токенов судьи по фактам: ≈{self.prompt_tokens} вход + ≈{self.completion_tokens} выход "
+               f"(без транскриптов; ответ ≈{ANSWER_TOKENS} токенов, ≈{FACTS_CLAIMS_GUESS} утверждений на ответ)"]
+        if self.cost_lo is None:
+            out.append("стоимость судьи по фактам: цены не заданы (JUDGE_PRICE_* / PRICE_* в .env = 0), оценить нельзя")
+        else:
+            out.append(f"стоимость судьи по фактам: ≈${self.cost_lo:.4f} без ретраев, "
+                       f"до ≈${self.cost_hi:.4f} с ретраями")
+        return out
+
+
+def estimate_judge_facts(questions: Sequence, modes: Sequence[str], *, raw_dir: Path, repeats: int = 1,
+                         judge_repeats: int = 1) -> FactsJudgeEstimate:
+    """Вызовов = (настоящие ответы всех режимов и повторов) × judge_repeats. Модель не вызывается. Вход считаем по
+    настоящему сообщению судьи с ответом средней длины, выход — по числу фактов вопроса."""
+    est = FactsJudgeEstimate(repeats=repeats * judge_repeats)
+    chars = completion = 0
+    graph_stub: dict[str, bool] = {}
+    for mode in modes:
+        for q in questions:
+            if mode == "graph":
+                if q.as_of not in graph_stub:
+                    graph_stub[q.as_of] = bool(systems.graph_problem(raw_dir, q.as_of))
+                if graph_stub[q.as_of]:
+                    continue
+            if not q.required_facts and not q.forbidden_facts:
+                continue    # харнес такому вопросу судью не зовёт (questions_m008.json без фактов)
+            msgs = facts_mod.build_messages(q.question, "x" * ANSWER_TOKENS * CHARS_PER_TOKEN, q.required_facts,
+                                            q.forbidden_facts, q.answerable)
+            n_calls = repeats * judge_repeats
+            chars += n_calls * sum(len(m["content"]) for m in msgs)
+            completion += n_calls * (FACTS_TOKENS_PER_FLAG * (len(q.required_facts) + len(q.forbidden_facts))
+                                     + FACTS_TOKENS_PER_CLAIM * FACTS_CLAIMS_GUESS)
+            est.calls += n_calls
+    est.prompt_tokens = chars // CHARS_PER_TOKEN
+    est.completion_tokens = completion
+    p_in, p_out = judge_mod.judge_prices()
+    if p_in or p_out:
+        est.cost_lo = (est.prompt_tokens * p_in + est.completion_tokens * p_out) / 1e6
+        est.cost_hi = est.cost_lo + (est.prompt_tokens * 1.4 * p_in + est.completion_tokens * p_out) / 1e6
+    return est
 
 
 def remaining_budget() -> float:
