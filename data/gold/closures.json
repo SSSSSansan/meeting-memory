@@ -1,0 +1,50 @@
+[
+  {
+    "task_event_id": "ev_m001_03",
+    "closing_event_id": "ev_m004_03",
+    "task_statement": "Сделать миграцию БД",
+    "closing_statement": "Миграция БД выполнена",
+    "task_meeting": "m_001",
+    "closing_meeting": "m_004"
+  },
+  {
+    "task_event_id": "ev_m003_04",
+    "closing_event_id": "ev_m007_02",
+    "task_statement": "Отправить клиенту коммерческое предложение",
+    "closing_statement": "Коммерческое предложение клиенту отправлено",
+    "task_meeting": "m_003",
+    "closing_meeting": "m_007"
+  },
+  {
+    "task_event_id": "ev_m002_03",
+    "closing_event_id": "ev_m009_01",
+    "task_statement": "Кто делает интерфейс бота",
+    "closing_statement": "Интерфейс бота Qamqor делает Абдурахман",
+    "task_meeting": "m_002",
+    "closing_meeting": "m_009"
+  },
+  {
+    "task_event_id": "ev_m002_02",
+    "closing_event_id": "ev_m009_02",
+    "task_statement": "Сделать прототип Qamqor",
+    "closing_statement": "Прототип Qamqor готов",
+    "task_meeting": "m_002",
+    "closing_meeting": "m_009"
+  },
+  {
+    "task_event_id": "ev_m006_02",
+    "closing_event_id": "ev_m011_02",
+    "task_statement": "Сделать экран статистики",
+    "closing_statement": "Экран статистики готов",
+    "task_meeting": "m_006",
+    "closing_meeting": "m_011"
+  },
+  {
+    "task_event_id": "ev_m012_02",
+    "closing_event_id": "ev_m015_05",
+    "task_statement": "Собрать тестовую выборку для Qamqor",
+    "closing_statement": "Тестовая выборка собрана",
+    "task_meeting": "m_012",
+    "closing_meeting": "m_015"
+  }
+]
