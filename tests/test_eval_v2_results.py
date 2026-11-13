@@ -275,7 +275,10 @@ def test_cli_writes_json_without_judge_facts_with_null_fact_metrics_and_keeps_cs
     assert d["run_id"] == "t1" and d["config"]["judge_facts"] is False and d["config"]["judge_repeats"] == 1
     base = [r for r in d["per_question"] if r["mode"] == "baseline"]
     assert len(base) == 2 and all(r["metrics"]["fact_f1"] is None for r in base)
-    assert all(r["retrieved_meetings"] is None and r["metrics"]["retrieval_recall"] is None for r in base)
+    # С PR #42 api.ask() отдаёт Answer.retrieved_meetings: полнота поиска у настоящей системы измерена.
+    # У вопроса без ответа в данных (answerable=false) эталонных встреч нет — там null.
+    assert all(isinstance(r["retrieved_meetings"], list) for r in base)
+    assert all((r["metrics"]["retrieval_recall"] is not None) == r["answerable"] for r in base)
     out = tmp_path / "out"
     assert not list(out.glob("*.partial.jsonl"))                      # итог записан — промежуточный файл удалён
     (csv_path,) = out.glob("eval_*.csv")
@@ -286,7 +289,7 @@ def test_cli_writes_json_without_judge_facts_with_null_fact_metrics_and_keeps_cs
     assert not {"citations", "facts_detail"} & set(cols)
     (md_path,) = out.glob("summary_*.md")
     md = md_path.read_text(encoding="utf-8")
-    assert "## Метрики v2" in md and "retrieval_recall: не измерено" in md and "## test" in md
+    assert "## Метрики v2" in md and "retrieval_recall: не измерено" not in md and "## test" in md
 
 
 def test_cli_judge_facts_fills_metrics_and_old_judge_v2_still_works_alongside(tmp_path):
