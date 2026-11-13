@@ -125,8 +125,11 @@ class Row:
     fact_precision: Optional[float] = None
     fact_precision_strict: Optional[float] = None
     fact_f1: Optional[float] = None
-    forbidden_hits: Optional[float] = None      # int при одном повторе судьи, при нескольких — среднее
+    forbidden_hits: Optional[float] = None      # int при одном повторе судьи, иначе среднее
+    # токены контекста в промпте ответа: usage.context_tokens, иначе usage.prompt_tokens (None — нет ответа)
+    context_tokens: Optional[int] = None
     # Только для json и --resume, в csv не попадают:
+    context_tokens_source: str = ""             # какое поле usage использовано
     citations: list = field(default_factory=list)               # [{meeting_id, ts, quote}]
     retrieved_meetings: Optional[list] = None   # None: api.ask() список не отдал
     facts_detail: Optional[dict] = None         # разбор судьи по фактам (первый повтор)
@@ -134,7 +137,7 @@ class Row:
     judge_usage: Optional[dict] = None          # токены и цена вызовов судьи по фактам для этой строки
 
 
-NOT_IN_CSV = {"citations", "retrieved_meetings", "facts_detail", "metrics_std", "judge_usage"}
+NOT_IN_CSV = {"context_tokens_source", "citations", "retrieved_meetings", "facts_detail", "metrics_std", "judge_usage"}
 CSV_FIELDS = [f.name for f in fields(Row) if f.name not in NOT_IN_CSV]
 
 JudgeFn = Callable[..., judge_mod.JudgeResult]
@@ -296,6 +299,10 @@ def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTe
     row.prompt_tokens = usage.prompt_tokens if usage else 0
     row.completion_tokens = usage.completion_tokens if usage else 0
     row.cost_usd = round(usage.cost_usd, 6) if usage else 0.0
+    if usage is not None:   # без ответа (ошибка, нет ответа) контекста не было: None, а не 0
+        own = getattr(usage, "context_tokens", None)    # в Usage (4.6) пока нет: тогда prompt_tokens
+        row.context_tokens = own if own is not None else usage.prompt_tokens
+        row.context_tokens_source = results_v2.CONTEXT_FIELD if own is not None else results_v2.CONTEXT_FALLBACK
     return row
 
 

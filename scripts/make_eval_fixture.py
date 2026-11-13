@@ -78,6 +78,10 @@ def fake_rows(questions: list[dict], seed: int = SEED) -> list[Row]:
                 r.fact_precision = round((claims - wrong) / claims, 4)
                 r.fact_precision_strict = round(sup / claims, 4)
                 r.forbidden_hits = wrong if rng.random() < 0.5 else 0
+                r.abstained = rng.random() < (0.05 if mode == "graph" else 0.1)    # ложный отказ
+                if r.abstained:     # отказ на вопрос с ответом: факты не найдены, утверждений нет
+                    r.fact_recall = r.fact_precision = r.fact_precision_strict = 0.0
+                    r.forbidden_hits = 0
             else:
                 refuse = rng.random() < (0.85 if mode == "graph" else 0.7)
                 r.fact_recall = 1.0 if refuse else 0.0
@@ -85,7 +89,8 @@ def fake_rows(questions: list[dict], seed: int = SEED) -> list[Row]:
                 r.forbidden_hits = 0 if refuse else 1
                 r.abstained = refuse
             r.fact_f1 = round(harmonic(r.fact_recall, r.fact_precision), 4)
-            r.prompt_tokens = rng.randint(1500, 4500)
+            r.prompt_tokens = rng.randint(1500, 4500) + (900 if mode == "baseline" else 0)
+            r.context_tokens, r.context_tokens_source = r.prompt_tokens, "usage.prompt_tokens"
             r.completion_tokens = rng.randint(80, 300)
             r.cost_usd = round(r.prompt_tokens * 2.5e-6 + r.completion_tokens * 1e-5, 6)
             r.latency_ms = rng.randint(1800, 6500) + (700 if mode == "graph" else 0)
