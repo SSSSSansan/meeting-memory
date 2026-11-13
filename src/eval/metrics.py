@@ -8,7 +8,13 @@
                      событие — одно совпадение;
   citation_valid   — цитата реально есть в тексте встречи (normalize_quote из scripts/build_gold.py);
   abstained        — система сказала «данных нет» (эвристика по фразам, см. ABSTAIN_RE; цитаты не важны).
-Точность содержания ответа здесь не считается: её посчитает судья (A8).
+Метрики v2 (тоже без модели, только для вопросов с ответом; для answerable=false — None):
+  citation_recall    — |цитируемые встречи ∩ source_meetings| / |source_meetings|;
+  citation_precision — |цитируемые ∩ source_meetings| / |цитируемые|; ответ без цитат = 0.0 (как correct_meetings:
+                       нет цитаты — не засчитано), иначе система, которая ничего не цитирует, выпала бы из среднего;
+  retrieval_recall   — |retrieved_meetings ∩ source_meetings| / |source_meetings|, где retrieved_meetings — встречи,
+                       попавшие в контекст ДО генерации. api.ask() их пока не отдаёт: тогда None («не измерено»).
+Точность содержания ответа здесь не считается: её считает судья (judge.py, judge_facts.py).
 """
 from __future__ import annotations
 
@@ -16,7 +22,7 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Sequence
 
 from scripts.build_gold import MeetingText, load_segments
 from src.extract.compare import _match
@@ -91,6 +97,24 @@ def is_abstention(answer: str) -> bool:
     return ABSTAIN_RE.search(normalize(answer)) is not None
 
 
+def citation_recall(cited: Sequence[str], source: Sequence[str]) -> Optional[float]:
+    src = set(source)
+    return len(src & set(cited)) / len(src) if src else None
+
+
+def citation_precision(cited: Sequence[str], source: Sequence[str]) -> Optional[float]:
+    if not source:
+        return None
+    return len(set(source) & set(cited)) / len(set(cited)) if cited else 0.0
+
+
+def retrieval_recall(retrieved: Optional[Sequence[str]], source: Sequence[str]) -> Optional[float]:
+    """None — «не измерено»: система не отдала список встреч, попавших в контекст (это не то же самое, что 0.0)."""
+    if retrieved is None or not source:
+        return None
+    return len(set(source) & set(retrieved)) / len(set(source))
+
+
 @dataclass
 class AnswerMetrics:
     cited_meetings: list[str]
@@ -102,11 +126,14 @@ class AnswerMetrics:
     citations_total: int
     citations_valid: int
     abstained: bool
+    citation_recall: Optional[float] = None       # метрики v2, см. docstring модуля
+    citation_precision: Optional[float] = None
+    retrieval_recall: Optional[float] = None
 
 
 def score_answer(*, answer: str, citations: list[Citation], answerable: bool, source_meetings: list[str],
                  decision_ids: list[str], as_of: str, gold: dict[str, dict],
-                 texts: MeetingTexts) -> AnswerMetrics:
+                 texts: MeetingTexts, retrieved_meetings: Optional[Sequence[str]] = None) -> AnswerMetrics:
     cited = sorted({c.meeting_id for c in citations})
     limit = meeting_number(as_of)
     after = sum(1 for c in citations if limit is not None and (meeting_number(c.meeting_id) or 0) > limit)
@@ -121,5 +148,8 @@ def score_answer(*, answer: str, citations: list[Citation], answerable: bool, so
         meetings_hit=len(source & set(cited)) / len(source) if source else None,
         events_found=events_found(citations, decision_ids, gold),
         events_total=len(decision_ids),
+        citation_recall=citation_recall(cited, source_meetings),
+        citation_precision=citation_precision(cited, source_meetings),
+        retrieval_recall=retrieval_recall(retrieved_meetings, source_meetings),
         **base,
     )
