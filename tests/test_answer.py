@@ -185,6 +185,33 @@ def test_graph_mode_uses_subgraph_context_and_same_verification(monkeypatch):
     assert calls[0][1]["purpose"] == "answer_graph"
 
 
+def test_retrieved_meetings_in_answer_and_report(monkeypatch):
+    """C3: какие встречи попали в контекст до генерации — для полноты поиска у A."""
+    _fake_llm(monkeypatch, json.dumps(GOOD, ensure_ascii=False))
+    a = ans.answer("Когда релиз Zhol?", index=_index())
+    assert sorted(a.retrieved_meetings) == ["m_001", "m_002"]
+    assert _report_rows()[-1]["retrieved_meetings"] == a.retrieved_meetings
+
+
+def test_as_of_hides_future_meetings_in_baseline(monkeypatch):
+    calls = _fake_llm(monkeypatch, _json("Двадцатого августа.", ("m_001", "00:01:00", "двадцатого августа")))
+    a = ans.answer("Когда релиз Zhol?", index=_index(), as_of="2026-08-05")
+    assert a.retrieved_meetings == ["m_001"]
+    assert "m_002" not in calls[0][0][1]["content"]
+    assert _report_rows()[-1]["as_of"] == "2026-08-05"
+
+
+def test_graph_mode_as_of_and_retrieved_meetings(monkeypatch):
+    from src.graph.queries import load_graph
+    calls = _fake_llm(monkeypatch, _json("20 апреля.", ("m_001", "00:04:12", "перенесём релиз на двадцатое апреля")))
+    G = load_graph(ans.ROOT / "data/sample/graph.json")
+    a = ans.answer("Как менялся срок релиза Атласа?", mode="graph", graph=G)
+    assert a.retrieved_meetings == ["m_001", "m_002"]
+    a = ans.answer("Как менялся срок релиза Атласа?", mode="graph", graph=G, as_of="2026-02-05")
+    assert a.retrieved_meetings == ["m_001"]
+    assert "[m_002 " not in calls[-1][0][1]["content"]
+
+
 def test_unknown_mode_rejected():
     with pytest.raises(ValueError):
         ans.answer("?", mode="hybrid", index=_index())

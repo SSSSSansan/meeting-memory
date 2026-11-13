@@ -24,13 +24,13 @@ import json
 import re
 import sys
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 from src.answer.prompts import SYSTEM_PROMPT, retry_prompt, user_prompt
 from src.llm_client import complete
-from src.retrieval.baseline import ROOT, BaselineIndex, load_transcripts
-from src.retrieval.graph_rag import retrieve_subgraph
+from src.retrieval.baseline import CONTEXT_K, ROOT, BaselineIndex, load_transcripts
+from src.retrieval.graph_rag import get_graph, retrieve_subgraph
 from src.retrieval.router import route
 from src.schemas import Answer, Citation, Usage
 from src.utils.text import normalize
@@ -51,6 +51,8 @@ class AnswerStats:
     requested_mode: str = ""     # что попросили: baseline | graph | auto
     route_qtype: str = ""        # для auto: как роутер понял вопрос (T1..T5) и почему
     route_reason: str = ""
+    as_of: str = ""              # ISO-дата: поиск видел только встречи не позже неё ("" — без ограничения)
+    retrieved_meetings: list = field(default_factory=list)  # что попало в контекст до генерации
     attempts: int = 0
     json_failed_first: bool = False
     citations_first: int = 0
@@ -204,39 +206,51 @@ def _generate(question: str, context: str, mode: str, stats: AnswerStats) -> Ans
     return Answer(answer=text, citations=good, mode=mode, usage=usage)
 
 
-def answer(question: str, mode: str = "baseline", k: int = 5,
+def _graph_meetings(G, items: list[str]) -> list[str]:
+    return list(dict.fromkeys(G.nodes[n]["meeting_id"] for n in items if n in G and "meeting_id" in G.nodes[n]))
+
+
+def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
            index: Optional[BaselineIndex] = None, stats: Optional[AnswerStats] = None,
-           depth: int = 2, graph=None) -> Answer:
+           depth: int = 2, graph=None, as_of: Optional[str] = None) -> Answer:
     """mode: baseline | graph | auto (выбирает src.retrieval.router).
 
     k — сколько чанков берёт baseline; depth и graph — параметры graph-ветки.
+    as_of — ISO-дата вопроса: обе ветки видят только встречи не позже неё.
     """
     t0 = time.perf_counter()
-    requested, context, chosen = mode, None, None
+    requested, context, chosen, retrieved = mode, None, None, []
     if mode == "auto":
         chosen = route(question, graph)
         mode = chosen.mode
         if mode == "graph":
-            sub = retrieve_subgraph(question, depth=depth, G=graph)
+            sub = retrieve_subgraph(question, depth=depth, G=graph, as_of=as_of)
             if sub["items"]:
                 context = sub["context"]
+                retrieved = _graph_meetings(graph or get_graph(), sub["items"])
             else:
                 mode = "baseline"
                 chosen.reason += "; в графе по вопросу ничего нет — отвечает baseline"
     if mode == "baseline":
-        context = format_context((index or default_index()).search(question, k=k))
+        hits = (index or default_index()).search(question, k=k, as_of=as_of)
+        context = format_context(hits)
+        retrieved = list(dict.fromkeys(h["meeting_id"] for h in hits))
     elif mode == "graph":
         if context is None:
-            context = retrieve_subgraph(question, depth=depth, G=graph)["context"]
+            sub = retrieve_subgraph(question, depth=depth, G=graph, as_of=as_of)
+            context = sub["context"]
+            retrieved = _graph_meetings(graph or get_graph(), sub["items"])
     else:
         raise ValueError(f"mode={mode!r}: допустимо baseline | graph | auto")
 
     stats = stats or AnswerStats(mode=mode, question=question)
     stats.mode, stats.requested_mode = mode, requested
+    stats.as_of, stats.retrieved_meetings = as_of or "", retrieved
     if chosen:
         stats.route_qtype, stats.route_reason = chosen.qtype, chosen.reason
     stats.retrieval_ms = int((time.perf_counter() - t0) * 1000)
     result = _generate(question, context, mode, stats)
+    result.retrieved_meetings = retrieved
     result.latency_ms = stats.latency_ms = int((time.perf_counter() - t0) * 1000)
     _write_report(stats)
     return result
@@ -252,11 +266,12 @@ def _write_report(stats: AnswerStats) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("question")
-    ap.add_argument("-k", type=int, default=5)
+    ap.add_argument("-k", type=int, default=CONTEXT_K)
     ap.add_argument("--mode", choices=["baseline", "graph", "auto"], default="baseline")
     ap.add_argument("--depth", type=int, default=2)
+    ap.add_argument("--as-of", default=None, help="ISO-дата: только встречи не позже неё")
     a = ap.parse_args()
-    print(answer(a.question, mode=a.mode, k=a.k, depth=a.depth).model_dump_json(indent=2))
+    print(answer(a.question, mode=a.mode, k=a.k, depth=a.depth, as_of=a.as_of).model_dump_json(indent=2))
     return 0
 
 
