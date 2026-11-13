@@ -204,6 +204,16 @@ def _embed_meta() -> dict:
             "chunk_format": CHUNK_FORMAT}
 
 
+def chunk_lines(chunk: dict) -> set:
+    """Реплики чанка — по ним чанки сравниваются на почти-дубли (см. NEAR_DUP_SHARE)."""
+    return {(chunk["meeting_id"], s["ts"], s["text"]) for s in chunk["segments"]}
+
+
+def is_near_duplicate(chunk: dict, taken: list[set]) -> bool:
+    lines = chunk_lines(chunk)
+    return any(len(lines & prev) >= NEAR_DUP_SHARE * len(lines) for prev in taken)
+
+
 class BaselineIndex:
     def __init__(self, projects: Optional[list[str]] = None) -> None:
         """projects — реестр проектов для заголовков и буста; по умолчанию — проекты графа."""
@@ -211,6 +221,7 @@ class BaselineIndex:
         self.meta = _embed_meta()
         self._projects = projects
         self._vectors = np.zeros((0, 0), dtype=np.float32)  # строки нормированы: косинус = скалярное произведение
+        self._row: Optional[dict[str, int]] = None          # chunk_id → строка _vectors, строится лениво
 
     @property
     def projects(self) -> list[str]:
@@ -238,11 +249,21 @@ class BaselineIndex:
         self.chunks += new
         return len(new)
 
+    def query_vector(self, question: str) -> np.ndarray:
+        return _normalize_rows(np.array(embed([question], purpose="embed_query"), dtype=np.float32))[0]
+
+    def similarity(self, chunk_id: str, q: np.ndarray) -> float:
+        """Косинус чанка с уже посчитанным вектором вопроса (гибрид ранжирует им backfill графа)."""
+        if self._row is None or len(self._row) != len(self.chunks):
+            self._row = {c["chunk_id"]: i for i, c in enumerate(self.chunks)}
+        return float(self._vectors[self._row[chunk_id]] @ q)
+
     def search(self, question: str, k: int = CONTEXT_K, as_of: Optional[str] = None,
-               pool: int = POOL_K) -> list[dict]:
+               pool: int = POOL_K, query_vec: Optional[np.ndarray] = None) -> list[dict]:
         """До k чанков встреч не позже as_of (ISO-дата). У каждого sim — косинус, score — после буста.
 
         Без as_of в eval на вопрос «что решили к марту» утекает будущее и метрики завышены.
+        query_vec — вектор вопроса из query_vector(), чтобы не эмбеддить вопрос второй раз.
         """
         if not self.chunks:
             return []
@@ -250,7 +271,7 @@ class BaselineIndex:
                            dtype=int)
         if allowed.size == 0:
             return []
-        q = _normalize_rows(np.array(embed([question], purpose="embed_query"), dtype=np.float32))[0]
+        q = self.query_vector(question) if query_vec is None else query_vec
         sims = self._vectors[allowed] @ q
         top = np.argsort(-sims, kind="stable")[:max(pool, k)]
         cands = [(int(allowed[j]), float(sims[j])) for j in top]
@@ -269,10 +290,9 @@ class BaselineIndex:
         taken: list[set] = []
         for score, sim, i in scored:
             c = self.chunks[i]
-            lines = {(c["meeting_id"], s["ts"], s["text"]) for s in c["segments"]}
-            if any(len(lines & prev) >= NEAR_DUP_SHARE * len(lines) for prev in taken):
+            if is_near_duplicate(c, taken):
                 continue
-            taken.append(lines)
+            taken.append(chunk_lines(c))
             out.append({**c, "sim": sim, "score": score})
             if len(out) == k:
                 break

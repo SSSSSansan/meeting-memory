@@ -214,7 +214,7 @@ def test_graph_mode_as_of_and_retrieved_meetings(monkeypatch):
 
 def test_unknown_mode_rejected():
     with pytest.raises(ValueError):
-        ans.answer("?", mode="hybrid", index=_index())
+        ans.answer("?", mode="agent", index=_index())
 
 
 def test_report_has_question_latency_and_its_parts(monkeypatch):
