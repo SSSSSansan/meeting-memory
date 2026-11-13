@@ -161,7 +161,7 @@ class Usage(BaseModel):
 class Answer(BaseModel):
     answer: str
     citations: list[Citation] = []
-    mode: Literal["baseline", "graph"]
+    mode: Literal["baseline", "graph", "hybrid"]  # hybrid — граф + фрагменты транскрипта (C4), 2026-11-13
     usage: Usage = Usage()
     latency_ms: int = 0
     # Встречи, попавшие в контекст ДО генерации (порядок ранжирования). Нужны для полноты поиска (A4):

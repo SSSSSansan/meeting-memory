@@ -33,7 +33,9 @@ LINK = {("SUPERSEDES", "out"): "заменяет", ("SUPERSEDES", "in"): "зам
         ("REFINES", "out"): "уточняет", ("REFINES", "in"): "уточнено решением",
         ("DEPENDS_ON", "out"): "зависит от", ("DEPENDS_ON", "in"): "от него зависит",
         ("SAME_TOPIC", "out"): "на ту же тему, что", ("SAME_TOPIC", "in"): "на ту же тему, что"}
-MODE_BADGE = {"graph": ("GraphRAG", "violet"), "baseline": ("Baseline RAG", "blue")}
+MODE_BADGE = {"graph": ("GraphRAG", "violet"), "baseline": ("Baseline RAG", "blue"),
+              "hybrid": ("Hybrid: граф + реплики", "green")}
+COMPARE = ("baseline", "graph", "hybrid")
 EXAMPLES = [(":material/fact_check:", "Факт из встречи", "Кто делает экран статистики и к какому сроку?"),
             (":material/history:", "Как менялось решение", "Как менялся срок релиза Zhol?"),
             (":material/warning:", "Конфликты", "Есть ли конфликты по загрузке людей?"),
@@ -197,20 +199,21 @@ with tab_qa:
         cols[n % 3].button(label, key=f"ex_{n}", icon=icon, help=q, width="stretch",
                            on_click=pick_example, args=(q,))
 
-    mode = st.radio("Режим", ["auto", "baseline", "graph", "сравнить"], horizontal=True,
+    mode = st.radio("Режим", ["auto", "baseline", "graph", "hybrid", "сравнить"], horizontal=True,
                     help="baseline — поиск по репликам загруженных встреч; graph — по графу решений и задач; "
+                         "hybrid — граф и реплики вокруг его пунктов плюс поиск по смыслу; "
                          "auto — граф для вопросов через несколько встреч, baseline для простых фактов; "
-                         "сравнить — baseline и graph на один вопрос рядом")
+                         "сравнить — baseline, graph и hybrid на один вопрос рядом")
     question = st.text_input("Вопрос", key="q", placeholder="Например: как менялся срок релиза Zhol?")
     asked = st.button("Спросить", type="primary", disabled=not question.strip())
     if (asked or st.session_state.pop("go", False)) and question.strip():
         chosen = api.route(question) if mode == "auto" else None
-        needs_index = mode in ("baseline", "сравнить") or (chosen and chosen.mode == "baseline")
+        needs_index = mode in ("baseline", "hybrid", "сравнить") or (chosen and chosen.mode == "baseline")
         if needs_index and not meetings:
             st.session_state.last = None
             st.info("Индекс пуст: загрузите встречи слева.")
         else:
-            modes = ["baseline", "graph"] if mode == "сравнить" else [mode]
+            modes = list(COMPARE) if mode == "сравнить" else [mode]
             with st.spinner("Ищу и отвечаю…"):
                 results = [api.ask(question, mode=m) for m in modes]
             st.session_state.last = {"question": question, "mode": mode, "results": results, "chosen": chosen}
@@ -219,7 +222,7 @@ with tab_qa:
     if last:  # ответ живёт в сессии: переключение вкладок и выбор проекта его не стирают
         st.markdown(f"#### {last['question']}")
         if last["mode"] == "сравнить":
-            for col, m, result in zip(st.columns(2), ("baseline", "graph"), last["results"]):
+            for col, m, result in zip(st.columns(len(COMPARE)), COMPARE, last["results"]):
                 with col:
                     st.subheader(m)
                     show_answer(result)

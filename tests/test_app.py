@@ -92,7 +92,7 @@ def test_all_tabs_render_on_sample_graph():
     assert at.get("graphviz_chart")
 
 
-def test_compare_mode_shows_both_branches(monkeypatch):
+def test_compare_mode_shows_all_three_branches(monkeypatch):
     monkeypatch.setattr(answerer, "complete", lambda messages, **kw: LLMResponse(
         text=json.dumps({"answer": "ok", "citations": []})))
     at = AppTest.from_file(APP, default_timeout=60).run()
@@ -101,7 +101,7 @@ def test_compare_mode_shows_both_branches(monkeypatch):
     at.text_input[0].input("Как менялся срок релиза Атласа?").run()
     _button(at, "Спросить").click().run()
     assert not at.exception
-    assert {"baseline", "graph"} <= {s.value for s in at.subheader}
+    assert {"baseline", "graph", "hybrid"} <= {s.value for s in at.subheader}
 
 
 def test_sources_are_highlighted_in_transcript(monkeypatch):

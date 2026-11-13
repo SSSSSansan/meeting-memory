@@ -122,8 +122,9 @@ def reset_index() -> None:
 def ask(question: str, mode: str = "baseline", k: int = CONTEXT_K, depth: int = 2,
         as_of: Optional[str] = None) -> Answer:
     """Одна точка для UI и eval. baseline ищет по индексу встреч, загруженных в UI;
-    graph — по графу роли B (graph_info()); auto — ветку выбирает роутер (см. route()).
-    as_of — ISO-дата вопроса: обе ветки видят только встречи не позже неё (для eval обязательно).
+    graph — по графу роли B (graph_info()); hybrid — граф + реплики вокруг его пунктов + поиск по индексу;
+    auto — ветку выбирает роутер (см. route()).
+    as_of — ISO-дата вопроса: все ветки видят только встречи не позже неё (для eval обязательно).
     Какой веткой реально ответили — Answer.mode; какие встречи ушли в контекст — Answer.retrieved_meetings."""
     return answer(question, mode=mode, k=k, depth=depth, index=get_index(), as_of=as_of)
 
