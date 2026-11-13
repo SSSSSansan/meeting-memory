@@ -17,9 +17,8 @@
   5. У вопросов answerable=false оба списка пусты, тип none; у остальных списки не пусты.
   6. as_of_date совпадает с датой встречи as_of в world.yaml (ISO); поля as_of_date,
      required_facts, forbidden_facts есть у каждой записи.
-  7. У вопросов split=test required_facts не пусты; у answerable=false в test они тоже есть
-     (смысл эталона — «система сообщает, что данных нет»). В dev пустые required_facts допустимы,
-     скрипт печатает предупреждение с их числом.
+  7. У всех вопросов (и dev, и test) required_facts не пусты, у answerable=false тоже
+     (смысл эталона — «система сообщает, что данных нет»). Пустые required_facts — ошибка.
   8. Набор целиком: 58 вопросов, test 23, dev 35; kk не меньше 3 и в dev, и в test;
      в test не меньше 3 вопросов каждого типа T1..T5 и none.
 
@@ -185,24 +184,11 @@ def check(raw_questions: Any, world: dict, *, strict: bool = True) -> list[str]:
         errors += _reference_errors(q, meeting_order, event_meeting)
         errors += _answerable_errors(q)
         if strict:
-            errors += _test_facts_errors(q)
+            errors += _required_facts_errors(q)
 
     if strict:
         errors += _set_errors(questions)
     return errors
-
-
-def warnings(raw_questions: Any) -> list[str]:
-    """Предупреждения (не ошибки): dev-вопросы без required_facts. Пока их дописывают отдельной порцией."""
-    if not isinstance(raw_questions, list):
-        return []
-    empty = [
-        q["id"] for q in raw_questions
-        if isinstance(q, dict) and q.get("split") == "dev" and not q.get("required_facts")
-    ]
-    if not empty:
-        return []
-    return [f"у {len(empty)} вопросов dev пустые required_facts (допустимо для dev, нужно дописать)"]
 
 
 def _new_field_errors(q: Question, raw: dict, meeting_order: dict[str, date]) -> list[str]:
@@ -216,10 +202,10 @@ def _new_field_errors(q: Question, raw: dict, meeting_order: dict[str, date]) ->
     return errors
 
 
-def _test_facts_errors(q: Question) -> list[str]:
-    # в dev пустые required_facts допустимы (см. warnings), в test — нет: по ним считается таблица отчёта
-    if q.split == "test" and not q.required_facts:
-        return [f"{q.id}: split=test, но required_facts пусты"]
+def _required_facts_errors(q: Question) -> list[str]:
+    # по required_facts считается таблица отчёта, поэтому они нужны у каждого вопроса, и у answerable=false тоже
+    if not q.required_facts:
+        return [f"{q.id}: split={q.split}, но required_facts пусты"]
     return []
 
 
@@ -304,12 +290,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     errors = check(raw, world)
-    notes = warnings(raw)
     if errors:
         for e in errors:
             print(f"ОШИБКА: {e}", file=sys.stderr)
-        for w in notes:
-            print(f"ПРЕДУПРЕЖДЕНИЕ: {w}", file=sys.stderr)
         print(f"Ошибок: {len(errors)}", file=sys.stderr)
         return 1
 
@@ -320,8 +303,6 @@ def main(argv: list[str] | None = None) -> int:
     print("По типам: " + ", ".join(f"{k} {v}" for k, v in sorted(by_type.items())))
     print("По выборкам: " + ", ".join(f"{k} {v}" for k, v in sorted(by_split.items())))
     print("По языкам: " + ", ".join(f"{k} {v}" for k, v in sorted(by_lang.items())))
-    for w in notes:
-        print(f"ПРЕДУПРЕЖДЕНИЕ: {w}")
     print("Все проверки пройдены.")
     return 0
 
