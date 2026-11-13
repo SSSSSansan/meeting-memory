@@ -11,7 +11,6 @@ from scripts.check_questions import (
     load_json,
     load_world,
     main,
-    warnings,
 )
 
 
@@ -67,15 +66,21 @@ def test_old_questions_are_dev_new_are_test(questions):
         assert q["as_of_date"] == ("2026-09-02" if q["as_of"] == "m_008" else "2026-10-26")
 
 
-def test_old_questions_have_empty_facts_new_have_required(questions):
+def test_all_questions_have_facts(questions):
     for q in questions:
-        number = int(q["id"][2:])
-        if number <= 35:
-            assert q["required_facts"] == [] and q["forbidden_facts"] == [], q["id"]
-        else:
-            assert q["required_facts"] and q["forbidden_facts"], q["id"]
-            if not q["answerable"]:
-                assert q["source_meetings"] == [] and q["decision_ids"] == [], q["id"]
+        assert q["required_facts"] and q["forbidden_facts"], q["id"]
+        assert all(f.strip() for f in q["required_facts"] + q["forbidden_facts"]), q["id"]
+        if not q["answerable"]:
+            assert q["source_meetings"] == [] and q["decision_ids"] == [], q["id"]
+
+
+def test_q46_covers_push_cancellation(questions, world):
+    q = _by_id(questions, "q_46")
+    assert "push-уведомления отменены без замены (m_008)" in q["required_facts"]
+    assert "push-уведомления заменены другой функцией или остались" in q["forbidden_facts"]
+    assert "push-уведомления заменены другой функцией" not in q["forbidden_facts"]
+    assert "ev_m008_02" in q["decision_ids"] and "m_008" in q["source_meetings"]
+    assert check(questions, world) == []
 
 
 def test_test_split_has_each_type_at_least_three(questions):
@@ -283,10 +288,20 @@ def test_unanswerable_test_question_needs_required_facts(questions, world):
     assert any("q_43" in e and "required_facts пусты" in e for e in errors)
 
 
-def test_dev_question_with_empty_required_facts_is_allowed(questions, world):
+def test_dev_question_without_required_facts_fails(questions, world):
     q = _by_id(questions, "q_01")
-    assert q["split"] == "dev" and q["required_facts"] == []
-    assert check(questions, world) == []
+    assert q["split"] == "dev"
+    q["required_facts"] = []
+    errors = check(questions, world)
+    assert any("q_01" in e and "split=dev" in e and "required_facts пусты" in e for e in errors)
+
+
+def test_unanswerable_dev_question_needs_required_facts(questions, world):
+    q = _by_id(questions, "q_18")
+    assert q["answerable"] is False and q["split"] == "dev"
+    q["required_facts"] = []
+    errors = check(questions, world)
+    assert any("q_18" in e and "required_facts пусты" in e for e in errors)
 
 
 def test_as_of_date_must_match_world(questions, world):
@@ -328,23 +343,16 @@ def test_facts_must_be_a_list_of_strings(questions, world):
     assert any("q_36" in e and "forbidden_facts" in e for e in errors)
 
 
-def test_warnings_count_dev_questions_without_required_facts(questions):
-    assert warnings(questions) == ["у 35 вопросов dev пустые required_facts (допустимо для dev, нужно дописать)"]
-    _by_id(questions, "q_01")["required_facts"] = ["Абдурахман"]
-    assert "у 34 вопросов dev" in warnings(questions)[0]
-    # пустые required_facts в test — не предупреждение, а ошибка check()
-    _by_id(questions, "q_41")["required_facts"] = []
-    assert "у 34 вопросов dev" in warnings(questions)[0]
-    for q in questions:
-        q["required_facts"] = q["required_facts"] or ["x"]
-    assert warnings(questions) == []
-    assert warnings({"not": "a list"}) == []
-
-
-def test_main_prints_dev_warning_with_count(capsys):
+def test_main_has_no_warnings(capsys):
     assert main([]) == 0
-    out = capsys.readouterr().out
-    assert "ПРЕДУПРЕЖДЕНИЕ" in out and "35 вопросов dev" in out
+    assert "ПРЕДУПРЕЖДЕНИЕ" not in capsys.readouterr().out
+
+
+def test_main_returns_1_on_empty_dev_required_facts(tmp_path, questions, capsys):
+    _by_id(questions, "q_01")["required_facts"] = []
+    code, err = _run(tmp_path, questions, capsys)
+    assert code == 1
+    assert "q_01" in err and "required_facts пусты" in err
 
 
 def test_not_a_list_fails(world):
