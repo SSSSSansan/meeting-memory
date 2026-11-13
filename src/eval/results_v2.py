@@ -47,7 +47,9 @@ ROUND = 6
 
 
 def _r(x: Optional[float]) -> Optional[float]:
-    return None if x is None else round(float(x), ROUND)
+    if x is None or (isinstance(x, int) and not isinstance(x, bool)):
+        return x    # целые (forbidden_hits, n) остаются целыми
+    return round(float(x), ROUND)
 
 
 # ---------- per_question ----------

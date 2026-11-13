@@ -1,0 +1,5025 @@
+{
+  "run_id": "fixture",
+  "timestamp": "2026-01-01T00:00:00+05:00",
+  "config": {
+    "model": "fixture-model",
+    "embed_model": "fixture-embed",
+    "judge_model": "fixture-judge",
+    "JUDGE_FACTS_PROMPT_VERSION": "judge-facts-v1",
+    "modes": [
+      "baseline",
+      "graph"
+    ],
+    "split": "dev",
+    "n_questions": 35,
+    "as_of": "m_008,m_015",
+    "judge_repeats": 1,
+    "repeats": 1,
+    "backend": "fixture",
+    "commit": "fixture",
+    "judge_facts": true,
+    "fixture": true,
+    "fixture_note": "fixture: числа выдуманы (stub), не результат запуска системы; нужен только для вёрстки вкладки метрик. В настоящих прогонах retrieval_recall = null, пока api.ask() не отдаёт retrieved_meetings."
+  },
+  "per_question": [
+    {
+      "qid": "q_01",
+      "question_id": "q_01",
+      "type": "T1",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_01 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_005",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_006"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 3913,
+        "completion_tokens": 151,
+        "cost_usd": 0.011293
+      },
+      "latency_ms": 1853,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_01",
+      "question_id": "q_01",
+      "type": "T1",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_01 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_007",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_006"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 4488,
+        "completion_tokens": 197,
+        "cost_usd": 0.01319
+      },
+      "latency_ms": 6892,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_02",
+      "question_id": "q_02",
+      "type": "T1",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_02 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_005",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 0.5,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 3357,
+        "completion_tokens": 242,
+        "cost_usd": 0.010813
+      },
+      "latency_ms": 4788,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_02",
+      "question_id": "q_02",
+      "type": "T1",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_02 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_013",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.8333,
+        "fact_f1": 0.9091,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.6667
+      },
+      "usage": {
+        "prompt_tokens": 2364,
+        "completion_tokens": 225,
+        "cost_usd": 0.00816
+      },
+      "latency_ms": 5077,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_03",
+      "question_id": "q_03",
+      "type": "T1",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_03 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.1667
+      },
+      "usage": {
+        "prompt_tokens": 1692,
+        "completion_tokens": 300,
+        "cost_usd": 0.00723
+      },
+      "latency_ms": 2698,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_03",
+      "question_id": "q_03",
+      "type": "T1",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_03 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_011",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_002",
+        "m_004"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 0.5,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 0.5,
+        "fact_f1": 0.5,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 2893,
+        "completion_tokens": 108,
+        "cost_usd": 0.008313
+      },
+      "latency_ms": 4904,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_04",
+      "question_id": "q_04",
+      "type": "T1",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_04 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 2161,
+        "completion_tokens": 218,
+        "cost_usd": 0.007583
+      },
+      "latency_ms": 6144,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_04",
+      "question_id": "q_04",
+      "type": "T1",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_04 (graph)",
+      "citations": [],
+      "retrieved_meetings": [],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.0,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 3751,
+        "completion_tokens": 122,
+        "cost_usd": 0.010598
+      },
+      "latency_ms": 4671,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_05",
+      "question_id": "q_05",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_05 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_006",
+        "m_011",
+        "m_012",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.25,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.75,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 1529,
+        "completion_tokens": 98,
+        "cost_usd": 0.004803
+      },
+      "latency_ms": 2282,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_05",
+      "question_id": "q_05",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_05 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_006",
+        "m_011",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 4486,
+        "completion_tokens": 93,
+        "cost_usd": 0.012145
+      },
+      "latency_ms": 3306,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_06",
+      "question_id": "q_06",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_06 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_004",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 3714,
+        "completion_tokens": 294,
+        "cost_usd": 0.012225
+      },
+      "latency_ms": 1920,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_06",
+      "question_id": "q_06",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_06 (graph)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_001",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.4
+      },
+      "usage": {
+        "prompt_tokens": 2715,
+        "completion_tokens": 135,
+        "cost_usd": 0.008138
+      },
+      "latency_ms": 2979,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_07",
+      "question_id": "q_07",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_07 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_013",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_010",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 0.5,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0
+      },
+      "usage": {
+        "prompt_tokens": 2463,
+        "completion_tokens": 183,
+        "cost_usd": 0.007988
+      },
+      "latency_ms": 2782,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_07",
+      "question_id": "q_07",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_07 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_013",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_002",
+        "m_003",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 1797,
+        "completion_tokens": 82,
+        "cost_usd": 0.005313
+      },
+      "latency_ms": 6254,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_08",
+      "question_id": "q_08",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_08 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_009",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_004",
+        "m_005"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 3771,
+        "completion_tokens": 156,
+        "cost_usd": 0.010988
+      },
+      "latency_ms": 2648,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_08",
+      "question_id": "q_08",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_08 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_003",
+        "m_004"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 0.5,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.75,
+        "fact_f1": 0.8571,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 1680,
+        "completion_tokens": 80,
+        "cost_usd": 0.005
+      },
+      "latency_ms": 5232,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_09",
+      "question_id": "q_09",
+      "type": "T3",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_09 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_010"
+      ],
+      "metrics": {
+        "citation_recall": 0.3333,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.6667,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.5,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.25
+      },
+      "usage": {
+        "prompt_tokens": 2360,
+        "completion_tokens": 254,
+        "cost_usd": 0.00844
+      },
+      "latency_ms": 3844,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_09",
+      "question_id": "q_09",
+      "type": "T3",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_09 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_005",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.3333,
+        "citation_precision": 1.0,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.3333,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.4444,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.6667
+      },
+      "usage": {
+        "prompt_tokens": 3186,
+        "completion_tokens": 285,
+        "cost_usd": 0.010815
+      },
+      "latency_ms": 4532,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_10",
+      "question_id": "q_10",
+      "type": "T3",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_10 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_008",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_003",
+        "m_004",
+        "m_006",
+        "m_007",
+        "m_008",
+        "m_009",
+        "m_010",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.5556,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.5,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 2,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 2784,
+        "completion_tokens": 191,
+        "cost_usd": 0.00887
+      },
+      "latency_ms": 5989,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_10",
+      "question_id": "q_10",
+      "type": "T3",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_10 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_006",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_007",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_008",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_003",
+        "m_004",
+        "m_006",
+        "m_007",
+        "m_008",
+        "m_009",
+        "m_010",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.5556,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.2
+      },
+      "usage": {
+        "prompt_tokens": 2360,
+        "completion_tokens": 190,
+        "cost_usd": 0.0078
+      },
+      "latency_ms": 5139,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_11",
+      "question_id": "q_11",
+      "type": "T3",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_11 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_005",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 3446,
+        "completion_tokens": 236,
+        "cost_usd": 0.010975
+      },
+      "latency_ms": 2396,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_11",
+      "question_id": "q_11",
+      "type": "T3",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_11 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_005",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_005"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 2396,
+        "completion_tokens": 125,
+        "cost_usd": 0.00724
+      },
+      "latency_ms": 6743,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_12",
+      "question_id": "q_12",
+      "type": "T4",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_12 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_007",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_007"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": 1.0,
+        "fact_recall": 0.6667,
+        "fact_precision": 0.8333,
+        "fact_f1": 0.7407,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 2635,
+        "completion_tokens": 276,
+        "cost_usd": 0.009348
+      },
+      "latency_ms": 6070,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_12",
+      "question_id": "q_12",
+      "type": "T4",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_12 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_007",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_008",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_007",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.8,
+        "fact_f1": 0.8889,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.4
+      },
+      "usage": {
+        "prompt_tokens": 3220,
+        "completion_tokens": 179,
+        "cost_usd": 0.00984
+      },
+      "latency_ms": 2660,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_13",
+      "question_id": "q_13",
+      "type": "T4",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_13 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_006",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_011",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_006",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 0.6667,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.6667,
+        "quote_validity": 1.0,
+        "fact_recall": 0.3333,
+        "fact_precision": 0.75,
+        "fact_f1": 0.4615,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 3414,
+        "completion_tokens": 112,
+        "cost_usd": 0.009655
+      },
+      "latency_ms": 6175,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_13",
+      "question_id": "q_13",
+      "type": "T4",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_13 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_006",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_011",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_006",
+        "m_011",
+        "m_014"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 0.75,
+        "fact_f1": 0.6,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.25
+      },
+      "usage": {
+        "prompt_tokens": 1713,
+        "completion_tokens": 169,
+        "cost_usd": 0.005973
+      },
+      "latency_ms": 4336,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_14",
+      "question_id": "q_14",
+      "type": "T5",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_14 (baseline)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.0,
+        "forbidden_hits": 2,
+        "fact_precision_strict": 0.1667
+      },
+      "usage": {
+        "prompt_tokens": 3987,
+        "completion_tokens": 271,
+        "cost_usd": 0.012678
+      },
+      "latency_ms": 2738,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_14",
+      "question_id": "q_14",
+      "type": "T5",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_14 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_007",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.6667,
+        "citation_precision": 1.0,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.3333,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.4444,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 2735,
+        "completion_tokens": 297,
+        "cost_usd": 0.009808
+      },
+      "latency_ms": 3491,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_15",
+      "question_id": "q_15",
+      "type": "T5",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_15 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_012",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_002",
+        "m_009",
+        "m_011",
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.75,
+        "quote_validity": 1.0,
+        "fact_recall": 0.6667,
+        "fact_precision": 1.0,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 4494,
+        "completion_tokens": 231,
+        "cost_usd": 0.013545
+      },
+      "latency_ms": 3998,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_15",
+      "question_id": "q_15",
+      "type": "T5",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_15 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_009",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_002",
+        "m_009",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.75,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.75,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.25
+      },
+      "usage": {
+        "prompt_tokens": 2282,
+        "completion_tokens": 101,
+        "cost_usd": 0.006715
+      },
+      "latency_ms": 4477,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_16",
+      "question_id": "q_16",
+      "type": "T5",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_16 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_002",
+        "m_003"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 3358,
+        "completion_tokens": 149,
+        "cost_usd": 0.009885
+      },
+      "latency_ms": 4311,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_008",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_16",
+      "question_id": "q_16",
+      "type": "T5",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_16 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_003",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_002",
+        "m_003"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0
+      },
+      "usage": {
+        "prompt_tokens": 1723,
+        "completion_tokens": 221,
+        "cost_usd": 0.006518
+      },
+      "latency_ms": 4893,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_008",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_17",
+      "question_id": "q_17",
+      "type": "T5",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_17 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_014",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 3141,
+        "completion_tokens": 205,
+        "cost_usd": 0.009902
+      },
+      "latency_ms": 2406,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_17",
+      "question_id": "q_17",
+      "type": "T5",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_17 (graph)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.4
+      },
+      "usage": {
+        "prompt_tokens": 3910,
+        "completion_tokens": 189,
+        "cost_usd": 0.011665
+      },
+      "latency_ms": 5001,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_18",
+      "question_id": "q_18",
+      "type": "none",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_18 (baseline)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 1746,
+        "completion_tokens": 236,
+        "cost_usd": 0.006725
+      },
+      "latency_ms": 2612,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_18",
+      "question_id": "q_18",
+      "type": "none",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_18 (graph)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.0
+      },
+      "usage": {
+        "prompt_tokens": 2364,
+        "completion_tokens": 147,
+        "cost_usd": 0.00738
+      },
+      "latency_ms": 3165,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_19",
+      "question_id": "q_19",
+      "type": "T1",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_19 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_011",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_007",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 0.5,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 3730,
+        "completion_tokens": 137,
+        "cost_usd": 0.010695
+      },
+      "latency_ms": 3020,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_19",
+      "question_id": "q_19",
+      "type": "T1",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_19 (graph)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 0.6667,
+        "fact_precision": 1.0,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 3269,
+        "completion_tokens": 268,
+        "cost_usd": 0.010853
+      },
+      "latency_ms": 5140,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_20",
+      "question_id": "q_20",
+      "type": "T1",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_20 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.3333,
+        "fact_precision": 0.75,
+        "fact_f1": 0.4615,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 2243,
+        "completion_tokens": 229,
+        "cost_usd": 0.007898
+      },
+      "latency_ms": 5370,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_20",
+      "question_id": "q_20",
+      "type": "T1",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_20 (graph)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_006",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0
+      },
+      "usage": {
+        "prompt_tokens": 2788,
+        "completion_tokens": 144,
+        "cost_usd": 0.00841
+      },
+      "latency_ms": 5148,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_21",
+      "question_id": "q_21",
+      "type": "T1",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_21 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_012",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.6667
+      },
+      "usage": {
+        "prompt_tokens": 3485,
+        "completion_tokens": 111,
+        "cost_usd": 0.009823
+      },
+      "latency_ms": 2036,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_21",
+      "question_id": "q_21",
+      "type": "T1",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_21 (graph)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_003",
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 0.5,
+        "fact_precision": 0.5,
+        "fact_f1": 0.5,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 4435,
+        "completion_tokens": 154,
+        "cost_usd": 0.012627
+      },
+      "latency_ms": 6668,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_22",
+      "question_id": "q_22",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_22 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": 1.0,
+        "fact_recall": 0.6667,
+        "fact_precision": 0.8,
+        "fact_f1": 0.7273,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.6
+      },
+      "usage": {
+        "prompt_tokens": 3329,
+        "completion_tokens": 217,
+        "cost_usd": 0.010493
+      },
+      "latency_ms": 5767,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_22",
+      "question_id": "q_22",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_22 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_011",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_011",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 4218,
+        "completion_tokens": 282,
+        "cost_usd": 0.013365
+      },
+      "latency_ms": 3746,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_23",
+      "question_id": "q_23",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_23 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_013",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_013",
+        "m_014"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.6667
+      },
+      "usage": {
+        "prompt_tokens": 2845,
+        "completion_tokens": 298,
+        "cost_usd": 0.010093
+      },
+      "latency_ms": 6171,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_23",
+      "question_id": "q_23",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_23 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_013",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.3333,
+        "fact_precision": 0.8,
+        "fact_f1": 0.4706,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.4
+      },
+      "usage": {
+        "prompt_tokens": 1688,
+        "completion_tokens": 163,
+        "cost_usd": 0.00585
+      },
+      "latency_ms": 2959,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_24",
+      "question_id": "q_24",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_24 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_009",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 0.6667,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.5714,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 2147,
+        "completion_tokens": 98,
+        "cost_usd": 0.006348
+      },
+      "latency_ms": 5418,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_24",
+      "question_id": "q_24",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_24 (graph)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 0.6667,
+        "fact_precision": 0.8,
+        "fact_f1": 0.7273,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.6
+      },
+      "usage": {
+        "prompt_tokens": 4196,
+        "completion_tokens": 181,
+        "cost_usd": 0.0123
+      },
+      "latency_ms": 4748,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_25",
+      "question_id": "q_25",
+      "type": "T2",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_25 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.3333,
+        "citation_precision": 1.0,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.6667,
+        "fact_precision": 1.0,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 4452,
+        "completion_tokens": 276,
+        "cost_usd": 0.01389
+      },
+      "latency_ms": 2920,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_25",
+      "question_id": "q_25",
+      "type": "T2",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_25 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_008",
+        "m_010",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.6667,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 2708,
+        "completion_tokens": 271,
+        "cost_usd": 0.00948
+      },
+      "latency_ms": 5274,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_26",
+      "question_id": "q_26",
+      "type": "T3",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_26 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_009",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_013",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 0.5,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 0.8333,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.1667
+      },
+      "usage": {
+        "prompt_tokens": 4115,
+        "completion_tokens": 175,
+        "cost_usd": 0.012038
+      },
+      "latency_ms": 2687,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_26",
+      "question_id": "q_26",
+      "type": "T3",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_26 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_009",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 1977,
+        "completion_tokens": 115,
+        "cost_usd": 0.006093
+      },
+      "latency_ms": 2871,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_27",
+      "question_id": "q_27",
+      "type": "T3",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_27 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_006",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_008",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_009",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_006",
+        "m_009",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 0.6,
+        "citation_precision": 0.75,
+        "retrieval_recall": 0.8,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 0.75,
+        "fact_f1": 0.0,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.25
+      },
+      "usage": {
+        "prompt_tokens": 4308,
+        "completion_tokens": 174,
+        "cost_usd": 0.01251
+      },
+      "latency_ms": 6260,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_27",
+      "question_id": "q_27",
+      "type": "T3",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_27 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_009",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_006",
+        "m_009",
+        "m_010",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 0.4,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0
+      },
+      "usage": {
+        "prompt_tokens": 2454,
+        "completion_tokens": 164,
+        "cost_usd": 0.007775
+      },
+      "latency_ms": 3708,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_28",
+      "question_id": "q_28",
+      "type": "T3",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_28 (baseline)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_004"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 0.5,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 1564,
+        "completion_tokens": 124,
+        "cost_usd": 0.00515
+      },
+      "latency_ms": 3973,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_28",
+      "question_id": "q_28",
+      "type": "T3",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_28 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 3461,
+        "completion_tokens": 296,
+        "cost_usd": 0.011613
+      },
+      "latency_ms": 5790,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_29",
+      "question_id": "q_29",
+      "type": "T4",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_29 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_007",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_008",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_007",
+        "m_008",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.25
+      },
+      "usage": {
+        "prompt_tokens": 4374,
+        "completion_tokens": 109,
+        "cost_usd": 0.012025
+      },
+      "latency_ms": 6316,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_29",
+      "question_id": "q_29",
+      "type": "T4",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_29 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_007",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_008",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_007",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.75,
+        "fact_f1": 0.8571,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 1895,
+        "completion_tokens": 270,
+        "cost_usd": 0.007438
+      },
+      "latency_ms": 5552,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_30",
+      "question_id": "q_30",
+      "type": "T4",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_30 (baseline)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_001"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.25
+      },
+      "usage": {
+        "prompt_tokens": 1943,
+        "completion_tokens": 169,
+        "cost_usd": 0.006548
+      },
+      "latency_ms": 6356,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_30",
+      "question_id": "q_30",
+      "type": "T4",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_30 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_008",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.6667,
+        "fact_precision": 0.75,
+        "fact_f1": 0.7059,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.75
+      },
+      "usage": {
+        "prompt_tokens": 2086,
+        "completion_tokens": 224,
+        "cost_usd": 0.007455
+      },
+      "latency_ms": 5783,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_31",
+      "question_id": "q_31",
+      "type": "T5",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_31 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_009",
+        "m_010",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.5,
+        "fact_f1": 0.6667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 3489,
+        "completion_tokens": 235,
+        "cost_usd": 0.011073
+      },
+      "latency_ms": 5421,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_31",
+      "question_id": "q_31",
+      "type": "T5",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_31 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_002",
+        "m_010",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.6667,
+        "fact_precision": 0.5,
+        "fact_f1": 0.5714,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 2546,
+        "completion_tokens": 154,
+        "cost_usd": 0.007905
+      },
+      "latency_ms": 5187,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_32",
+      "question_id": "q_32",
+      "type": "T5",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_32 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.3333,
+        "fact_precision": 0.6,
+        "fact_f1": 0.4285,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.4
+      },
+      "usage": {
+        "prompt_tokens": 4406,
+        "completion_tokens": 243,
+        "cost_usd": 0.013445
+      },
+      "latency_ms": 5221,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_32",
+      "question_id": "q_32",
+      "type": "T5",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_32 (graph)",
+      "citations": [
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 0.8333,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.1667
+      },
+      "usage": {
+        "prompt_tokens": 3121,
+        "completion_tokens": 159,
+        "cost_usd": 0.009392
+      },
+      "latency_ms": 5281,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_33",
+      "question_id": "q_33",
+      "type": "T5",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_33 (baseline)",
+      "citations": [
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:05",
+          "quote": "[fixture] цитата"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_010",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 0.6667,
+        "fact_f1": 0.5714,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.3333
+      },
+      "usage": {
+        "prompt_tokens": 4184,
+        "completion_tokens": 99,
+        "cost_usd": 0.01145
+      },
+      "latency_ms": 3251,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_33",
+      "question_id": "q_33",
+      "type": "T5",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_33 (graph)",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_010"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 0.3333,
+        "fact_precision": 0.75,
+        "fact_f1": 0.4615,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5
+      },
+      "usage": {
+        "prompt_tokens": 2941,
+        "completion_tokens": 209,
+        "cost_usd": 0.009443
+      },
+      "latency_ms": 3107,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_34",
+      "question_id": "q_34",
+      "type": "none",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_34 (baseline)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 3351,
+        "completion_tokens": 89,
+        "cost_usd": 0.009268
+      },
+      "latency_ms": 2266,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_34",
+      "question_id": "q_34",
+      "type": "none",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_34 (graph)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 2675,
+        "completion_tokens": 99,
+        "cost_usd": 0.007678
+      },
+      "latency_ms": 3239,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_35",
+      "question_id": "q_35",
+      "type": "none",
+      "mode": "baseline",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_35 (baseline)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 3576,
+        "completion_tokens": 178,
+        "cost_usd": 0.01072
+      },
+      "latency_ms": 5590,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    },
+    {
+      "qid": "q_35",
+      "question_id": "q_35",
+      "type": "none",
+      "mode": "graph",
+      "repeat": 1,
+      "answer": "[fixture] выдуманный ответ на q_35 (graph)",
+      "citations": [],
+      "retrieved_meetings": null,
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0
+      },
+      "usage": {
+        "prompt_tokens": 1668,
+        "completion_tokens": 195,
+        "cost_usd": 0.00612
+      },
+      "latency_ms": 7183,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "judge_facts": null,
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 900,
+        "completion_tokens": 250,
+        "cost_usd": 0.0048
+      }
+    }
+  ],
+  "aggregate": {
+    "by_mode_type": {
+      "baseline": {
+        "T1": {
+          "citation_recall": {
+            "mean": 0.642857,
+            "ci_low": 0.285714,
+            "ci_high": 0.928571,
+            "n": 7,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.571429,
+            "ci_low": 0.285714,
+            "ci_high": 0.857143,
+            "n": 7,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.7619,
+            "ci_low": 0.428571,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.964286,
+            "ci_low": 0.892857,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.780214,
+            "ci_low": 0.4835,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.595243,
+            "ci_low": 0.380957,
+            "ci_high": 0.809529,
+            "n": 7,
+            "note": null
+          }
+        },
+        "T2": {
+          "citation_recall": {
+            "mean": 0.510412,
+            "ci_low": 0.291662,
+            "ci_high": 0.729162,
+            "n": 8,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.833338,
+            "ci_low": 0.583338,
+            "ci_high": 1.0,
+            "n": 8,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.821429,
+            "ci_low": 0.642857,
+            "ci_high": 0.964286,
+            "n": 7,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 8,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.666675,
+            "ci_low": 0.4375,
+            "ci_high": 0.875,
+            "n": 8,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.829175,
+            "ci_low": 0.695838,
+            "ci_high": 0.958338,
+            "n": 8,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.695675,
+            "ci_low": 0.46785,
+            "ci_high": 0.866675,
+            "n": 8,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 8,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.491662,
+            "ci_low": 0.304163,
+            "ci_high": 0.683338,
+            "n": 8,
+            "note": null
+          }
+        },
+        "T3": {
+          "citation_recall": {
+            "mean": 0.49815,
+            "ci_low": 0.259158,
+            "ci_high": 0.738883,
+            "n": 6,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.708333,
+            "ci_low": 0.416667,
+            "ci_high": 0.958333,
+            "n": 6,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.69334,
+            "ci_low": 0.33334,
+            "ci_high": 0.96,
+            "n": 5,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.666667,
+            "ci_low": 0.333333,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.68055,
+            "ci_low": 0.541667,
+            "ci_high": 0.8472,
+            "n": 6,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.500017,
+            "ci_low": 0.222233,
+            "ci_high": 0.7778,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.5,
+            "ci_low": 0.0,
+            "ci_high": 1.166667,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.361117,
+            "ci_low": 0.250017,
+            "ci_high": 0.458333,
+            "n": 6,
+            "note": null
+          }
+        },
+        "T4": {
+          "citation_recall": {
+            "mean": 0.541675,
+            "ci_low": 0.166675,
+            "ci_high": 0.875,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "citation_precision": {
+            "mean": 0.75,
+            "ci_low": 0.25,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "retrieval_recall": {
+            "mean": 0.666675,
+            "ci_low": 0.5,
+            "ci_high": 0.875,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.25,
+            "ci_low": 0.0,
+            "ci_high": 0.500025,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 0.895825,
+            "ci_low": 0.79165,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.30055,
+            "ci_low": 0.0,
+            "ci_high": 0.6011,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 0.333325,
+            "ci_low": 0.25,
+            "ci_high": 0.4375,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "T5": {
+          "citation_recall": {
+            "mean": 0.5,
+            "ci_low": 0.214286,
+            "ci_high": 0.785714,
+            "n": 7,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.714286,
+            "ci_low": 0.428571,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.958333,
+            "ci_low": 0.875,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.571429,
+            "ci_low": 0.333329,
+            "ci_high": 0.809529,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.7762,
+            "ci_low": 0.633343,
+            "ci_high": 0.928571,
+            "n": 7,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.590471,
+            "ci_low": 0.360528,
+            "ci_high": 0.794557,
+            "n": 7,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.285714,
+            "ci_low": 0.0,
+            "ci_high": 0.857143,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.557143,
+            "ci_low": 0.352371,
+            "ci_high": 0.785714,
+            "n": 7,
+            "note": null
+          }
+        },
+        "none": {
+          "citation_recall": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "all": {
+          "citation_recall": {
+            "mean": 0.538716,
+            "ci_low": 0.411448,
+            "ci_high": 0.666849,
+            "n": 32,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.716147,
+            "ci_low": 0.567709,
+            "ci_high": 0.851562,
+            "n": 32,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.838274,
+            "ci_low": 0.736422,
+            "ci_high": 0.925926,
+            "n": 27,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 29,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.64762,
+            "ci_low": 0.514291,
+            "ci_high": 0.776191,
+            "n": 35,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.842383,
+            "ci_low": 0.777605,
+            "ci_high": 0.903811,
+            "n": 35,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.638929,
+            "ci_low": 0.51647,
+            "ci_high": 0.757658,
+            "n": 35,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.142857,
+            "ci_low": 0.0,
+            "ci_high": 0.314286,
+            "n": 35,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.528571,
+            "ci_low": 0.434286,
+            "ci_high": 0.627632,
+            "n": 35,
+            "note": null
+          }
+        }
+      },
+      "graph": {
+        "T1": {
+          "citation_recall": {
+            "mean": 0.285714,
+            "ci_low": 0.0,
+            "ci_high": 0.571429,
+            "n": 7,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.214286,
+            "ci_low": 0.0,
+            "ci_high": 0.5,
+            "n": 7,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.857143,
+            "ci_low": 0.571429,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.666671,
+            "ci_low": 0.380957,
+            "ci_high": 0.904771,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.785714,
+            "ci_low": 0.619057,
+            "ci_high": 0.928571,
+            "n": 7,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.644157,
+            "ci_low": 0.387014,
+            "ci_high": 0.858443,
+            "n": 7,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.285714,
+            "ci_low": 0.0,
+            "ci_high": 0.571429,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.5,
+            "ci_low": 0.285714,
+            "ci_high": 0.714286,
+            "n": 7,
+            "note": null
+          }
+        },
+        "T2": {
+          "citation_recall": {
+            "mean": 0.520838,
+            "ci_low": 0.270838,
+            "ci_high": 0.770838,
+            "n": 8,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.6875,
+            "ci_low": 0.375,
+            "ci_high": 1.0,
+            "n": 8,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.8125,
+            "ci_low": 0.625,
+            "ci_high": 0.958338,
+            "n": 8,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.91875,
+            "ci_low": 0.84375,
+            "ci_high": 1.0,
+            "n": 8,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.840213,
+            "ci_low": 0.706216,
+            "ci_high": 0.964275,
+            "n": 8,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.125,
+            "ci_low": 0.0,
+            "ci_high": 0.375,
+            "n": 8,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.675,
+            "ci_low": 0.5,
+            "ci_high": 0.8625,
+            "n": 8,
+            "note": null
+          }
+        },
+        "T3": {
+          "citation_recall": {
+            "mean": 0.631483,
+            "ci_low": 0.427767,
+            "ci_high": 0.8426,
+            "n": 6,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.55555,
+            "ci_low": 0.277767,
+            "ci_high": 0.833333,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.8889,
+            "ci_low": 0.7778,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.629633,
+            "ci_low": 0.33335,
+            "ci_high": 0.8889,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.45,
+            "ci_low": 0.2,
+            "ci_high": 0.722233,
+            "n": 6,
+            "note": null
+          }
+        },
+        "T4": {
+          "citation_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "citation_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.791675,
+            "ci_low": 0.58335,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 0.7625,
+            "ci_low": 0.75,
+            "ci_high": 0.7875,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.762975,
+            "ci_low": 0.65295,
+            "ci_high": 0.873,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.75,
+            "ci_low": 0.25,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 0.475,
+            "ci_low": 0.3125,
+            "ci_high": 0.6625,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "T5": {
+          "citation_recall": {
+            "mean": 0.630957,
+            "ci_low": 0.309529,
+            "ci_high": 0.916671,
+            "n": 7,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.714286,
+            "ci_low": 0.428571,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.95,
+            "ci_low": 0.85,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.476186,
+            "ci_low": 0.190471,
+            "ci_high": 0.761914,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.821429,
+            "ci_low": 0.678586,
+            "ci_high": 0.952371,
+            "n": 7,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.496757,
+            "ci_low": 0.208786,
+            "ci_high": 0.782471,
+            "n": 7,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.307143,
+            "ci_low": 0.1762,
+            "ci_high": 0.426186,
+            "n": 7,
+            "note": null
+          }
+        },
+        "none": {
+          "citation_recall": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.666667,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 0.666667,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.666667,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.333333,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 0.666667,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "all": {
+          "citation_recall": {
+            "mean": 0.574134,
+            "ci_low": 0.427077,
+            "ci_high": 0.716147,
+            "n": 32,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.6875,
+            "ci_low": 0.53125,
+            "ci_high": 0.828125,
+            "n": 32,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.953704,
+            "ci_low": 0.87037,
+            "ci_high": 1.0,
+            "n": 27,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 24,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.657143,
+            "ci_low": 0.538091,
+            "ci_high": 0.776189,
+            "n": 35,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.828097,
+            "ci_low": 0.751911,
+            "ci_high": 0.894763,
+            "n": 35,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.672509,
+            "ci_low": 0.56094,
+            "ci_high": 0.77941,
+            "n": 35,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.2,
+            "ci_low": 0.085714,
+            "ci_high": 0.342857,
+            "n": 35,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.504286,
+            "ci_low": 0.401906,
+            "ci_high": 0.609051,
+            "n": 35,
+            "note": null
+          }
+        }
+      }
+    },
+    "paired": {
+      "T1": {
+        "citation_recall": {
+          "diff_mean": -0.357143,
+          "ci_low": -0.785714,
+          "ci_high": 0.071429,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.285714,
+          "mean_b": 0.642857
+        },
+        "citation_precision": {
+          "diff_mean": -0.357143,
+          "ci_low": -0.714286,
+          "ci_high": 0.0,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.214286,
+          "mean_b": 0.571429
+        },
+        "retrieval_recall": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 5,
+          "verdict": "различие не доказано",
+          "n_excluded": 2,
+          "mean_a": 1.0,
+          "mean_b": 1.0
+        },
+        "quote_validity": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 3,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 4,
+          "mean_a": 1.0,
+          "mean_b": 1.0
+        },
+        "fact_recall": {
+          "diff_mean": -0.095229,
+          "ci_low": -0.309514,
+          "ci_high": 0.142857,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.666671,
+          "mean_b": 0.7619
+        },
+        "fact_precision": {
+          "diff_mean": -0.178571,
+          "ci_low": -0.357143,
+          "ci_high": 0.0119,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.785714,
+          "mean_b": 0.964286
+        },
+        "fact_f1": {
+          "diff_mean": -0.136057,
+          "ci_low": -0.344843,
+          "ci_high": 0.106865,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.644157,
+          "mean_b": 0.780214
+        },
+        "forbidden_hits": {
+          "diff_mean": 0.285714,
+          "ci_low": 0.0,
+          "ci_high": 0.571429,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.285714,
+          "mean_b": 0.0
+        },
+        "fact_precision_strict": {
+          "diff_mean": -0.095243,
+          "ci_low": -0.380957,
+          "ci_high": 0.166657,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.5,
+          "mean_b": 0.595243
+        }
+      },
+      "T2": {
+        "citation_recall": {
+          "diff_mean": 0.010425,
+          "ci_low": -0.34375,
+          "ci_high": 0.312501,
+          "n": 8,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.520838,
+          "mean_b": 0.510412
+        },
+        "citation_precision": {
+          "diff_mean": -0.145838,
+          "ci_low": -0.458338,
+          "ci_high": 0.125,
+          "n": 8,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.6875,
+          "mean_b": 0.833338
+        },
+        "retrieval_recall": {
+          "diff_mean": 0.208333,
+          "ci_low": 0.041667,
+          "ci_high": 0.375,
+          "n": 6,
+          "verdict": "интервал не содержит 0",
+          "n_excluded": 2,
+          "mean_a": 1.0,
+          "mean_b": 0.791667
+        },
+        "quote_validity": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 6,
+          "verdict": "различие не доказано",
+          "n_excluded": 2,
+          "mean_a": 1.0,
+          "mean_b": 1.0
+        },
+        "fact_recall": {
+          "diff_mean": 0.145825,
+          "ci_low": -0.208338,
+          "ci_high": 0.499987,
+          "n": 8,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.8125,
+          "mean_b": 0.666675
+        },
+        "fact_precision": {
+          "diff_mean": 0.089575,
+          "ci_low": -0.043762,
+          "ci_high": 0.233325,
+          "n": 8,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.91875,
+          "mean_b": 0.829175
+        },
+        "fact_f1": {
+          "diff_mean": 0.144537,
+          "ci_low": -0.115694,
+          "ci_high": 0.4421,
+          "n": 8,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.840213,
+          "mean_b": 0.695675
+        },
+        "forbidden_hits": {
+          "diff_mean": 0.125,
+          "ci_low": 0.0,
+          "ci_high": 0.375,
+          "n": 8,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.125,
+          "mean_b": 0.0
+        },
+        "fact_precision_strict": {
+          "diff_mean": 0.183338,
+          "ci_low": -0.116663,
+          "ci_high": 0.495838,
+          "n": 8,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.675,
+          "mean_b": 0.491662
+        }
+      },
+      "T3": {
+        "citation_recall": {
+          "diff_mean": 0.133333,
+          "ci_low": -0.1,
+          "ci_high": 0.5,
+          "n": 6,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.631483,
+          "mean_b": 0.49815
+        },
+        "citation_precision": {
+          "diff_mean": 0.291667,
+          "ci_low": 0.041667,
+          "ci_high": 0.583333,
+          "n": 6,
+          "verdict": "интервал не содержит 0",
+          "n_excluded": 0,
+          "mean_a": 1.0,
+          "mean_b": 0.708333
+        },
+        "retrieval_recall": {
+          "diff_mean": 0.3,
+          "ci_low": 0.0,
+          "ci_high": 0.75,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 2,
+          "mean_a": 1.0,
+          "mean_b": 0.7
+        },
+        "quote_validity": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 5,
+          "verdict": "различие не доказано",
+          "n_excluded": 1,
+          "mean_a": 1.0,
+          "mean_b": 1.0
+        },
+        "fact_recall": {
+          "diff_mean": -0.111117,
+          "ci_low": -0.416683,
+          "ci_high": 0.166667,
+          "n": 6,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.55555,
+          "mean_b": 0.666667
+        },
+        "fact_precision": {
+          "diff_mean": 0.20835,
+          "ci_low": 0.0278,
+          "ci_high": 0.3889,
+          "n": 6,
+          "verdict": "интервал не содержит 0",
+          "n_excluded": 0,
+          "mean_a": 0.8889,
+          "mean_b": 0.68055
+        },
+        "fact_f1": {
+          "diff_mean": 0.129617,
+          "ci_low": -0.0741,
+          "ci_high": 0.3889,
+          "n": 6,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.629633,
+          "mean_b": 0.500017
+        },
+        "forbidden_hits": {
+          "diff_mean": -0.5,
+          "ci_low": -1.166667,
+          "ci_high": 0.0,
+          "n": 6,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.0,
+          "mean_b": 0.5
+        },
+        "fact_precision_strict": {
+          "diff_mean": 0.088883,
+          "ci_low": -0.208334,
+          "ci_high": 0.444433,
+          "n": 6,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.45,
+          "mean_b": 0.361117
+        }
+      },
+      "T4": {
+        "citation_recall": {
+          "diff_mean": 0.458325,
+          "ci_low": 0.125,
+          "ci_high": 0.833325,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 1.0,
+          "mean_b": 0.541675
+        },
+        "citation_precision": {
+          "diff_mean": 0.25,
+          "ci_low": 0.0,
+          "ci_high": 0.75,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 1.0,
+          "mean_b": 0.75
+        },
+        "retrieval_recall": {
+          "diff_mean": 0.333325,
+          "ci_low": 0.125,
+          "ci_high": 0.5,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 1.0,
+          "mean_b": 0.666675
+        },
+        "quote_validity": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 3,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 1,
+          "mean_a": 1.0,
+          "mean_b": 1.0
+        },
+        "fact_recall": {
+          "diff_mean": 0.541675,
+          "ci_low": 0.25,
+          "ci_high": 0.83335,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.791675,
+          "mean_b": 0.25
+        },
+        "fact_precision": {
+          "diff_mean": -0.133325,
+          "ci_low": -0.25,
+          "ci_high": -0.01665,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.7625,
+          "mean_b": 0.895825
+        },
+        "fact_f1": {
+          "diff_mean": 0.462425,
+          "ci_low": 0.14335,
+          "ci_high": 0.7815,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.762975,
+          "mean_b": 0.30055
+        },
+        "forbidden_hits": {
+          "diff_mean": 0.75,
+          "ci_low": 0.25,
+          "ci_high": 1.0,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.75,
+          "mean_b": 0.0
+        },
+        "fact_precision_strict": {
+          "diff_mean": 0.141675,
+          "ci_low": -0.125,
+          "ci_high": 0.391675,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.475,
+          "mean_b": 0.333325
+        }
+      },
+      "T5": {
+        "citation_recall": {
+          "diff_mean": 0.130957,
+          "ci_low": -0.285714,
+          "ci_high": 0.4643,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.630957,
+          "mean_b": 0.5
+        },
+        "citation_precision": {
+          "diff_mean": 0.0,
+          "ci_low": -0.428571,
+          "ci_high": 0.428571,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.714286,
+          "mean_b": 0.714286
+        },
+        "retrieval_recall": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 5,
+          "verdict": "различие не доказано",
+          "n_excluded": 2,
+          "mean_a": 0.95,
+          "mean_b": 0.95
+        },
+        "quote_validity": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 4,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 3,
+          "mean_a": 1.0,
+          "mean_b": 1.0
+        },
+        "fact_recall": {
+          "diff_mean": -0.095243,
+          "ci_low": -0.309514,
+          "ci_high": 0.142843,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.476186,
+          "mean_b": 0.571429
+        },
+        "fact_precision": {
+          "diff_mean": 0.045229,
+          "ci_low": 0.0,
+          "ci_high": 0.111886,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.821429,
+          "mean_b": 0.7762
+        },
+        "fact_f1": {
+          "diff_mean": -0.093714,
+          "ci_low": -0.347707,
+          "ci_high": 0.1587,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.496757,
+          "mean_b": 0.590471
+        },
+        "forbidden_hits": {
+          "diff_mean": -0.285714,
+          "ci_low": -0.857143,
+          "ci_high": 0.0,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.0,
+          "mean_b": 0.285714
+        },
+        "fact_precision_strict": {
+          "diff_mean": -0.25,
+          "ci_low": -0.504771,
+          "ci_high": 0.004743,
+          "n": 7,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.307143,
+          "mean_b": 0.557143
+        }
+      },
+      "none": {
+        "citation_recall": {
+          "diff_mean": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 0,
+          "verdict": "нет общих вопросов с оценкой",
+          "n_excluded": 3,
+          "mean_a": null,
+          "mean_b": null
+        },
+        "citation_precision": {
+          "diff_mean": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 0,
+          "verdict": "нет общих вопросов с оценкой",
+          "n_excluded": 3,
+          "mean_a": null,
+          "mean_b": null
+        },
+        "retrieval_recall": {
+          "diff_mean": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 0,
+          "verdict": "нет общих вопросов с оценкой",
+          "n_excluded": 3,
+          "mean_a": null,
+          "mean_b": null
+        },
+        "quote_validity": {
+          "diff_mean": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 0,
+          "verdict": "нет общих вопросов с оценкой",
+          "n_excluded": 3,
+          "mean_a": null,
+          "mean_b": null
+        },
+        "fact_recall": {
+          "diff_mean": -0.333333,
+          "ci_low": -1.0,
+          "ci_high": 0.0,
+          "n": 3,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.666667,
+          "mean_b": 1.0
+        },
+        "fact_precision": {
+          "diff_mean": -0.333333,
+          "ci_low": -1.0,
+          "ci_high": 0.0,
+          "n": 3,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.666667,
+          "mean_b": 1.0
+        },
+        "fact_f1": {
+          "diff_mean": -0.333333,
+          "ci_low": -1.0,
+          "ci_high": 0.0,
+          "n": 3,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.666667,
+          "mean_b": 1.0
+        },
+        "forbidden_hits": {
+          "diff_mean": 0.333333,
+          "ci_low": 0.0,
+          "ci_high": 1.0,
+          "n": 3,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.333333,
+          "mean_b": 0.0
+        },
+        "fact_precision_strict": {
+          "diff_mean": -0.333333,
+          "ci_low": -1.0,
+          "ci_high": 0.0,
+          "n": 3,
+          "verdict": "n<5, интервал не информативен",
+          "n_excluded": 0,
+          "mean_a": 0.666667,
+          "mean_b": 1.0
+        }
+      },
+      "all": {
+        "citation_recall": {
+          "diff_mean": 0.035419,
+          "ci_low": -0.162494,
+          "ci_high": 0.21875,
+          "n": 32,
+          "verdict": "различие не доказано",
+          "n_excluded": 3,
+          "mean_a": 0.574134,
+          "mean_b": 0.538716
+        },
+        "citation_precision": {
+          "diff_mean": -0.028647,
+          "ci_low": -0.210938,
+          "ci_high": 0.151041,
+          "n": 32,
+          "verdict": "различие не доказано",
+          "n_excluded": 3,
+          "mean_a": 0.6875,
+          "mean_b": 0.716147
+        },
+        "retrieval_recall": {
+          "diff_mean": 0.157638,
+          "ci_low": 0.0625,
+          "ci_high": 0.270137,
+          "n": 24,
+          "verdict": "интервал не содержит 0",
+          "n_excluded": 11,
+          "mean_a": 0.989583,
+          "mean_b": 0.831946
+        },
+        "quote_validity": {
+          "diff_mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 21,
+          "verdict": "различие не доказано",
+          "n_excluded": 14,
+          "mean_a": 1.0,
+          "mean_b": 1.0
+        },
+        "fact_recall": {
+          "diff_mean": 0.009523,
+          "ci_low": -0.1381,
+          "ci_high": 0.15714,
+          "n": 35,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.657143,
+          "mean_b": 0.64762
+        },
+        "fact_precision": {
+          "diff_mean": -0.014286,
+          "ci_low": -0.111903,
+          "ci_high": 0.076189,
+          "n": 35,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.828097,
+          "mean_b": 0.842383
+        },
+        "fact_f1": {
+          "diff_mean": 0.03358,
+          "ci_low": -0.103385,
+          "ci_high": 0.169657,
+          "n": 35,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.672509,
+          "mean_b": 0.638929
+        },
+        "forbidden_hits": {
+          "diff_mean": 0.057143,
+          "ci_low": -0.171429,
+          "ci_high": 0.285714,
+          "n": 35,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.2,
+          "mean_b": 0.142857
+        },
+        "fact_precision_strict": {
+          "diff_mean": -0.024286,
+          "ci_low": -0.171426,
+          "ci_high": 0.11952,
+          "n": 35,
+          "verdict": "различие не доказано",
+          "n_excluded": 0,
+          "mean_a": 0.504286,
+          "mean_b": 0.528571
+        }
+      }
+    },
+    "paired_pairs": {},
+    "bootstrap": {
+      "n_boot": 10000,
+      "seed": 42,
+      "percentiles": [
+        2.5,
+        97.5
+      ],
+      "min_n": 5,
+      "paired": "graph - baseline",
+      "unit": "question",
+      "note": "интервал показывает зависимость от набора вопросов, а не разброс повторов; при температуре 0 повторы ответов детерминированы"
+    }
+  }
+}
