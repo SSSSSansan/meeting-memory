@@ -217,6 +217,31 @@ def test_graph_dot_marks_superseded_and_conflicts():
     assert '"project:Горизонт"' not in dot
 
 
+def test_context_subgraph_matches_answer_context():
+    ctx = api.context_subgraph("Как менялся срок релиза Атласа?")
+    assert ctx["items"] == ["d_m001_01", "t_m001_01", "d_m002_01", "t_m002_01"]
+    assert ctx["entities"] == ["project:Атлас"] and not ctx["fallback"]
+    assert api.context_subgraph("Как менялся срок релиза Атласа?", as_of="2026-02-05")["items"] == \
+        ["d_m001_01", "t_m001_01"]
+
+
+def test_graph_dot_highlights_context_and_fades_the_rest():
+    ctx = api.context_subgraph("Как менялся срок релиза Атласа?")
+    dot = api.graph_dot(None, highlight=ctx)
+    line = {ln.split('"')[1]: ln for ln in dot.splitlines() if ln.startswith('  "') and "->" not in ln}
+    assert "penwidth=3" in line["d_m002_01"] and "penwidth=3" in line["project:Атлас"]
+    assert 'fontcolor="#B4B2A9"' in line["d_m002_02"]                       # пункт Горизонта приглушён
+    assert '"d_m002_01" -> "d_m001_01" [color="#5F5E5A" style=bold label="заменяет"];' in dot
+
+
+def test_graph_dot_focus_draws_only_context_and_its_projects():
+    ctx = api.context_subgraph("Как менялся срок релиза Атласа?")
+    dot = api.graph_dot(highlight=ctx, focus=True)
+    assert '"d_m001_01"' in dot and '"project:Атлас"' in dot
+    assert '"d_m002_02"' not in dot and '"project:Горизонт"' not in dot
+    assert 'fillcolor="#FAFAF8"' not in dot                              # в фокусе приглушать нечего
+
+
 def test_overview_counts_on_sample_graph():
     ov = api.overview()
     assert (ov["decisions"], ov["tasks"], ov["open_tasks"], ov["graph_meetings"]) == (3, 2, 1, 2)
