@@ -27,6 +27,16 @@ judge_score 0/1/2 и judge_fabrication 0/1; в сводке accuracy = сред�
 и тексты встреч, но не режим, тип и split. Одинаковый вход судья не получает дважды (хэш входа; плюс кэш llm_client
 на диске). Без --judge accuracy и fabrication_rate = n/a.
 
+--judge-facts (по умолчанию выключен): судья по фактам (src/eval/judge_facts.py, judge-facts-v1, без транскриптов)
+заполняет fact_recall, fact_precision, fact_precision_strict, fact_f1, forbidden_hits; --judge-repeats N (1..5) —
+N вызовов судьи на ответ, метрики усредняются, печатается std (каждый повтор судьи идёт мимо кэша llm_client).
+Без судьи по фактам эти метрики null. Метрики без модели (citation_recall, citation_precision, retrieval_recall) —
+всегда. retrieval_recall = null («не измерено»), пока api.ask() не отдаёт retrieved_meetings.
+Рядом с csv и md пишется results/eval_<run_id>.json (контракт — src/eval/results_v2.py; run_id по умолчанию
+<YYYYMMDD_HHMM>, свой — --run-id). После каждого ответа строка дописывается в results/eval_<run_id>.partial.jsonl;
+упавший прогон продолжается: --resume --run-id <тот же>. В сводке «Метрики v2» — бутстрап по вопросам
+(src/eval/bootstrap.py): интервалы режимов и разности graph − baseline.
+
 Если LLM_BACKEND не stub, прогон платный: сначала печатается оценка (ответы + судья), запуск — только с --confirm-paid.
 Лимит расходов держит scripts/cost_guard через src/llm_client (complete/embed).
 """
@@ -38,6 +48,7 @@ import datetime as dt
 import json
 import math
 import os
+import re
 import subprocess
 import sys
 import time
@@ -52,7 +63,8 @@ from scripts.check_questions import Question, load_json
 from src import llm_client  # читает .env до того, как мы смотрим на LLM_BACKEND
 from src.eval import estimate as est_mod
 from src.eval import judge as judge_mod
-from src.eval import systems
+from src.eval import judge_facts as facts_mod
+from src.eval import results_v2, systems
 from src.eval.metrics import MeetingTexts, load_gold_events, score_answer
 from src.retrieval.baseline import STEP, WINDOW
 from src.schemas import Answer
@@ -105,9 +117,25 @@ class Row:
     latency_ms: Optional[int] = None
     from_cache: Optional[bool] = None   # хотя бы один вызов модели за ответ взят из кэша llm_client; None — не известно
     repeat: int = 1
+    # --- метрики v2 (только добавлены). None — не измерено / не посчитано, а не 0 ---
+    citation_recall: Optional[float] = None     # цитируемые встречи ∩ source_meetings / source_meetings
+    citation_precision: Optional[float] = None  # то же / цитируемые встречи
+    retrieval_recall: Optional[float] = None    # retrieved_meetings ∩ source_meetings / source_meetings
+    fact_recall: Optional[float] = None         # судья по фактам (--judge-facts)
+    fact_precision: Optional[float] = None
+    fact_precision_strict: Optional[float] = None
+    fact_f1: Optional[float] = None
+    forbidden_hits: Optional[float] = None      # int при одном повторе судьи, при нескольких — среднее
+    # Только для json и --resume, в csv не попадают:
+    citations: list = field(default_factory=list)               # [{meeting_id, ts, quote}]
+    retrieved_meetings: Optional[list] = None   # None: api.ask() список не отдал
+    facts_detail: Optional[dict] = None         # разбор судьи по фактам (первый повтор)
+    metrics_std: Optional[dict] = None          # std метрик по повторам судьи (если их больше одного)
+    judge_usage: Optional[dict] = None          # токены и цена вызовов судьи по фактам для этой строки
 
 
-CSV_FIELDS = [f.name for f in fields(Row)]
+NOT_IN_CSV = {"citations", "retrieved_meetings", "facts_detail", "metrics_std", "judge_usage"}
+CSV_FIELDS = [f.name for f in fields(Row) if f.name not in NOT_IN_CSV]
 
 JudgeFn = Callable[..., judge_mod.JudgeResult]
 
@@ -247,9 +275,16 @@ def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTe
     row.latency_ms = (answer.latency_ms if answer and answer.latency_ms else wall_ms)
     row.answer = answer.answer if answer else ""
     citations = answer.citations if answer else []
+    # retrieved_meetings: встречи, попавшие в контекст до генерации. В Answer (4.6) такого поля пока нет, и тогда это
+    # None («не измерено»); когда роль C добавит его аддитивно, harness подхватит без правок.
+    retrieved = getattr(answer, "retrieved_meetings", None) if answer else None
     m = score_answer(answer=row.answer, citations=citations, answerable=q.answerable,
                      source_meetings=q.source_meetings, decision_ids=q.decision_ids, as_of=q.as_of,
-                     gold=gold, texts=texts)
+                     gold=gold, texts=texts, retrieved_meetings=retrieved)
+    row.citations = [c.model_dump() for c in citations]
+    row.retrieved_meetings = None if retrieved is None else list(retrieved)
+    row.citation_recall, row.citation_precision = m.citation_recall, m.citation_precision
+    row.retrieval_recall = m.retrieval_recall
     row.cited_meetings = ",".join(m.cited_meetings)
     row.correct_meetings, row.meetings_hit = m.correct_meetings, m.meetings_hit
     row.cited_after_as_of = m.cited_after_as_of
@@ -269,19 +304,71 @@ def _no_ctx() -> Iterator[None]:
     yield
 
 
+RowKey = tuple[str, str, str, int]      # (question_id, mode, as_of, repeat)
+
+
+def row_key(row: Row) -> RowKey:
+    return (row.question_id, row.mode, row.as_of, row.repeat)
+
+
+def apply_facts(runner: facts_mod.JudgeFactsRunner, row: Row, q: Question) -> None:
+    """Судья по фактам: ему уходят вопрос, ответ и списки фактов — ни режима, ни типа, ни эталонного ответа."""
+    if not q.required_facts and not q.forbidden_facts:
+        row.facts_detail = {"skipped": "у вопроса нет required_facts и forbidden_facts"}
+        return
+    out = runner.evaluate(question=q.question, answer=row.answer, required_facts=q.required_facts,
+                          forbidden_facts=q.forbidden_facts, answerable=q.answerable, answered=row.status == "ok")
+    row.judge_usage = {"prompt_tokens": out.prompt_tokens, "completion_tokens": out.completion_tokens,
+                       "cost_usd": round(out.cost_usd, 6)}
+    if out.metrics is None:     # ни один повтор не вернул вердикт: строка без оценки, в средние не входит
+        row.facts_detail = {"error": out.errors}
+        return
+    m = out.metrics
+    row.fact_recall, row.fact_precision = m["fact_recall"], m["fact_precision"]
+    row.fact_precision_strict, row.fact_f1 = m["fact_precision_strict"], m["fact_f1"]
+    hits = m["forbidden_hits"]
+    row.forbidden_hits = int(hits) if hits is not None and float(hits).is_integer() else hits
+    row.facts_detail, row.metrics_std = out.detail, out.std
+    if out.repeats_failed:
+        row.facts_detail = {**(out.detail or {}), "repeats_failed": out.repeats_failed, "errors": out.errors}
+
+
 def run_eval(questions: list[Question], modes: list[str], build: Callable[[str, str], systems.System], *,
              gold: dict, texts: MeetingTexts, backend: str, judge: Optional[JudgeRunner] = None,
              repeats: int = 1, repeat_cache: Optional[Callable[[int], ContextManager]] = None,
-             call_log: Optional[CallLog] = None) -> list[Row]:
+             call_log: Optional[CallLog] = None, facts: Optional[facts_mod.JudgeFactsRunner] = None,
+             on_row: Optional[Callable[[Row], None]] = None,
+             done: Optional[dict[RowKey, Row]] = None) -> list[Row]:
     """build(mode, as_of) → System. Каждая пара (as_of, режим) строится один раз и отвечает на все свои вопросы,
     repeats раз. repeat_cache(n) — менеджер контекста, в котором идёт ответ n-го повтора (изоляция кэша).
-    Заглушка (stub) отвечает один раз: повторять нечего."""
+    Заглушка (stub) отвечает один раз: повторять нечего.
+    on_row(row) вызывается после каждой готовой строки (ответ и все оценки): харнес дописывает её в промежуточный
+    файл. done — строки уже сделанной части прогона (--resume): берутся как есть, вопрос не задаётся заново, а
+    группа, где всё готово, систему не строит (индекс baseline стоит эмбеддингов)."""
+    done = done or {}
     by_asof: dict[str, list[Question]] = defaultdict(list)
     for q in questions:
         by_asof[q.as_of].append(q)
     rows: list[Row] = []
+
+    def finish(row: Row, q: Question) -> None:
+        if judge and row.status != "stub":
+            judge.apply(row, q)
+        if facts and row.status != "stub":
+            apply_facts(facts, row, q)
+        rows.append(row)
+        if on_row:
+            on_row(row)
+
     for as_of, qs in sorted(by_asof.items()):
         for mode in modes:
+            all_done = all((q.id, mode, as_of, rep) in done for q in qs for rep in range(1, repeats + 1))
+            stub_done = all(((q.id, mode, as_of, 1) in done and done[(q.id, mode, as_of, 1)].status == "stub")
+                            for q in qs)
+            if all_done or stub_done:
+                rows += [done[(q.id, mode, as_of, rep)] for rep in range(1, 2 if stub_done else repeats + 1)
+                         for q in qs]
+                continue
             try:
                 system = build(mode, as_of)
             except cost_guard.BudgetExceeded:
@@ -289,22 +376,24 @@ def run_eval(questions: list[Question], modes: list[str], build: Callable[[str, 
             except Exception as e:
                 for rep in range(1, repeats + 1):
                     for q in qs:
+                        if (q.id, mode, as_of, rep) in done:
+                            rows.append(done[(q.id, mode, as_of, rep)])
+                            continue
                         row = Row(question_id=q.id, type=q.type, split=q.split, lang=q.lang, as_of=as_of,
                                   mode=mode, system="real", backend=backend, status="error",
                                   error=f"{type(e).__name__}: {e}", answerable=q.answerable,
                                   source_meetings=",".join(q.source_meetings), repeat=rep)
-                        if judge:
-                            judge.apply(row, q)
-                        rows.append(row)
+                        finish(row, q)
                 continue
             for rep in range(1, 2 if system.is_stub else repeats + 1):
                 ask_ctx = (lambda rep=rep: repeat_cache(rep)) if repeat_cache else None
                 for q in qs:
+                    if (q.id, mode, as_of, rep) in done:
+                        rows.append(done[(q.id, mode, as_of, rep)])
+                        continue
                     row = run_one(q, system, gold=gold, texts=texts, backend=backend, repeat=rep,
                                   ask_ctx=ask_ctx, call_log=call_log)
-                    if judge and row.status != "stub":
-                        judge.apply(row, q)
-                    rows.append(row)
+                    finish(row, q)
     return rows
 
 
@@ -494,7 +583,7 @@ def _meta_lines(rows: list[Row], modes: list[str], *, k: int, depth: int, judge:
 
 
 def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, depth: int, notes: dict[str, str],
-                   splits: list[str], judge: Optional[JudgeInfo] = None) -> str:
+                   splits: list[str], judge: Optional[JudgeInfo] = None, v2: Optional[list[str]] = None) -> str:
     backend = os.environ.get("LLM_BACKEND", "stub")
     lines = [f"# Eval summary {date}", ""] + _meta_lines(rows, modes, k=k, depth=depth, judge=judge)
     if backend == "stub":
@@ -549,6 +638,8 @@ def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, dept
             if part and split in splits:
                 lines += [f"Раздел {HISTORICAL_AS_OF}, split={split}:", ""]
                 lines += split_table(part, modes, judge is not None) + [""]
+    if v2:
+        lines += [""] + v2
     lines += [""] + [f"{i}. {t}" for i, t in enumerate(notes_md, 1)]
     return "\n".join(lines) + "\n"
 
@@ -607,7 +698,7 @@ def render_final_table(rows: list[Row], modes: list[str], *, date: str, k: int, 
 def write_csv(path: Path, rows: list[Row]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8-sig", newline="") as f:  # BOM: Excel открывает кириллицу без плясок
-        w = csv.DictWriter(f, fieldnames=CSV_FIELDS)
+        w = csv.DictWriter(f, fieldnames=CSV_FIELDS, extrasaction="ignore")  # json-only поля Row в csv не пишем
         w.writeheader()
         w.writerows(asdict(r) for r in rows)
 
@@ -624,15 +715,20 @@ def select_questions(path: Path, split: str, as_of: Optional[str], limit: Option
 
 
 def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], backend: str,
-               dry_run: bool = False) -> None:
-    """Оценка прогона: ответы, судья, итог и сравнение с остатком бюджета (в --dry-run — при любом backend:
-    план нужен, чтобы решить, запускать ли платный прогон)."""
+               dry_run: bool = False, fest: Optional[est_mod.FactsJudgeEstimate] = None) -> None:
+    """Оценка прогона: ответы, судья (v2 и/или по фактам) отдельно, итог и сравнение с остатком бюджета (в --dry-run —
+    при любом backend: план нужен, чтобы решить, запускать ли платный прогон)."""
     print("Оценка ответов системы:\n  " + "\n  ".join(est.lines()))
-    if jest is None:
+    if jest is None and fest is None:
         return
-    print("Оценка судьи (judge-v2, модель " + judge_mod.judge_model() + "):\n  " + "\n  ".join(jest.lines()))
-    total = est_mod.total_cost(est, jest)
-    calls = f"{est.chat_calls_min}–{est.chat_calls_max} вызовов ответов + до {jest.calls} вызовов судьи"
+    if jest is not None:
+        print("Оценка судьи (judge-v2, модель " + judge_mod.judge_model() + "):\n  " + "\n  ".join(jest.lines()))
+    if fest is not None:
+        print(f"Оценка судьи по фактам ({facts_mod.JUDGE_FACTS_PROMPT_VERSION}, модель " + judge_mod.judge_model()
+              + "):\n  " + "\n  ".join(fest.lines()))
+    total = est_mod.total_cost(est, jest, fest)
+    judge_calls = (jest.calls if jest else 0) + (fest.calls if fest else 0)
+    calls = f"{est.chat_calls_min}–{est.chat_calls_max} вызовов ответов + до {judge_calls} вызовов судьи"
     print(f"Итого (ответы + судья): {calls}; " + (
         f"≈${total[0]:.4f} без ретраев, до ≈${total[1]:.4f} с ретраями" if total else "стоимость не оценить (нет цен)"))
     if total and (backend != "stub" or dry_run):
@@ -662,7 +758,37 @@ def out_suffix(questions_file: Path, as_of: Optional[str]) -> str:
     return "_" + "_".join(parts) if parts else ""
 
 
-def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -> int:
+def judge_repeats_arg(value: str) -> int:
+    try:
+        n = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"{value!r}: нужно целое число от 1 до {MAX_REPEATS}") from None
+    if not 1 <= n <= MAX_REPEATS:
+        raise argparse.ArgumentTypeError(
+            f"{n}: допустимо от 1 до {MAX_REPEATS} (каждый повтор судьи — отдельный платный вызов)")
+    return n
+
+
+RUN_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]*")
+
+
+def run_header(a: argparse.Namespace, run_id: str, questions: list[Question]) -> dict:
+    """Что должно совпасть при --resume: тот же прогон, а не просто тот же run_id."""
+    return {"run_id": run_id, "modes": MODES[a.mode], "split": a.split, "as_of_filter": a.as_of, "limit": a.limit,
+            "questions_file": Path(a.questions).name, "questions": [q.id for q in questions], "repeats": a.repeats,
+            "judge": a.judge, "judge_facts": a.judge_facts, "judge_repeats": a.judge_repeats,
+            "model": os.environ.get("LLM_MODEL", "stub-model"), "judge_model": judge_mod.judge_model(),
+            "backend": os.environ.get("LLM_BACKEND", "stub"), "k": a.k, "depth": a.depth,
+            "JUDGE_FACTS_PROMPT_VERSION": facts_mod.JUDGE_FACTS_PROMPT_VERSION}
+
+
+def row_from_dict(d: dict) -> Row:
+    names = {f.name for f in fields(Row)}
+    return Row(**{k: v for k, v in d.items() if k in names})
+
+
+def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
+         facts_fn: Optional[Callable[..., facts_mod.FactsVerdict]] = None) -> int:
     ap = argparse.ArgumentParser(description="Eval-harness: вопросы → api.ask → метрики, повторы, срезы")
     ap.add_argument("--mode", choices=list(MODES), default="both")
     ap.add_argument("--split", choices=["dev", "test", "all"], default="test")
@@ -680,9 +806,25 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
     ap.add_argument("--out-dir", type=Path, default=RESULTS)
     ap.add_argument("--judge", action="store_true",
                     help="оценить ответы судьёй v2: заполнить accuracy и fabrication_rate (платные вызовы)")
+    ap.add_argument("--judge-facts", action="store_true",
+                    help="судья по фактам (judge-facts-v1): fact_recall, fact_precision, fact_f1, forbidden_hits "
+                         "(платные вызовы); по умолчанию выключен")
+    ap.add_argument("--judge-repeats", type=judge_repeats_arg, default=1,
+                    help=f"повторов судьи по фактам 1..{MAX_REPEATS}: метрики усредняются, печатается std; "
+                         "каждый повтор мимо кэша llm_client и оплачивается")
+    ap.add_argument("--run-id", help="идентификатор прогона (по умолчанию <YYYYMMDD_HHMM>): имена "
+                                     "results/eval_<run_id>.json и .partial.jsonl")
+    ap.add_argument("--resume", action="store_true",
+                    help="продолжить прерванный прогон с тем же --run-id по промежуточному файлу")
     ap.add_argument("--dry-run", action="store_true", help="план и оценка стоимости, без прогона")
     ap.add_argument("--confirm-paid", action="store_true", help="разрешить прогон с платным backend")
     a = ap.parse_args(argv)
+    if a.judge_repeats > 1 and not a.judge_facts:
+        ap.error("--judge-repeats имеет смысл только вместе с --judge-facts")
+    if a.resume and not a.run_id:
+        ap.error("--resume требует --run-id: какой прогон продолжать")
+    if a.run_id and not RUN_ID_RE.fullmatch(a.run_id):
+        ap.error("--run-id: только латиница, цифры, «_» и «-»")
 
     modes = MODES[a.mode]
     questions = select_questions(a.questions, a.split, a.as_of, a.limit)
@@ -701,12 +843,14 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
     estimate = est_mod.estimate_run(plan, raw_dir=a.raw_dir, k=a.k, depth=a.depth, repeats=a.repeats)
     judge_estimate = (est_mod.estimate_judge(questions, modes, raw_dir=a.raw_dir, repeats=a.repeats)
                       if a.judge else None)
-    print_plan(estimate, judge_estimate, backend, dry_run=a.dry_run)
+    facts_estimate = (est_mod.estimate_judge_facts(questions, modes, raw_dir=a.raw_dir, repeats=a.repeats,
+                                                   judge_repeats=a.judge_repeats) if a.judge_facts else None)
+    print_plan(estimate, judge_estimate, backend, dry_run=a.dry_run, fest=facts_estimate)
     if a.dry_run:
         return 0
-    if a.judge and backend == "stub" and judge_fn is None:
-        print("--judge при LLM_BACKEND=stub: заглушка не оценивает ответы. Для проверки без денег — --dry-run; "
-              "для настоящего прогона поставьте LLM_BACKEND=openai.", file=sys.stderr)
+    if ((a.judge and judge_fn is None) or (a.judge_facts and facts_fn is None)) and backend == "stub":
+        print("--judge / --judge-facts при LLM_BACKEND=stub: заглушка не оценивает ответы. Для проверки без денег — "
+              "--dry-run; для настоящего прогона поставьте LLM_BACKEND=openai.", file=sys.stderr)
         return 2
     if backend != "stub" and not a.confirm_paid:
         print(f"\nLLM_BACKEND={backend} — прогон платный. Подтвердите числа выше и запустите с --confirm-paid.",
@@ -716,16 +860,57 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
     def build(mode: str, as_of: str) -> systems.System:
         return systems.build_system(mode, as_of, raw_dir=a.raw_dir, index_root=a.index_dir, k=a.k, depth=a.depth)
 
+    # --- run_id, промежуточный файл и --resume ---
+    now = dt.datetime.now()
+    run_id = a.run_id or now.strftime("%Y%m%d_%H%M")
+    json_path, part_path = results_v2.result_path(a.out_dir, run_id), results_v2.partial_path(a.out_dir, run_id)
+    header = run_header(a, run_id, questions)
+    done: dict[RowKey, Row] = {}
+    if part_path.exists():
+        if not a.resume:
+            print(f"Есть промежуточный файл {part_path}: прогон {run_id} не завершён. Продолжить — добавьте "
+                  "--resume, начать заново — другой --run-id.", file=sys.stderr)
+            return 2
+        saved_header, saved = results_v2.read_partial(part_path)
+        if saved_header != header:
+            diff = sorted(k for k in {**header, **(saved_header or {})} if (saved_header or {}).get(k) != header.get(k))
+            print(f"--resume: параметры прогона изменились ({', '.join(diff)}); продолжить нельзя, чтобы не смешать "
+                  "разные прогоны. Верните прежние параметры или возьмите другой --run-id.", file=sys.stderr)
+            return 2
+        done = {row_key(r): r for r in map(row_from_dict, saved)}
+        print(f"--resume: из {part_path.name} взято {len(done)} готовых строк; остальные будут посчитаны.")
+    elif a.resume and json_path.exists():
+        print(f"--resume: прогон {run_id} уже завершён: {json_path}")
+        return 0
+    elif a.resume:
+        print(f"--resume: промежуточного файла для {run_id} нет, начинаю прогон заново.")
+    if not done and json_path.exists():
+        print(f"Результат {json_path} уже есть: возьмите другой --run-id.", file=sys.stderr)
+        return 2
+    if not part_path.exists():
+        results_v2.append_jsonl(part_path, {"header": header})
+
+    def save_row(row: Row) -> None:
+        results_v2.append_jsonl(part_path, {"row": asdict(row)})
+
     # Повторы без кэша: у каждого свой каталог (под runs/cache/, он в .gitignore), новый на каждый запуск.
-    cache_root = llm_client.CACHE / "eval_repeats" / dt.datetime.now().strftime("%Y%m%dT%H%M%S")
+    stamp = now.strftime("%Y%m%dT%H%M%S")
+    cache_root = llm_client.CACHE / "eval_repeats" / stamp
     repeat_cache = (lambda rep: isolated_cache(cache_root / f"rep{rep}")) if a.repeats > 1 else None
+    judge_cache = ((lambda rep: isolated_cache(cache_root / f"judge_rep{rep}")) if a.judge_repeats > 1 else None)
 
     from src import api
     runner = JudgeRunner(raw_dir=a.raw_dir, fn=judge_fn or judge_mod.judge) if a.judge else None
+    facts_runner = (facts_mod.JudgeFactsRunner(judge_repeats=a.judge_repeats, fn=facts_fn or facts_mod.judge_facts,
+                                               repeat_cache=judge_cache) if a.judge_facts else None)
     try:
         rows = run_eval(questions, modes, build, gold=load_gold_events(a.gold), texts=MeetingTexts(a.raw_dir),
                         backend=backend, judge=runner, repeats=a.repeats, repeat_cache=repeat_cache,
-                        call_log=CallLog())
+                        call_log=CallLog(), facts=facts_runner, on_row=save_row, done=done)
+    except BaseException:
+        print(f"\nПрогон прерван. Готовые строки сохранены в {part_path}. "
+              f"Продолжить: те же аргументы и --resume --run-id {run_id}", file=sys.stderr)
+        raise
     finally:
         api.use_index_dir(api.DEFAULT_INDEX_DIR)  # UI-индекс не должен остаться подменённым
 
@@ -736,10 +921,27 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None) -
     write_csv(csv_path, rows)
     info = JudgeInfo(judge_mod.JUDGE_PROMPT_VERSION_V2, judge_mod.judge_model(), runner.calls, runner.reused,
                      runner.failed) if runner else None
+    # json: aggregate считает харнес, дашборд только читает
+    config = results_v2.build_config(
+        modes=modes, split=a.split, n_questions=len({q.id for q in questions}),
+        as_of=results_v2.as_of_label(q.as_of for q in questions), judge_repeats=a.judge_repeats,
+        repeats=a.repeats, backend=backend, commit=_git_commit(), judge_facts=a.judge_facts)
+    result = results_v2.build_result(run_id=run_id, timestamp=now.astimezone().isoformat(timespec="seconds"),
+                                    config=config, rows=rows)
+    v2 = results_v2.render_v2_section(
+        result["aggregate"], result["per_question"], modes, judge_facts=a.judge_facts,
+        judge_repeats=a.judge_repeats, split=a.split,
+        header_lines=([f"- судья по фактам: {facts_mod.JUDGE_FACTS_PROMPT_VERSION} (без транскриптов), модель "
+                       f"{judge_mod.judge_model()}; вызовов {facts_runner.calls}, повторных входов пропущено "
+                       f"{facts_runner.reused}, без вердикта (ошибка формата) {facts_runner.failed}. "
+                       "Судья и система по умолчанию на одной модели; судья без транскриптов не проверяет факты "
+                       "вне списка, поэтому extra не штрафуется."] if facts_runner else []))
     summary = render_summary(rows, modes, date=date, k=a.k, depth=a.depth, notes=notes,
-                             splits=["dev", "test"] if a.split == "all" else [a.split], judge=info)
+                             splits=["dev", "test"] if a.split == "all" else [a.split], judge=info, v2=v2)
     md_path.write_text(summary, encoding="utf-8")
-    print(f"\n{summary}\nCSV: {csv_path}\nСводка: {md_path}")
+    results_v2.write_result(json_path, result)
+    part_path.unlink(missing_ok=True)   # итог записан целиком, промежуточный файл больше не нужен
+    print(f"\n{summary}\nCSV: {csv_path}\nСводка: {md_path}\nJSON: {json_path}")
     # Итоговая таблица — только полный прогон both по test (отладка с --limit её не затирает); при stub — отдельное
     # имя, чтобы заглушка не перезаписала платный результат того же дня.
     if a.mode == "both" and not a.limit and final_rows(rows):
