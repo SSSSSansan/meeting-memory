@@ -164,3 +164,6 @@ class Answer(BaseModel):
     mode: Literal["baseline", "graph"]
     usage: Usage = Usage()
     latency_ms: int = 0
+    # Встречи, попавшие в контекст ДО генерации (порядок ранжирования). Нужны для полноты поиска (A4):
+    # она отделяет «поиск не нашёл» от «модель нашла, но не использовала». Аддитивное поле, 2026-11-13.
+    retrieved_meetings: list[str] = []

@@ -279,10 +279,11 @@ def format_context(G: nx.MultiDiGraph, items: list[str]) -> str:
 # ---------- Точка входа ----------
 
 def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph] = None,
-                      aliases: Optional[dict[str, str]] = None) -> dict:
+                      aliases: Optional[dict[str, str]] = None, as_of: Optional[str] = None) -> dict:
     """Подграф по вопросу. depth — сколько шагов от сущностей (1: их пункты; 2: + связанные решения; 3: ещё шаг).
 
     Без G читается граф по умолчанию вместе с его aliases.json.
+    as_of (ISO-дата) — только пункты встреч не позже неё, как у baseline.
     Возвращает {"entities", "items", "last_meetings", "fallback", "context"}.
     """
     if depth < 1:
@@ -296,16 +297,22 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
             found.update({n: 1 for n in _mentioned_person_items(G, s) if n not in found})
 
     fallback = not seeds
-    items = _fallback_items(G, FALLBACK_MAX_ITEMS) if fallback else list(found)
+    if fallback:
+        items = [n for n in _fallback_items(G, len(G)) if as_of is None or G.nodes[n].get("date", "") <= as_of]
+        items = items[:FALLBACK_MAX_ITEMS]
+    else:
+        items = [n for n in found if as_of is None or G.nodes[n].get("date", "") <= as_of]
 
     n_last = last_n_meetings(question)
     if n_last:
         projects = [G.nodes[s]["label"] for s in seeds if G.nodes[s]["type"] == "Project"]
         if projects:
-            allowed = {m["meeting_id"] for p in projects for m in project_meetings(G, p)[-n_last:]}
+            allowed = {m["meeting_id"] for p in projects
+                       for m in [m for m in project_meetings(G, p)
+                                 if as_of is None or m.get("date", "") <= as_of][-n_last:]}
         else:
             meetings = sorted((d.get("date", ""), d["meeting_id"]) for _, d in G.nodes(data=True)
-                              if d.get("type") == "Meeting")
+                              if d.get("type") == "Meeting" and (as_of is None or d.get("date", "") <= as_of))
             allowed = {mid for _, mid in meetings[-n_last:]}
         items = [n for n in items if G.nodes[n].get("meeting_id") in allowed]
 

@@ -23,7 +23,7 @@ from typing import Iterator, Optional
 from src.answer.answerer import answer
 from src.ingest.scribal_adapter import convert
 from src.ingest.speakers import apply_speakers
-from src.retrieval.baseline import DEFAULT_INDEX_DIR, ROOT, BaselineIndex
+from src.retrieval.baseline import CONTEXT_K, DEFAULT_INDEX_DIR, ROOT, BaselineIndex
 from src.resolve.entities import resolve_projects
 from src.retrieval.graph_rag import (B_GRAPH_PATH, GRAPH_PATH, SAMPLE_GRAPH_PATH, default_graph_path, get_aliases,
                                      use_graph_path)
@@ -119,11 +119,13 @@ def reset_index() -> None:
         (_index_dir / name).unlink(missing_ok=True)
 
 
-def ask(question: str, mode: str = "baseline", k: int = 5, depth: int = 2) -> Answer:
+def ask(question: str, mode: str = "baseline", k: int = CONTEXT_K, depth: int = 2,
+        as_of: Optional[str] = None) -> Answer:
     """Одна точка для UI и eval. baseline ищет по индексу встреч, загруженных в UI;
     graph — по графу роли B (graph_info()); auto — ветку выбирает роутер (см. route()).
-    Какой веткой реально ответили — Answer.mode."""
-    return answer(question, mode=mode, k=k, depth=depth, index=get_index())
+    as_of — ISO-дата вопроса: обе ветки видят только встречи не позже неё (для eval обязательно).
+    Какой веткой реально ответили — Answer.mode; какие встречи ушли в контекст — Answer.retrieved_meetings."""
+    return answer(question, mode=mode, k=k, depth=depth, index=get_index(), as_of=as_of)
 
 
 def route(question: str) -> Route:
