@@ -15,12 +15,14 @@ from src.eval import systems
 from src.eval.judge import JudgeFormatError, JudgeResult
 from src.eval.metrics import MeetingTexts
 from src.schemas import Answer, Citation
+from tests.eval_helpers import build_index, graph_as_stub
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
 @pytest.fixture(autouse=True)
 def _isolated(monkeypatch, tmp_path):
+    graph_as_stub(monkeypatch)
     monkeypatch.setenv("LLM_BACKEND", "stub")
     monkeypatch.setenv("EMBED_MODEL", "")
     monkeypatch.setenv("LLM_MODEL", "gpt-answer")
@@ -214,7 +216,8 @@ def questions_file(tmp_path):
 
 
 def cli(tmp_path, *extra, judge_fn=None):
-    return ev.main(["--mode", "both", "--split", "test", "--as-of", "m_003", "--questions",
+    build_index(tmp_path / "idx")
+    return ev.main(["--mode", "both", "--split", "test", "--unlock-test", "--as-of", "m_003", "--questions",
                     str(questions_file(tmp_path)), "--out-dir", str(tmp_path / "out"),
                     "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(ROOT / "data" / "raw"), *extra],
                    judge_fn=judge_fn)

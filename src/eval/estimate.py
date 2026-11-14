@@ -18,7 +18,7 @@ from src.answer.prompts import SYSTEM_PROMPT
 from src.eval import judge as judge_mod
 from src.eval import judge_facts as facts_mod
 from src.eval import systems
-from src.retrieval.baseline import EMBED_BATCH, chunk_transcript
+from src.retrieval.baseline import chunk_transcript
 
 CHARS_PER_TOKEN = 3
 ANSWER_TOKENS = 300
@@ -38,6 +38,7 @@ class Estimate:
     completion_tokens: int = 0
     embed_tokens: int = 0
     notes: list[str] = field(default_factory=list)
+    longctx_tokens: list[int] = field(default_factory=list)   # токены контекста longctx на каждый ответ (один повтор)
 
     @staticmethod
     def priced() -> bool:
@@ -63,36 +64,80 @@ class Estimate:
         return out + self.notes
 
 
+def _chunks_until(raw_dir: Path, as_of: str) -> list[dict]:
+    return [c for t in systems.load_transcripts(raw_dir, as_of) for c in chunk_transcript(t)]
+
+
+def _longctx_text(raw_dir: Path, as_of: str) -> str:
+    """Контекст longctx так, как его соберёт система: из чанков встреч до as_of (src.retrieval.longctx)."""
+    from src.retrieval.baseline import BaselineIndex
+    from src.retrieval.longctx import meeting_blocks
+
+    index = BaselineIndex(projects=[])
+    index.chunks = _chunks_until(raw_dir, as_of)
+    return "\n\n".join(text for _, text in meeting_blocks(index, as_of))
+
+
+def reindex_note(raw_dir: Path) -> str:
+    """Сколько стоит пересобрать индекс baseline по всем встречам raw_dir (делает не harness)."""
+    chunks = [c for t in systems.load_transcripts(raw_dir, "9999-12-31") for c in chunk_transcript(t)]
+    tokens = sum(len(c["text"]) + 150 for c in chunks) // CHARS_PER_TOKEN   # + заголовок чанка
+    price = float(os.environ.get("PRICE_EMBED_PER_M", "0") or 0)
+    cost = f", ≈${tokens * price / 1e6:.4f}" if price else ""
+    return f"Переиндексация: ≈{len(chunks)} чанков, ≈{tokens} токенов эмбеддингов{cost} (в оценку ниже не входит)."
+
+
 def estimate_run(plan: dict[tuple[str, str], list[str]], *, raw_dir: Path, k: int, depth: int,
                  repeats: int = 1) -> Estimate:
-    """plan: {(mode, as_of): [тексты вопросов]}. Заглушки (graph без графа) вызовов не делают.
-    repeats: каждый повтор — полный проход по вопросам мимо кэша, поэтому вызовы, токены и эмбеддинги запросов ×repeats;
-    индекс baseline строится один раз на (as_of, режим)."""
+    """plan: {(mode, as_of_date): [тексты вопросов]}; as_of — ISO-дата (или meeting_id). Заглушки (graph без графа)
+    вызовов не делают. Индекс baseline готовый (harness его не строит): эмбеддинги — только вопросы, по одному на
+    ответ (hybrid тоже один: вектор вопроса переиспользуется). Оценка — при готовом индексе.
+    repeats: каждый повтор — полный проход по вопросам мимо кэша, поэтому вызовы, токены и эмбеддинги запросов ×repeats.
+    hybrid: контекст graph + до HYBRID_CHUNKS чанков."""
+    from src.retrieval.graph_rag import retrieve_subgraph
+    from src.retrieval.hybrid import HYBRID_CHUNKS
+
     est = Estimate()
     for (mode, as_of), questions in sorted(plan.items()):
         n = len(questions)
-        if mode == "graph":
-            reason = systems.graph_problem(raw_dir, as_of)
+        as_of_date = systems.as_of_date_of(as_of, raw_dir) or as_of
+        ctx_chars = [0] * n
+        if mode in systems.GRAPH_MODES:
+            reason = systems.graph_problem(raw_dir, as_of_date)
             if reason:
-                est.notes.append(f"graph до {as_of}: заглушка, вызовов 0 ({reason})")
+                est.notes.append(f"{mode} до {as_of_date}: заглушка, вызовов 0 ({reason})")
                 continue
-            from src.retrieval.graph_rag import retrieve_subgraph
-            ctx_chars = [len(retrieve_subgraph(q, depth=depth)["context"]) for q in questions]
-        else:
-            chunks = [c for t in systems.load_transcripts(raw_dir, as_of) for c in chunk_transcript(t)]
+            ctx_chars = [len(retrieve_subgraph(q, depth=depth, as_of=as_of_date)["context"]) for q in questions]
+        if mode in systems.INDEX_MODES:
+            chunks = _chunks_until(raw_dir, as_of_date)
             if not chunks:
-                est.notes.append(f"baseline до {as_of}: нет встреч, вызовов 0")
+                est.notes.append(f"{mode} до {as_of_date}: нет встреч, вызовов 0")
                 continue
-            chars = sum(len(c["text"]) for c in chunks)
-            est.embed_calls += -(-len(chunks) // EMBED_BATCH) + n * repeats  # индекс + по запросу на вопрос и повтор
-            est.embed_tokens += (chars // CHARS_PER_TOKEN
-                                 + repeats * sum(len(q) for q in questions) // CHARS_PER_TOKEN)
-            ctx_chars = [k * chars // len(chunks) + 150] * n
+            if mode == "longctx":
+                # контроль A5: все встречи до as_of целиком, без поиска и без эмбеддингов
+                full = len(_longctx_text(raw_dir, as_of_date))
+                ctx_chars = [full] * n
+                est.longctx_tokens += [full // CHARS_PER_TOKEN] * n
+            else:
+                avg = sum(len(c["text"]) for c in chunks) // len(chunks)
+                n_chunks = HYBRID_CHUNKS if mode == "hybrid" else k
+                if mode != "bm25":  # bm25 ищет по словам: вектор вопроса не нужен
+                    est.embed_calls += n * repeats  # индекс готов: только вектор вопроса на ответ и повтор
+                    est.embed_tokens += repeats * sum(len(q) for q in questions) // CHARS_PER_TOKEN
+                ctx_chars = [c + n_chunks * avg + 150 for c in ctx_chars]
         est.chat_calls_min += n * repeats
         est.chat_calls_max += 2 * n * repeats
         chars_in = sum(len(SYSTEM_PROMPT) + len(q) + c for q, c in zip(questions, ctx_chars))
         est.prompt_tokens += repeats * chars_in // CHARS_PER_TOKEN
         est.completion_tokens += repeats * n * ANSWER_TOKENS
+    if est.longctx_tokens:
+        xs = est.longctx_tokens
+        est.notes.append(f"longctx: контекст ≈{sum(xs) // len(xs)} токенов в среднем (min {min(xs)}, max {max(xs)}) "
+                         f"на {len(xs)} ответов; CONTEXT_K не применяется (контроль, бюджет контекста не ограничен)")
+        from src.retrieval.longctx import ANSWER_RESERVE_TOKENS, model_limit_tokens
+        if max(xs) + ANSWER_RESERVE_TOKENS > model_limit_tokens():
+            est.notes.append(f"longctx: ВНИМАНИЕ — max контекст больше окна модели ({model_limit_tokens()}): "
+                             "такие вопросы упадут с LongContextTooLarge, контекст не обрезается")
     if repeats > 1:
         est.notes.append(f"повторов: {repeats}; ответы повторов идут мимо кэша и оплачиваются все "
                          f"(оценка уже ×{repeats})")
@@ -132,6 +177,16 @@ def _avg_meeting_chars(raw_dir: Path, as_of: str) -> int:
     return sum(sizes) // len(sizes) if sizes else 0
 
 
+def _graph_stub(mode: str, q, raw_dir: Path, memo: dict[str, bool]) -> bool:
+    """graph и hybrid станут заглушкой, если графа нет или в нём не хватает встреч до as_of_date вопроса."""
+    if mode not in systems.GRAPH_MODES:
+        return False
+    d = getattr(q, "as_of_date", None) or systems.as_of_date_of(q.as_of, raw_dir) or q.as_of
+    if d not in memo:
+        memo[d] = bool(systems.graph_problem(raw_dir, d))
+    return memo[d]
+
+
 def estimate_judge(questions: Sequence, modes: Sequence[str], *, raw_dir: Path, repeats: int = 1) -> JudgeEstimate:
     """Судья вызывается на каждый настоящий (не stub) ответ каждого режима и каждого повтора. Ответы ещё не получены,
     поэтому вход считаем по настоящему сообщению судьи с ответом средней длины. Модель не вызывается."""
@@ -141,11 +196,8 @@ def estimate_judge(questions: Sequence, modes: Sequence[str], *, raw_dir: Path, 
     graph_stub: dict[str, bool] = {}
     for mode in modes:
         for q in questions:
-            if mode == "graph":
-                if q.as_of not in graph_stub:
-                    graph_stub[q.as_of] = bool(systems.graph_problem(raw_dir, q.as_of))
-                if graph_stub[q.as_of]:
-                    continue
+            if _graph_stub(mode, q, raw_dir, graph_stub):
+                continue
             docs = list(judge_mod.select_meetings(q.source_meetings, [], q.as_of, raw_dir).docs)
             if len(docs) < JUDGE_MIN_MEETINGS:
                 if q.as_of not in avg_cache:
@@ -207,11 +259,8 @@ def estimate_judge_facts(questions: Sequence, modes: Sequence[str], *, raw_dir: 
     graph_stub: dict[str, bool] = {}
     for mode in modes:
         for q in questions:
-            if mode == "graph":
-                if q.as_of not in graph_stub:
-                    graph_stub[q.as_of] = bool(systems.graph_problem(raw_dir, q.as_of))
-                if graph_stub[q.as_of]:
-                    continue
+            if _graph_stub(mode, q, raw_dir, graph_stub):
+                continue
             if not q.required_facts and not q.forbidden_facts:
                 continue    # харнес такому вопросу судью не зовёт (questions_m008.json без фактов)
             msgs = facts_mod.build_messages(q.question, "x" * ANSWER_TOKENS * CHARS_PER_TOKEN, q.required_facts,

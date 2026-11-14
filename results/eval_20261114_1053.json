@@ -1,0 +1,3848 @@
+{
+  "run_id": "20261114_1053",
+  "timestamp": "2026-11-14T10:53:26+05:00",
+  "config": {
+    "model": "gpt-4o",
+    "embed_model": "text-embedding-3-small",
+    "judge_model": "gpt-4o",
+    "JUDGE_FACTS_PROMPT_VERSION": "judge-facts-v1",
+    "modes": [
+      "bm25"
+    ],
+    "split": "dev",
+    "n_questions": 34,
+    "as_of": "m_015",
+    "judge_repeats": 1,
+    "repeats": 1,
+    "backend": "openai",
+    "commit": "0d8b5eb",
+    "judge_facts": true,
+    "context_k": 10,
+    "mode_flags": {},
+    "final_table_modes": [
+      "bm25"
+    ]
+  },
+  "per_question": [
+    {
+      "qid": "q_01",
+      "question_id": "q_01",
+      "type": "T1",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Экран статистики делает Абдурахман. Срок выполнения был до четвертого сентября.",
+      "citations": [
+        {
+          "meeting_id": "m_006",
+          "ts": "00:06:25",
+          "quote": "Абду, ты делаешь экран статистики до четвертого сентября."
+        },
+        {
+          "meeting_id": "m_011",
+          "ts": "00:00:48",
+          "quote": "ну по экранам в общем экран статистики готов."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_011",
+        "m_006",
+        "m_002",
+        "m_010",
+        "m_009"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 0.5,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1348
+      },
+      "usage": {
+        "prompt_tokens": 1348,
+        "completion_tokens": 102,
+        "cost_usd": 0.00439
+      },
+      "latency_ms": 4431,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Абдурахман",
+            "present": true
+          },
+          {
+            "fact": "до 4 сентября",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "делает Николай",
+            "asserted": false
+          },
+          {
+            "fact": "срок в октябре",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Экран статистики делает Абдурахман.",
+            "label": "supported"
+          },
+          {
+            "text": "Срок выполнения был до четвертого сентября.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 676,
+        "completion_tokens": 100,
+        "cost_usd": 0.00269
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_02",
+      "question_id": "q_02",
+      "type": "T1",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Первая версия Squad выходит двадцатого ноября.",
+      "citations": [
+        {
+          "meeting_id": "m_013",
+          "ts": "00:06:18",
+          "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_013",
+        "m_003",
+        "m_004",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.666667,
+        "fact_precision": 1.0,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1254
+      },
+      "usage": {
+        "prompt_tokens": 1254,
+        "completion_tokens": 59,
+        "cost_usd": 0.003725
+      },
+      "latency_ms": 1229,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "первая версия до 30 октября (m_003)",
+            "present": false
+          },
+          {
+            "fact": "перенесена на 20 ноября (m_013)",
+            "present": true
+          },
+          {
+            "fact": "действует 20 ноября",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "срок остался 30 октября",
+            "asserted": false
+          },
+          {
+            "fact": "срок в декабре",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Первая версия Squad выходит двадцатого ноября.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 688,
+        "completion_tokens": 94,
+        "cost_usd": 0.00266
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_03",
+      "question_id": "q_03",
+      "type": "T1",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о миграции БД на еженедельном по Zhol.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_001",
+        "m_008",
+        "m_007",
+        "m_011",
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.0,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1454
+      },
+      "usage": {
+        "prompt_tokens": 1454,
+        "completion_tokens": 31,
+        "cost_usd": 0.003945
+      },
+      "latency_ms": 1185,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "миграция БД выполнена",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "миграция не закончена",
+            "asserted": false
+          },
+          {
+            "fact": "названа новая задача Николаю",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 686,
+        "completion_tokens": 50,
+        "cost_usd": 0.002215
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_04",
+      "question_id": "q_04",
+      "type": "T1",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Qamqor үшін дайын open-source модельді алып, промпттармен реттеп көру шешілді. Fine-tuning жасалмайды, себебі қазақ тіліндегі сапалы диалогтар аз және вычислительный ресурстар көп кетеді.",
+      "citations": [
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:27",
+          "quote": "просто fine-tuning жасауға бізде данные өте аз. Таза қазақ тіліндегі сапалы диалогтарды жинау үшін көп уақыт керек. Сосын вычислительный ресурстар да көп кетеді. Одан да дайын нұсқаны алып, промпттармен ғана реттеп көрейік."
+        },
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:42",
+          "quote": "То есть берем готовую и не тратим время на дообучение?"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_012",
+        "m_002",
+        "m_008",
+        "m_005"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1487
+      },
+      "usage": {
+        "prompt_tokens": 1487,
+        "completion_tokens": 192,
+        "cost_usd": 0.005638
+      },
+      "latency_ms": 1422,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "берём готовую модель",
+            "present": true
+          },
+          {
+            "fact": "без дообучения",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "модель дообучаем",
+            "asserted": false
+          },
+          {
+            "fact": "Qamqor делает свою модель",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "берём готовую open-source модель для Qamqor",
+            "label": "supported"
+          },
+          {
+            "text": "модель не будет дообучаться",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 718,
+        "completion_tokens": 103,
+        "cost_usd": 0.002825
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_05",
+      "question_id": "q_05",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о сроках релиза Zhol.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_002",
+        "m_003",
+        "m_004",
+        "m_001"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.25,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1388
+      },
+      "usage": {
+        "prompt_tokens": 1388,
+        "completion_tokens": 24,
+        "cost_usd": 0.00371
+      },
+      "latency_ms": 1011,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "15 сентября",
+            "present": false
+          },
+          {
+            "fact": "затем 6 октября",
+            "present": false
+          },
+          {
+            "fact": "затем 10 ноября",
+            "present": false
+          },
+          {
+            "fact": "10 ноября подтверждено на итоговой встрече",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "релиз действует 15 сентября или 6 октября",
+            "asserted": false
+          },
+          {
+            "fact": "релиз перенесён на декабрь",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 701,
+        "completion_tokens": 86,
+        "cost_usd": 0.002612
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_06",
+      "question_id": "q_06",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о push-уведомлениях в Zhol.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_007",
+        "m_006",
+        "m_011",
+        "m_004",
+        "m_001",
+        "m_010"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1434
+      },
+      "usage": {
+        "prompt_tokens": 1434,
+        "completion_tokens": 27,
+        "cost_usd": 0.003855
+      },
+      "latency_ms": 830,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "push вошли в первую версию Zhol (m_001)",
+            "present": false
+          },
+          {
+            "fact": "затем отменены без замены (m_008)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "push заменены другой функцией",
+            "asserted": false
+          },
+          {
+            "fact": "push остались в релизе",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 696,
+        "completion_tokens": 62,
+        "cost_usd": 0.00236
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 6,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_07",
+      "question_id": "q_07",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о решении по Excel-экспорту в Squad.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_002",
+        "m_006",
+        "m_011",
+        "m_001",
+        "m_008",
+        "m_007",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1495
+      },
+      "usage": {
+        "prompt_tokens": 1495,
+        "completion_tokens": 28,
+        "cost_usd": 0.004018
+      },
+      "latency_ms": 836,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Excel сначала откладывали на вторую версию (m_003)",
+            "present": false
+          },
+          {
+            "fact": "затем вернули в первую (m_013)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "Excel остался во второй версии",
+            "asserted": false
+          },
+          {
+            "fact": "Excel отменён",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 694,
+        "completion_tokens": 62,
+        "cost_usd": 0.002355
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 7,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_08",
+      "question_id": "q_08",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Задача по миграции БД была запланирована на выполнение до 14 августа. Были обсуждены риски, связанные с возможными проблемами при миграции, и необходимость тщательной подготовки бэкапов. Встреча m_001: \"ну давай тогда до четырнадцатого августа. это пятница через неделю. нормально?\" \"до четырнадцатого... ну да, до четырнадцатого сделаю миграцию.\" \"бэкапы настроены. там скрипт, он сначала полный дамп льёт в бакет, а потом уже миграцию накатывает.\"",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:06:55",
+          "quote": "ну давай тогда до четырнадцатого августа. это пятница через неделю. нормально?"
+        },
+        {
+          "meeting_id": "m_001",
+          "ts": "00:07:00",
+          "quote": "до четырнадцатого... ну да, до четырнадцатого сделаю миграцию."
+        },
+        {
+          "meeting_id": "m_001",
+          "ts": "00:07:50",
+          "quote": "бэкапы настроены. там скрипт, он сначала полный дамп льёт в бакет, а потом уже миграцию накатывает."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_003",
+        "m_015",
+        "m_006"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.666667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.5,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1395
+      },
+      "usage": {
+        "prompt_tokens": 1395,
+        "completion_tokens": 291,
+        "cost_usd": 0.006398
+      },
+      "latency_ms": 2071,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "задача Николаю до 14 августа (m_001)",
+            "present": true
+          },
+          {
+            "fact": "выполнена (m_004)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "задача не выполнена",
+            "asserted": false
+          },
+          {
+            "fact": "срок другой",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Задача по миграции БД была запланирована на выполнение до 14 августа.",
+            "label": "supported"
+          },
+          {
+            "text": "Были обсуждены риски, связанные с возможными проблемами при миграции, и необходимость тщательной подготовки бэкапов.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 799,
+        "completion_tokens": 130,
+        "cost_usd": 0.003298
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_09",
+      "question_id": "q_09",
+      "type": "T3",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "По Boost обсуждали несколько вопросов на разных встречах. На встрече 2026-08-17 упоминалось, что по Boost прошлись, но деталей не обсуждали. На встрече 2026-08-19 решили, что Boost сначала будет сделан для Zhol, а потом для Squad. На встрече 2026-09-14 обсуждали панель Boost, где Абдурахман показал дашборд с графиками регистраций и воронкой, и было решено добавить метрики продаж, такие как выручка по дням, количество успешных сделок и средний чек.",
+      "citations": [
+        {
+          "meeting_id": "m_004",
+          "ts": "00:06:33",
+          "quote": "так по Boost прошлись. давайте возвращаться"
+        },
+        {
+          "meeting_id": "m_005",
+          "ts": "00:07:38",
+          "quote": "Біз сол Boost-ты бірінші Zhol-ға жасаймыз, ал Squad үшін кейінірек қосамыз"
+        },
+        {
+          "meeting_id": "m_010",
+          "ts": "00:01:10",
+          "quote": "я собрал дашборд. тут получается графики регистраций"
+        },
+        {
+          "meeting_id": "m_010",
+          "ts": "00:08:38",
+          "quote": "ну выручку по дням, количество сделок успешных, средний чек"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_004",
+        "m_005",
+        "m_010"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.666667,
+        "fact_precision": 1.0,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1429
+      },
+      "usage": {
+        "prompt_tokens": 1429,
+        "completion_tokens": 298,
+        "cost_usd": 0.006553
+      },
+      "latency_ms": 2040,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "делаем панель Boost и интеграцию ведёт Абдурахман (m_004)",
+            "present": false
+          },
+          {
+            "fact": "сначала для Zhol, для Squad позже (m_005)",
+            "present": true
+          },
+          {
+            "fact": "добавлены метрики продаж (m_010)",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "интеграцию ведёт Николай",
+            "asserted": false
+          },
+          {
+            "fact": "названы сроки Boost",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "На встрече 2026-08-19 решили, что Boost сначала будет сделан для Zhol, а потом для Squad.",
+            "label": "supported"
+          },
+          {
+            "text": "На встрече 2026-09-14 обсуждали панель Boost, где Абдурахман показал дашборд с графиками регистраций и воронкой, и было решено добавить метрики продаж, такие как выручка по дням, количество успешных сделок и средний чек.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 825,
+        "completion_tokens": 185,
+        "cost_usd": 0.003913
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_10",
+      "question_id": "q_10",
+      "type": "T3",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о том, кто задействован в нескольких проектах и что ему поручено.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_006",
+        "m_002",
+        "m_003",
+        "m_004",
+        "m_011",
+        "m_012",
+        "m_010"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.444444,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1712
+      },
+      "usage": {
+        "prompt_tokens": 1712,
+        "completion_tokens": 33,
+        "cost_usd": 0.00461
+      },
+      "latency_ms": 1103,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Николай: Zhol (миграция, хотфикс), Squad (документация API, работа 14-18 сентября, повторно выдана до 6 ноября)",
+            "present": false
+          },
+          {
+            "fact": "Абдурахман: Zhol (экран статистики), Boost (интеграция, блок метрик продаж), Qamqor (интерфейс бота)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "Николай занят только Zhol",
+            "asserted": false
+          },
+          {
+            "fact": "Санду делает интерфейс бота",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 756,
+        "completion_tokens": 62,
+        "cost_usd": 0.00251
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 7,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_11",
+      "question_id": "q_11",
+      "type": "T3",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Boost-ты бірінші Zhol үшін жасайды.",
+      "citations": [
+        {
+          "meeting_id": "m_005",
+          "ts": "00:07:38",
+          "quote": "Біз сол Boost-ты бірінші Zhol-ға жасаймыз, ал Squad үшін кейінірек қосамыз."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_005",
+        "m_013",
+        "m_010",
+        "m_004"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.666667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1337
+      },
+      "usage": {
+        "prompt_tokens": 1337,
+        "completion_tokens": 67,
+        "cost_usd": 0.004012
+      },
+      "latency_ms": 1047,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Boost сначала для Zhol",
+            "present": true
+          },
+          {
+            "fact": "для Squad позже",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "сначала для Squad",
+            "asserted": false
+          },
+          {
+            "fact": "Boost делают одновременно для обоих",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Boost-ты бірінші Zhol үшін жасайды.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 667,
+        "completion_tokens": 81,
+        "cost_usd": 0.002478
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_12",
+      "question_id": "q_12",
+      "type": "T4",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о конфликтах по загрузке людей.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_011",
+        "m_006",
+        "m_001",
+        "m_010",
+        "m_002",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1372
+      },
+      "usage": {
+        "prompt_tokens": 1372,
+        "completion_tokens": 25,
+        "cost_usd": 0.00368
+      },
+      "latency_ms": 2607,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Николай на Squad 14-18 сентября (m_007)",
+            "present": false
+          },
+          {
+            "fact": "он же на хотфиксе Zhol в те же даты (m_008)",
+            "present": false
+          },
+          {
+            "fact": "это конфликт",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "конфликтов нет",
+            "asserted": false
+          },
+          {
+            "fact": "конфликт у Абдурахмана",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 700,
+        "completion_tokens": 74,
+        "cost_usd": 0.00249
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 6,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_13",
+      "question_id": "q_13",
+      "type": "T4",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о противоречиях в решениях по релизу Zhol.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_011",
+        "m_004",
+        "m_006",
+        "m_001",
+        "m_002",
+        "m_008",
+        "m_009"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.666667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1429
+      },
+      "usage": {
+        "prompt_tokens": 1429,
+        "completion_tokens": 31,
+        "cost_usd": 0.003883
+      },
+      "latency_ms": 1024,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "противоречий нет",
+            "present": true
+          },
+          {
+            "fact": "срок релиза заменялся новым (15 сентября, 6 октября, 10 ноября)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "решения по релизу противоречат друг другу",
+            "asserted": false
+          },
+          {
+            "fact": "названа отмена релиза",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "В контексте нет информации о противоречиях в решениях по релизу Zhol.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 706,
+        "completion_tokens": 92,
+        "cost_usd": 0.002685
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 7,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_14",
+      "question_id": "q_14",
+      "type": "T5",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о незакрытых задачах по Squad.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_007",
+        "m_003",
+        "m_010",
+        "m_001",
+        "m_009"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.666667,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1423
+      },
+      "usage": {
+        "prompt_tokens": 1423,
+        "completion_tokens": 26,
+        "cost_usd": 0.003818
+      },
+      "latency_ms": 918,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "документация API у Николая, срок 21 августа прошёл, выдана повторно до 6 ноября (m_015)",
+            "present": false
+          },
+          {
+            "fact": "предложение клиенту отправлено, закрыто (m_007)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "предложение клиенту не отправлено",
+            "asserted": false
+          },
+          {
+            "fact": "документация выполнена",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 703,
+        "completion_tokens": 62,
+        "cost_usd": 0.002377
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_15",
+      "question_id": "q_15",
+      "type": "T5",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "По Qamqor не закрыт технический момент с историей диалога, где бот хранит последние пять реплик в памяти, что может привести к проблемам с пониманием уточняющих вопросов. Также есть фокус на простом формате вопрос-ответ, что может не покрывать все кейсы.",
+      "citations": [
+        {
+          "meeting_id": "m_009",
+          "ts": "00:06:27",
+          "quote": "да по самому боту там еще есть технический момент с историей диалога."
+        },
+        {
+          "meeting_id": "m_012",
+          "ts": "00:05:36",
+          "quote": "Да просто юзер спросит сначала про отпуск, потом про больничный, а потом скажет ну вот по первому вопросу."
+        },
+        {
+          "meeting_id": "m_012",
+          "ts": "00:05:47",
+          "quote": "Бірақ біз бірінші кезекте қарапайым сұрақ-жауап форматына фокус жасап жатырмыз ғой."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_009",
+        "m_006",
+        "m_015",
+        "m_002",
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1493
+      },
+      "usage": {
+        "prompt_tokens": 1493,
+        "completion_tokens": 216,
+        "cost_usd": 0.005893
+      },
+      "latency_ms": 1708,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "открытых пунктов нет",
+            "present": false
+          },
+          {
+            "fact": "прототип готов (m_009)",
+            "present": false
+          },
+          {
+            "fact": "интерфейс бота назначен Абдурахману (m_009)",
+            "present": false
+          },
+          {
+            "fact": "тестовая выборка собрана (m_015)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "прототип не готов",
+            "asserted": false
+          },
+          {
+            "fact": "вопрос про интерфейс бота открыт",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "По Qamqor не закрыт технический момент с историей диалога, где бот хранит последние пять реплик в памяти, что может привести к проблемам с пониманием уточняющих вопросов.",
+            "label": "extra"
+          },
+          {
+            "text": "Есть фокус на простом формате вопрос-ответ, что может не покрывать все кейсы.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 760,
+        "completion_tokens": 168,
+        "cost_usd": 0.00358
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_17",
+      "question_id": "q_17",
+      "type": "T5",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о том, кто проводит QA перед релизом Zhol.",
+      "citations": [
+        {
+          "meeting_id": "m_015",
+          "ts": "00:01:30",
+          "quote": "и тут у нас открытый вопрос висит. кто вообще проводит qa перед релизом Zhol."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_015",
+        "m_004",
+        "m_008",
+        "m_001"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1126
+      },
+      "usage": {
+        "prompt_tokens": 1126,
+        "completion_tokens": 75,
+        "cost_usd": 0.003565
+      },
+      "latency_ms": 1063,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "вопрос открыт",
+            "present": true
+          },
+          {
+            "fact": "никто не назначен",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "QA проводит конкретный человек",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 671,
+        "completion_tokens": 49,
+        "cost_usd": 0.002168
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_18",
+      "question_id": "q_18",
+      "type": "none",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о бюджете на Boost.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_005",
+        "m_010",
+        "m_001",
+        "m_008",
+        "m_006"
+      ],
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1447
+      },
+      "usage": {
+        "prompt_tokens": 1447,
+        "completion_tokens": 22,
+        "cost_usd": 0.003838
+      },
+      "latency_ms": 848,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": false,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "в данных нет ответа о бюджете Boost",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "любая сумма",
+            "asserted": false
+          },
+          {
+            "fact": "бюджет на найм бэкендера выдан за бюджет Boost",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 671,
+        "completion_tokens": 50,
+        "cost_usd": 0.002178
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_19",
+      "question_id": "q_19",
+      "type": "T1",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Абдурахман сообщил, что экран статистики готов.",
+      "citations": [
+        {
+          "meeting_id": "m_011",
+          "ts": "00:00:48",
+          "quote": "ну по экранам в общем экран статистики готов. графики отрисовываются нормально."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_011",
+        "m_006",
+        "m_009",
+        "m_002",
+        "m_003",
+        "m_010",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1493
+      },
+      "usage": {
+        "prompt_tokens": 1493,
+        "completion_tokens": 65,
+        "cost_usd": 0.004383
+      },
+      "latency_ms": 1054,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Абдурахман",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "Николай",
+            "asserted": false
+          },
+          {
+            "fact": "Сандуғаш",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Абдурахман сообщил, что экран статистики готов.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 657,
+        "completion_tokens": 71,
+        "cost_usd": 0.002352
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 7,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_20",
+      "question_id": "q_20",
+      "type": "T1",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "На встрече с клиентом 5 октября обсуждался экспорт, и было решено, что первая версия Squad выйдет 20 ноября вместо конца октября. Ержан отметил, что главное, чтобы экспорт работал без ошибок.",
+      "citations": [
+        {
+          "meeting_id": "m_013",
+          "ts": "00:06:18",
+          "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября."
+        },
+        {
+          "meeting_id": "m_013",
+          "ts": "00:06:23",
+          "quote": "двадцатое ноября нас устраивает. главное чтобы этот экспорт работал без ошибок."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_006",
+        "m_013",
+        "m_002",
+        "m_007"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1573
+      },
+      "usage": {
+        "prompt_tokens": 1573,
+        "completion_tokens": 137,
+        "cost_usd": 0.005302
+      },
+      "latency_ms": 1399,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Excel-экспорт возвращается в первую версию Squad",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "решили выгрузку в CSV",
+            "asserted": false
+          },
+          {
+            "fact": "Excel остался во второй версии",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Первая версия Squad выйдет 20 ноября вместо конца октября.",
+            "label": "extra"
+          },
+          {
+            "text": "Ержан отметил, что главное, чтобы экспорт работал без ошибок.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 713,
+        "completion_tokens": 97,
+        "cost_usd": 0.002753
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_21",
+      "question_id": "q_21",
+      "type": "T1",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Бот әзірше қазақ және орыс тілдерінде ғана жұмыс істейді, ал ағылшын тілін кейінірек қосамыз деп ойлаймын.",
+      "citations": [
+        {
+          "meeting_id": "m_012",
+          "ts": "00:05:57",
+          "quote": "Бот әзірше қазақ және орыс тілдерінде ғана жұмыс істейді, ал ағылшын тілін кейінірек қосамыз деп ойлаймын."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_012",
+        "m_005",
+        "m_002",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1409
+      },
+      "usage": {
+        "prompt_tokens": 1409,
+        "completion_tokens": 99,
+        "cost_usd": 0.004513
+      },
+      "latency_ms": 1275,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "сначала казахский и русский",
+            "present": true
+          },
+          {
+            "fact": "английский позже",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "английский входит в первую версию",
+            "asserted": false
+          },
+          {
+            "fact": "назван срок английской версии",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Бот әзірше қазақ және орыс тілдерінде ғана жұмыс істейді.",
+            "label": "supported"
+          },
+          {
+            "text": "Ағылшын тілін кейінірек қосамыз деп ойлаймын.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 701,
+        "completion_tokens": 114,
+        "cost_usd": 0.002893
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_22",
+      "question_id": "q_22",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о сроке релиза Zhol.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_010",
+        "m_006",
+        "m_001",
+        "m_002",
+        "m_008"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.0,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1519
+      },
+      "usage": {
+        "prompt_tokens": 1519,
+        "completion_tokens": 24,
+        "cost_usd": 0.004038
+      },
+      "latency_ms": 858,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "действует 10 ноября",
+            "present": false
+          },
+          {
+            "fact": "подтверждён на итоговой встрече",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "действует 6 октября",
+            "asserted": false
+          },
+          {
+            "fact": "релиз в декабре",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 681,
+        "completion_tokens": 62,
+        "cost_usd": 0.002322
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_23",
+      "question_id": "q_23",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Первая версия Squad должна была выйти в конце октября, но теперь её выход перенесён на 20 ноября.",
+      "citations": [
+        {
+          "meeting_id": "m_013",
+          "ts": "00:06:18",
+          "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_013",
+        "m_003",
+        "m_002",
+        "m_007",
+        "m_004",
+        "m_011"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1678
+      },
+      "usage": {
+        "prompt_tokens": 1678,
+        "completion_tokens": 71,
+        "cost_usd": 0.004905
+      },
+      "latency_ms": 1528,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Excel во вторую версию и до 30 октября (m_003)",
+            "present": false
+          },
+          {
+            "fact": "затем Excel в первую версию и 20 ноября (m_013)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "срок остался 30 октября",
+            "asserted": false
+          },
+          {
+            "fact": "Excel остался во второй версии",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Первая версия Squad должна была выйти в конце октября.",
+            "label": "extra"
+          },
+          {
+            "text": "Выход первой версии Squad перенесён на 20 ноября.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 707,
+        "completion_tokens": 88,
+        "cost_usd": 0.002648
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 6,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_24",
+      "question_id": "q_24",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Задача по документации API Squad была назначена Николаю с дедлайном до 21 августа. Однако, на встрече 26 октября выяснилось, что Николай забыл про неё, и новый дедлайн был установлен на 6 ноября.",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:08:17",
+          "quote": "Николай делает документацию API до 21 августа."
+        },
+        {
+          "meeting_id": "m_015",
+          "ts": "00:05:48",
+          "quote": "Коля документацию апи Squad ты делаешь до шестого ноября."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_003",
+        "m_015",
+        "m_011",
+        "m_009",
+        "m_001"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.75,
+        "fact_precision": 1.0,
+        "fact_f1": 0.857143,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1546
+      },
+      "usage": {
+        "prompt_tokens": 1546,
+        "completion_tokens": 139,
+        "cost_usd": 0.005255
+      },
+      "latency_ms": 1414,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "выдана Николаю до 21 августа (m_003)",
+            "present": true
+          },
+          {
+            "fact": "дальше не звучала",
+            "present": false
+          },
+          {
+            "fact": "повторно выдана до 6 ноября",
+            "present": true
+          },
+          {
+            "fact": "Николай признал, что не сделал (m_015)",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "документация готова",
+            "asserted": false
+          },
+          {
+            "fact": "выдана Абдурахману",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Задача по документации API Squad была назначена Николаю с дедлайном до 21 августа.",
+            "label": "supported"
+          },
+          {
+            "text": "На встрече 26 октября выяснилось, что Николай забыл про неё.",
+            "label": "supported"
+          },
+          {
+            "text": "Новый дедлайн был установлен на 6 ноября.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 754,
+        "completion_tokens": 167,
+        "cost_usd": 0.003555
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_25",
+      "question_id": "q_25",
+      "type": "T2",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о том, как менялся состав первой версии Zhol.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_001",
+        "m_003",
+        "m_002",
+        "m_004"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.333333,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1598
+      },
+      "usage": {
+        "prompt_tokens": 1598,
+        "completion_tokens": 28,
+        "cost_usd": 0.004275
+      },
+      "latency_ms": 831,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "push вошли (m_001)",
+            "present": false
+          },
+          {
+            "fact": "отменены без замены (m_008)",
+            "present": false
+          },
+          {
+            "fact": "со 2 ноября новые функции не добавляем (m_015)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "push заменены другой функцией",
+            "asserted": false
+          },
+          {
+            "fact": "в первую версию добавлены новые функции после 2 ноября",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 708,
+        "completion_tokens": 74,
+        "cost_usd": 0.00251
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_26",
+      "question_id": "q_26",
+      "type": "T3",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Решение по интеграции Qamqor с Squad связано с необходимостью предоставления технической информации о коннекторах для безопасников и внутреннего IT департамента, чтобы они могли открыть нужные порты и понять, какие запросы будут уходить в базу данных.",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:07:20",
+          "quote": "наши безопасники и внутренний айти департамент просили техническую информацию о том, как ваши коннекторы будут забирать данные"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_009",
+        "m_003",
+        "m_010"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1342
+      },
+      "usage": {
+        "prompt_tokens": 1342,
+        "completion_tokens": 122,
+        "cost_usd": 0.004575
+      },
+      "latency_ms": 1232,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "подключение бота Qamqor к Squad только на готовой модели без дообучения (m_009)",
+            "present": false
+          },
+          {
+            "fact": "зависит от выбора готовой модели (m_002)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "можно подключать дообученную модель",
+            "asserted": false
+          },
+          {
+            "fact": "решение принято на встрече по Squad",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Решение по интеграции Qamqor с Squad связано с необходимостью предоставления технической информации о коннекторах для безопасников и внутреннего IT департамента.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 750,
+        "completion_tokens": 109,
+        "cost_usd": 0.002965
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 3,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_27",
+      "question_id": "q_27",
+      "type": "T3",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Абдурахман задействован в проекте Zhol. Ему поручено подгонять отступы и ширину элементов в макетах, так как автолейаут в Figma настроен неправильно, а также решать проблемы с рендерингом шрифтов и разъезжающимися кнопками на разных платформах. Также он занимается обработкой запросов, возникающих при изменении текста в инпуте.",
+      "citations": [
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:12",
+          "quote": "ну скажем он отступы поменял везде. то есть в старых макетах было шестнадцать а тут бац и двенадцать."
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:01:42",
+          "quote": "вот. и короче я сижу это все руками подгоняю. потому что автолейаут в фигме он как-то криво настроил."
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:02:08",
+          "quote": "ну он на маке дорисовывал походу. а у меня винда. и там рендеринг шрифтов разный."
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:02:21",
+          "quote": "да какая классика. там кнопка тупо разъехалась. я ему скрин кидаю а он говорит у меня все ровно."
+        },
+        {
+          "meeting_id": "m_006",
+          "ts": "00:05:29",
+          "quote": "пользователь стирает текст в инпуте, фокус уходит, запрос летит автоматически."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_001",
+        "m_003",
+        "m_006",
+        "m_002"
+      ],
+      "metrics": {
+        "citation_recall": 0.4,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.4,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1486
+      },
+      "usage": {
+        "prompt_tokens": 1486,
+        "completion_tokens": 380,
+        "cost_usd": 0.007515
+      },
+      "latency_ms": 2312,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Zhol: экран статистики (готов в m_011)",
+            "present": false
+          },
+          {
+            "fact": "Boost: интеграция (m_004), блок метрик продаж (m_010)",
+            "present": false
+          },
+          {
+            "fact": "Qamqor: интерфейс бота (m_009)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "Абдурахман работает над Squad",
+            "asserted": false
+          },
+          {
+            "fact": "у блока метрик продаж назван срок",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Абдурахман задействован в проекте Zhol.",
+            "label": "extra"
+          },
+          {
+            "text": "Ему поручено подгонять отступы и ширину элементов в макетах, так как автолейаут в Figma настроен неправильно.",
+            "label": "extra"
+          },
+          {
+            "text": "Ему поручено решать проблемы с рендерингом шрифтов и разъезжающимися кнопками на разных платформах.",
+            "label": "extra"
+          },
+          {
+            "text": "Он занимается обработкой запросов, возникающих при изменении текста в инпуте.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 805,
+        "completion_tokens": 210,
+        "cost_usd": 0.004112
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_28",
+      "question_id": "q_28",
+      "type": "T3",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о других проектах, обсуждавшихся на встрече 17 августа.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_008",
+        "m_005",
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.0,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1320
+      },
+      "usage": {
+        "prompt_tokens": 1320,
+        "completion_tokens": 31,
+        "cost_usd": 0.00361
+      },
+      "latency_ms": 879,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Boost",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "Squad",
+            "asserted": false
+          },
+          {
+            "fact": "Qamqor",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 673,
+        "completion_tokens": 50,
+        "cost_usd": 0.002182
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 3,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_29",
+      "question_id": "q_29",
+      "type": "T4",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Конфликтующие решения касаются пуш-уведомлений в первой версии Zhol. На встрече m_001 было решено, что пуш-уведомления критичны для бизнеса и должны войти в первую версию Zhol. Однако, на той же встрече другой участник выразил несогласие с этим решением, сказав: 'эээ не. ну какие пуши. мы же это...'.",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:11:33",
+          "quote": "пуш-уведомления входят в первую версию Zhol. это критично для бизнеса."
+        },
+        {
+          "meeting_id": "m_001",
+          "ts": "00:11:29",
+          "quote": "эээ не. ну какие пуши. мы же это..."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_010",
+        "m_006",
+        "m_003",
+        "m_004",
+        "m_001"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1401
+      },
+      "usage": {
+        "prompt_tokens": 1401,
+        "completion_tokens": 197,
+        "cost_usd": 0.005472
+      },
+      "latency_ms": 1924,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Николай назначен на Squad (m_007) и на хотфикс Zhol (m_008) на 14-18 сентября",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "конфликтов нет",
+            "asserted": false
+          },
+          {
+            "fact": "конфликт между решениями по релизу",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Конфликтующие решения касаются пуш-уведомлений в первой версии Zhol.",
+            "label": "extra"
+          },
+          {
+            "text": "На встрече m_001 было решено, что пуш-уведомления критичны для бизнеса и должны войти в первую версию Zhol.",
+            "label": "extra"
+          },
+          {
+            "text": "На той же встрече другой участник выразил несогласие с этим решением.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 765,
+        "completion_tokens": 147,
+        "cost_usd": 0.003383
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_30",
+      "question_id": "q_30",
+      "type": "T4",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Решение о внедрении пуш-уведомлений было отменено без замены.",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:11:28",
+          "quote": "пуш-уведомления."
+        },
+        {
+          "meeting_id": "m_001",
+          "ts": "00:11:29",
+          "quote": "эээ не. ну какие пуши. мы же это..."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_004",
+        "m_003",
+        "m_001",
+        "m_012"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 0.5,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1419
+      },
+      "usage": {
+        "prompt_tokens": 1419,
+        "completion_tokens": 96,
+        "cost_usd": 0.004508
+      },
+      "latency_ms": 1242,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "push-уведомления в Zhol отменены без замены (m_008)",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "отменён релиз",
+            "asserted": false
+          },
+          {
+            "fact": "отменена интеграция Boost",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Решение о внедрении пуш-уведомлений было отменено без замены.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 680,
+        "completion_tokens": 78,
+        "cost_usd": 0.00248
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 4,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_31",
+      "question_id": "q_31",
+      "type": "T5",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "На 26 октября остались не закрытыми следующие задачи: 1. Релиз Zhol перенесён на 10 ноября. 2. Первая версия Squad перенесена на 20 ноября.",
+      "citations": [
+        {
+          "meeting_id": "m_011",
+          "ts": "00:05:53",
+          "quote": "релиз Zhol переносится на десятое ноября вместо шестого октября"
+        },
+        {
+          "meeting_id": "m_013",
+          "ts": "00:06:18",
+          "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_006",
+        "m_004",
+        "m_003",
+        "m_011",
+        "m_013"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 0.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 0.5,
+        "fact_f1": 0.0,
+        "forbidden_hits": 1,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 1.0,
+        "context_tokens": 1331
+      },
+      "usage": {
+        "prompt_tokens": 1331,
+        "completion_tokens": 130,
+        "cost_usd": 0.004627
+      },
+      "latency_ms": 1309,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "блок метрик продаж в Boost без срока (m_010)",
+            "present": false
+          },
+          {
+            "fact": "вопрос про QA (m_015)",
+            "present": false
+          },
+          {
+            "fact": "документация API Squad выдана повторно до 6 ноября, срок ещё не наступил (m_015)",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "прототип Qamqor не закрыт",
+            "asserted": false
+          },
+          {
+            "fact": "экран статистики не закрыт",
+            "asserted": false
+          },
+          {
+            "fact": "предложение клиенту не отправлено",
+            "asserted": false
+          },
+          {
+            "fact": "релиз Zhol не закрыт",
+            "asserted": true
+          }
+        ],
+        "claims": [
+          {
+            "text": "Релиз Zhol перенесён на 10 ноября.",
+            "label": "wrong"
+          },
+          {
+            "text": "Первая версия Squad перенесена на 20 ноября.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 766,
+        "completion_tokens": 144,
+        "cost_usd": 0.003355
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_32",
+      "question_id": "q_32",
+      "type": "T5",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "Вопрос о предоставлении официальной спецификации для интеграции остался без ответа.",
+      "citations": [
+        {
+          "meeting_id": "m_003",
+          "ts": "00:07:47",
+          "quote": "но нашим айти специалистам нужна официальная спецификация. они без документации даже тестовый доступ к базе не дадут"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_013",
+        "m_009",
+        "m_003",
+        "m_007",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.0,
+        "fact_precision": 1.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1313
+      },
+      "usage": {
+        "prompt_tokens": 1313,
+        "completion_tokens": 76,
+        "cost_usd": 0.004043
+      },
+      "latency_ms": 1198,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "кто проводит QA перед релизом Zhol",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "назван ответственный за QA",
+            "asserted": false
+          },
+          {
+            "fact": "найм бэкендера как открытый вопрос",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Вопрос о предоставлении официальной спецификации для интеграции остался без ответа.",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 678,
+        "completion_tokens": 77,
+        "cost_usd": 0.002465
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_33",
+      "question_id": "q_33",
+      "type": "T5",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о том, что по Boost не закрыто.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_004",
+        "m_006",
+        "m_010"
+      ],
+      "metrics": {
+        "citation_recall": 0.0,
+        "citation_precision": 0.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": null,
+        "fact_recall": 0.0,
+        "fact_precision": 0.0,
+        "fact_f1": 0.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1345
+      },
+      "usage": {
+        "prompt_tokens": 1345,
+        "completion_tokens": 26,
+        "cost_usd": 0.003622
+      },
+      "latency_ms": 1160,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "блок метрик продаж",
+            "present": false
+          },
+          {
+            "fact": "срока нет",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "панель Boost не сделана",
+            "asserted": false
+          },
+          {
+            "fact": "авторизация как отдельная задача",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 671,
+        "completion_tokens": 62,
+        "cost_usd": 0.002298
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 3,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_34",
+      "question_id": "q_34",
+      "type": "none",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о том, когда выйдет английская версия Qamqor бота.",
+      "citations": [
+        {
+          "meeting_id": "m_012",
+          "ts": "00:05:57",
+          "quote": "Бот әзірше қазақ және орыс тілдерінде ғана жұмыс істейді, ал ағылшын тілін кейінірек қосамыз деп ойлаймын."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_012",
+        "m_002",
+        "m_005",
+        "m_008",
+        "m_009"
+      ],
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": 1.0,
+        "fact_recall": 0.5,
+        "fact_precision": 1.0,
+        "fact_f1": 0.666667,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1333
+      },
+      "usage": {
+        "prompt_tokens": 1333,
+        "completion_tokens": 88,
+        "cost_usd": 0.004213
+      },
+      "latency_ms": 1198,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": false,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "в данных нет даты английской версии",
+            "present": true
+          },
+          {
+            "fact": "сказано только «позже»",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "любая дата или срок английской версии",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 693,
+        "completion_tokens": 49,
+        "cost_usd": 0.002223
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    },
+    {
+      "qid": "q_35",
+      "question_id": "q_35",
+      "type": "none",
+      "mode": "bm25",
+      "repeat": 1,
+      "answer": "В контексте нет информации о названии компании-клиента Squad.",
+      "citations": [],
+      "retrieved_meetings": [
+        "m_007",
+        "m_010",
+        "m_015",
+        "m_002",
+        "m_001"
+      ],
+      "metrics": {
+        "citation_recall": null,
+        "citation_precision": null,
+        "retrieval_recall": null,
+        "quote_validity": null,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 1561
+      },
+      "usage": {
+        "prompt_tokens": 1561,
+        "completion_tokens": 25,
+        "cost_usd": 0.004152
+      },
+      "latency_ms": 971,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": false,
+      "abstained": true,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "в данных нет названия компании-клиента",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "любое конкретное название",
+            "asserted": false
+          }
+        ],
+        "claims": []
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 658,
+        "completion_tokens": 37,
+        "cost_usd": 0.002015
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 5,
+      "context_chunks": 10,
+      "context_graph_items": null,
+      "context_elements": 10,
+      "mode_flag": "",
+      "context_meetings": null
+    }
+  ],
+  "aggregate": {
+    "by_mode_type": {
+      "bm25": {
+        "T1": {
+          "citation_recall": {
+            "mean": 0.785714,
+            "ci_low": 0.5,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.785714,
+            "ci_low": 0.5,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.857143,
+            "ci_low": 0.571429,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.666667,
+            "ci_low": 0.285714,
+            "ci_high": 0.952381,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.857143,
+            "ci_low": 0.571429,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.685714,
+            "ci_low": 0.342857,
+            "ci_high": 0.971429,
+            "n": 7,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 7,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.714286,
+            "ci_low": 0.428571,
+            "ci_high": 1.0,
+            "n": 7,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 7,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 1431.142857,
+            "ci_low": 1357.0,
+            "ci_high": 1501.285714,
+            "n": 7,
+            "note": null
+          }
+        },
+        "T2": {
+          "citation_recall": {
+            "mean": 0.25,
+            "ci_low": 0.0,
+            "ci_high": 0.5,
+            "n": 8,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.375,
+            "ci_low": 0.0,
+            "ci_high": 0.75,
+            "n": 8,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.510417,
+            "ci_low": 0.291667,
+            "ci_high": 0.729167,
+            "n": 8,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.15625,
+            "ci_low": 0.0,
+            "ci_high": 0.375,
+            "n": 8,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.375,
+            "ci_low": 0.0,
+            "ci_high": 0.75,
+            "n": 8,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.190476,
+            "ci_low": 0.0,
+            "ci_high": 0.440476,
+            "n": 8,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 8,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.1875,
+            "ci_low": 0.0,
+            "ci_high": 0.4375,
+            "n": 8,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 8,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 1506.625,
+            "ci_low": 1444.496875,
+            "ci_high": 1573.253125,
+            "n": 8,
+            "note": null
+          }
+        },
+        "T3": {
+          "citation_recall": {
+            "mean": 0.4,
+            "ci_low": 0.066667,
+            "ci_high": 0.733333,
+            "n": 6,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.5,
+            "ci_low": 0.166667,
+            "ci_high": 0.833333,
+            "n": 6,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.557407,
+            "ci_low": 0.288889,
+            "ci_high": 0.824074,
+            "n": 6,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.194444,
+            "ci_low": 0.0,
+            "ci_high": 0.416667,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.666667,
+            "ci_low": 0.333333,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.244445,
+            "ci_low": 0.0,
+            "ci_high": 0.511111,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.333333,
+            "ci_low": 0.0,
+            "ci_high": 0.666667,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 6,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 1437.666667,
+            "ci_low": 1347.5,
+            "ci_high": 1555.166667,
+            "n": 6,
+            "note": null
+          }
+        },
+        "T4": {
+          "citation_recall": {
+            "mean": 0.125,
+            "ci_low": 0.0,
+            "ci_high": 0.375,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "citation_precision": {
+            "mean": 0.25,
+            "ci_low": 0.0,
+            "ci_high": 0.75,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "retrieval_recall": {
+            "mean": 0.5,
+            "ci_low": 0.125,
+            "ci_high": 0.875,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 2,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.375,
+            "ci_low": 0.0,
+            "ci_high": 0.75,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 0.75,
+            "ci_low": 0.25,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.416667,
+            "ci_low": 0.0,
+            "ci_high": 0.833333,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 0.5,
+            "ci_low": 0.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "context_tokens": {
+            "mean": 1405.25,
+            "ci_low": 1383.75,
+            "ci_high": 1424.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "T5": {
+          "citation_recall": {
+            "mean": 0.25,
+            "ci_low": 0.0,
+            "ci_high": 0.583333,
+            "n": 6,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.333333,
+            "ci_low": 0.0,
+            "ci_high": 0.666667,
+            "n": 6,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.777778,
+            "ci_low": 0.444444,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.166667,
+            "ci_low": 0.0,
+            "ci_high": 0.5,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.416667,
+            "ci_low": 0.083333,
+            "ci_high": 0.75,
+            "n": 6,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.166667,
+            "ci_low": 0.0,
+            "ci_high": 0.5,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.166667,
+            "ci_low": 0.0,
+            "ci_high": 0.5,
+            "n": 6,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 1338.5,
+            "ci_low": 1240.833333,
+            "ci_high": 1421.341667,
+            "n": 6,
+            "note": null
+          }
+        },
+        "none": {
+          "citation_recall": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": null,
+            "ci_low": null,
+            "ci_high": null,
+            "n": 0,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.833333,
+            "ci_low": 0.5,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.888889,
+            "ci_low": 0.666667,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          },
+          "context_tokens": {
+            "mean": 1447.0,
+            "ci_low": 1333.0,
+            "ci_high": 1561.0,
+            "n": 3,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "all": {
+          "citation_recall": {
+            "mean": 0.383871,
+            "ci_low": 0.23871,
+            "ci_high": 0.545161,
+            "n": 31,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.467742,
+            "ci_low": 0.290323,
+            "ci_high": 0.645161,
+            "n": 31,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.648208,
+            "ci_low": 0.512903,
+            "ci_high": 0.780287,
+            "n": 31,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 20,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.355392,
+            "ci_low": 0.218137,
+            "ci_high": 0.5,
+            "n": 34,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.632353,
+            "ci_low": 0.470588,
+            "ci_high": 0.794118,
+            "n": 34,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.356583,
+            "ci_low": 0.213726,
+            "ci_high": 0.505042,
+            "n": 34,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.029412,
+            "ci_low": 0.0,
+            "ci_high": 0.088235,
+            "n": 34,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.397059,
+            "ci_low": 0.235294,
+            "ci_high": 0.558824,
+            "n": 34,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.029412,
+            "ci_low": 0.0,
+            "ci_high": 0.088235,
+            "n": 34,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 1432.058824,
+            "ci_low": 1394.470588,
+            "ci_high": 1470.794853,
+            "n": 34,
+            "note": null
+          }
+        }
+      }
+    },
+    "by_mode_lang": {
+      "bm25": {
+        "ru": {
+          "citation_recall": {
+            "mean": 0.303846,
+            "ci_low": 0.153846,
+            "ci_high": 0.461538,
+            "n": 26,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.403846,
+            "ci_low": 0.230769,
+            "ci_high": 0.596154,
+            "n": 26,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.619017,
+            "ci_low": 0.475214,
+            "ci_high": 0.758339,
+            "n": 26,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 15,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.288691,
+            "ci_low": 0.148735,
+            "ci_high": 0.443452,
+            "n": 28,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.625,
+            "ci_low": 0.446429,
+            "ci_high": 0.785714,
+            "n": 28,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.313946,
+            "ci_low": 0.161565,
+            "ci_high": 0.475519,
+            "n": 28,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.035714,
+            "ci_low": 0.0,
+            "ci_high": 0.107143,
+            "n": 28,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.339286,
+            "ci_low": 0.178571,
+            "ci_high": 0.517857,
+            "n": 28,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.035714,
+            "ci_low": 0.0,
+            "ci_high": 0.107143,
+            "n": 28,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 1452.785714,
+            "ci_low": 1414.999107,
+            "ci_high": 1493.108929,
+            "n": 28,
+            "note": null
+          }
+        },
+        "kk": {
+          "citation_recall": {
+            "mean": 0.8,
+            "ci_low": 0.4,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 0.8,
+            "ci_low": 0.4,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 0.8,
+            "ci_low": 0.4,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.666667,
+            "ci_low": 0.333333,
+            "ci_high": 0.916667,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 0.666667,
+            "ci_low": 0.333333,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.555556,
+            "ci_low": 0.222222,
+            "ci_high": 0.888889,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 6,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.666667,
+            "ci_low": 0.333333,
+            "ci_high": 1.0,
+            "n": 6,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 6,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 1335.333333,
+            "ci_low": 1240.0,
+            "ci_high": 1418.333333,
+            "n": 6,
+            "note": null
+          }
+        }
+      }
+    },
+    "abstention": {
+      "bm25": {
+        "abstain_rate_unanswerable": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 3,
+          "note": "n<5, интервал не информативен"
+        },
+        "false_abstain_rate": {
+          "mean": 0.419355,
+          "ci_low": 0.258065,
+          "ci_high": 0.580645,
+          "n": 31,
+          "note": null
+        }
+      }
+    },
+    "paired": {},
+    "paired_pairs": {},
+    "bootstrap": {
+      "n_boot": 10000,
+      "seed": 42,
+      "percentiles": [
+        2.5,
+        97.5
+      ],
+      "min_n": 5,
+      "paired": "graph - baseline",
+      "unit": "question",
+      "note": "интервал показывает зависимость от набора вопросов, а не разброс повторов; при температуре 0 повторы ответов детерминированы"
+    },
+    "context_symmetry": {
+      "bm25": {
+        "max": 10,
+        "mean": 10.0,
+        "n": 34,
+        "over_k": 0,
+        "context_k": 10
+      }
+    }
+  }
+}

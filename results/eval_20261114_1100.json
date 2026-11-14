@@ -1,0 +1,1031 @@
+{
+  "run_id": "20261114_1100",
+  "timestamp": "2026-11-14T11:00:13+05:00",
+  "config": {
+    "model": "gpt-4o",
+    "embed_model": "text-embedding-3-small",
+    "judge_model": "gpt-4o",
+    "JUDGE_FACTS_PROMPT_VERSION": "judge-facts-v1",
+    "modes": [
+      "longctx"
+    ],
+    "split": "dev",
+    "n_questions": 5,
+    "as_of": "m_015",
+    "judge_repeats": 1,
+    "repeats": 1,
+    "backend": "openai",
+    "commit": "0d8b5eb",
+    "judge_facts": true,
+    "context_k": 10,
+    "mode_flags": {},
+    "final_table_modes": []
+  },
+  "per_question": [
+    {
+      "qid": "q_01",
+      "question_id": "q_01",
+      "type": "T1",
+      "mode": "longctx",
+      "repeat": 1,
+      "answer": "Экран статистики делает Абдурахман, срок выполнения — до четвертого сентября.",
+      "citations": [
+        {
+          "meeting_id": "m_006",
+          "ts": "00:06:25",
+          "quote": "Абду, ты делаешь экран статистики до четвертого сентября."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_002",
+        "m_003",
+        "m_004",
+        "m_005",
+        "m_006",
+        "m_007",
+        "m_008",
+        "m_009",
+        "m_010",
+        "m_011",
+        "m_012",
+        "m_013",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 51632
+      },
+      "usage": {
+        "prompt_tokens": 51632,
+        "completion_tokens": 77,
+        "cost_usd": 0.12985
+      },
+      "latency_ms": 5063,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "Абдурахман",
+            "present": true
+          },
+          {
+            "fact": "до 4 сентября",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "делает Николай",
+            "asserted": false
+          },
+          {
+            "fact": "срок в октябре",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Экран статистики делает Абдурахман",
+            "label": "supported"
+          },
+          {
+            "text": "Срок выполнения — до четвертого сентября",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 675,
+        "completion_tokens": 100,
+        "cost_usd": 0.002687
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 14,
+      "context_chunks": null,
+      "context_graph_items": null,
+      "context_elements": null,
+      "mode_flag": "",
+      "context_meetings": 14
+    },
+    {
+      "qid": "q_02",
+      "question_id": "q_02",
+      "type": "T1",
+      "mode": "longctx",
+      "repeat": 1,
+      "answer": "Первая версия Squad выходит 20 ноября 2026 года.",
+      "citations": [
+        {
+          "meeting_id": "m_013",
+          "ts": "00:06:18",
+          "quote": "первая версия Squad теперь выходит двадцатого ноября вместо конца октября."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_002",
+        "m_003",
+        "m_004",
+        "m_005",
+        "m_006",
+        "m_007",
+        "m_008",
+        "m_009",
+        "m_010",
+        "m_011",
+        "m_012",
+        "m_013",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.666667,
+        "fact_precision": 1.0,
+        "fact_f1": 0.8,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 51628
+      },
+      "usage": {
+        "prompt_tokens": 51628,
+        "completion_tokens": 61,
+        "cost_usd": 0.12968
+      },
+      "latency_ms": 3819,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "первая версия до 30 октября (m_003)",
+            "present": false
+          },
+          {
+            "fact": "перенесена на 20 ноября (m_013)",
+            "present": true
+          },
+          {
+            "fact": "действует 20 ноября",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "срок остался 30 октября",
+            "asserted": false
+          },
+          {
+            "fact": "срок в декабре",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Первая версия Squad выходит 20 ноября 2026 года.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 690,
+        "completion_tokens": 96,
+        "cost_usd": 0.002685
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 14,
+      "context_chunks": null,
+      "context_graph_items": null,
+      "context_elements": null,
+      "mode_flag": "",
+      "context_meetings": 14
+    },
+    {
+      "qid": "q_03",
+      "question_id": "q_03",
+      "type": "T1",
+      "mode": "longctx",
+      "repeat": 1,
+      "answer": "Николай сообщил, что миграция базы данных для Zhol выполнена, скрипты отработали, но были проблемы с кривыми старыми профилями, которые он исправил. Пустые поля были заполнены дефолтными значениями, и индексы пересобрались нормально.",
+      "citations": [
+        {
+          "meeting_id": "m_004",
+          "ts": "00:00:21",
+          "quote": "это готово. миграция базы данных выполнена. скрипты все отработали."
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:00:29",
+          "quote": "ну не совсем. там старые профили кривые были местами."
+        },
+        {
+          "meeting_id": "m_004",
+          "ts": "00:00:42",
+          "quote": "ну я скрипт поправил он это дело отфильтровал. пустые поля дефолтными значениями забил. по сути данные перелились. индексы тоже пересобрались нормально."
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_002",
+        "m_003",
+        "m_004",
+        "m_005",
+        "m_006",
+        "m_007",
+        "m_008",
+        "m_009",
+        "m_010",
+        "m_011",
+        "m_012",
+        "m_013",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.2,
+        "forbidden_rate": 0.0,
+        "context_tokens": 51639
+      },
+      "usage": {
+        "prompt_tokens": 51639,
+        "completion_tokens": 254,
+        "cost_usd": 0.131637
+      },
+      "latency_ms": 4773,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "миграция БД выполнена",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "миграция не закончена",
+            "asserted": false
+          },
+          {
+            "fact": "названа новая задача Николаю",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "миграция базы данных для Zhol выполнена",
+            "label": "supported"
+          },
+          {
+            "text": "скрипты отработали",
+            "label": "extra"
+          },
+          {
+            "text": "были проблемы с кривыми старыми профилями, которые он исправил",
+            "label": "extra"
+          },
+          {
+            "text": "пустые поля были заполнены дефолтными значениями",
+            "label": "extra"
+          },
+          {
+            "text": "индексы пересобрались нормально",
+            "label": "extra"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 731,
+        "completion_tokens": 159,
+        "cost_usd": 0.003417
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 14,
+      "context_chunks": null,
+      "context_graph_items": null,
+      "context_elements": null,
+      "mode_flag": "",
+      "context_meetings": 14
+    },
+    {
+      "qid": "q_04",
+      "question_id": "q_04",
+      "type": "T1",
+      "mode": "longctx",
+      "repeat": 1,
+      "answer": "Qamqor үшін дайын модельді алып, дообучение жасамауға шештік.",
+      "citations": [
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:17",
+          "quote": "Дайын модель ала салайық та, давайте не будем дообучать."
+        },
+        {
+          "meeting_id": "m_002",
+          "ts": "00:01:42",
+          "quote": "То есть берем готовую и не тратим время на дообучение?"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_002",
+        "m_003",
+        "m_004",
+        "m_005",
+        "m_006",
+        "m_007",
+        "m_008",
+        "m_009",
+        "m_010",
+        "m_011",
+        "m_012",
+        "m_013",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 1.0,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 1.0,
+        "fact_precision": 1.0,
+        "fact_f1": 1.0,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 1.0,
+        "forbidden_rate": 0.0,
+        "context_tokens": 51633
+      },
+      "usage": {
+        "prompt_tokens": 51633,
+        "completion_tokens": 131,
+        "cost_usd": 0.130392
+      },
+      "latency_ms": 3552,
+      "status": "ok",
+      "split": "dev",
+      "lang": "kk",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "берём готовую модель",
+            "present": true
+          },
+          {
+            "fact": "без дообучения",
+            "present": true
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "модель дообучаем",
+            "asserted": false
+          },
+          {
+            "fact": "Qamqor делает свою модель",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "берём готовую модель",
+            "label": "supported"
+          },
+          {
+            "text": "без дообучения",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 685,
+        "completion_tokens": 93,
+        "cost_usd": 0.002642
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 14,
+      "context_chunks": null,
+      "context_graph_items": null,
+      "context_elements": null,
+      "mode_flag": "",
+      "context_meetings": 14
+    },
+    {
+      "qid": "q_05",
+      "question_id": "q_05",
+      "type": "T2",
+      "mode": "longctx",
+      "repeat": 1,
+      "answer": "Срок релиза Zhol менялся несколько раз. Изначально релиз был запланирован на 15 сентября 2026 года. Затем он был перенесен на 6 октября 2026 года из-за задержек с фронтендом и необходимостью дополнительного тестирования. Позже, из-за проблем с оплатой и необходимостью доработок, релиз был снова перенесен на 10 ноября 2026 года.\n\n(Удалено неподтверждённых цитат: 1 — их нет дословно в источниках.)",
+      "citations": [
+        {
+          "meeting_id": "m_001",
+          "ts": "00:09:37",
+          "quote": "ну тогда пятнадцатое сентября, и давайте уже без переносов"
+        },
+        {
+          "meeting_id": "m_011",
+          "ts": "00:05:53",
+          "quote": "поэтому релиз Zhol переносится на десятое ноября вместо шестого октября"
+        }
+      ],
+      "retrieved_meetings": [
+        "m_001",
+        "m_002",
+        "m_003",
+        "m_004",
+        "m_005",
+        "m_006",
+        "m_007",
+        "m_008",
+        "m_009",
+        "m_010",
+        "m_011",
+        "m_012",
+        "m_013",
+        "m_015"
+      ],
+      "metrics": {
+        "citation_recall": 0.5,
+        "citation_precision": 1.0,
+        "retrieval_recall": 1.0,
+        "quote_validity": 1.0,
+        "fact_recall": 0.75,
+        "fact_precision": 1.0,
+        "fact_f1": 0.857143,
+        "forbidden_hits": 0,
+        "fact_precision_strict": 0.75,
+        "forbidden_rate": 0.0,
+        "context_tokens": 103639
+      },
+      "usage": {
+        "prompt_tokens": 103639,
+        "completion_tokens": 518,
+        "cost_usd": 0.264277
+      },
+      "latency_ms": 7503,
+      "status": "ok",
+      "split": "dev",
+      "lang": "ru",
+      "as_of": "m_015",
+      "from_cache": false,
+      "answerable": true,
+      "abstained": false,
+      "context_tokens_source": "usage.prompt_tokens",
+      "judge_facts": {
+        "required": [
+          {
+            "fact": "15 сентября",
+            "present": true
+          },
+          {
+            "fact": "затем 6 октября",
+            "present": true
+          },
+          {
+            "fact": "затем 10 ноября",
+            "present": true
+          },
+          {
+            "fact": "10 ноября подтверждено на итоговой встрече",
+            "present": false
+          }
+        ],
+        "forbidden": [
+          {
+            "fact": "релиз действует 15 сентября или 6 октября",
+            "asserted": false
+          },
+          {
+            "fact": "релиз перенесён на декабрь",
+            "asserted": false
+          }
+        ],
+        "claims": [
+          {
+            "text": "Срок релиза Zhol менялся несколько раз.",
+            "label": "extra"
+          },
+          {
+            "text": "Изначально релиз был запланирован на 15 сентября 2026 года.",
+            "label": "supported"
+          },
+          {
+            "text": "Затем он был перенесен на 6 октября 2026 года из-за задержек с фронтендом и необходимостью дополнительного тестирования.",
+            "label": "supported"
+          },
+          {
+            "text": "Позже, из-за проблем с оплатой и необходимостью доработок, релиз был снова перенесен на 10 ноября 2026 года.",
+            "label": "supported"
+          }
+        ]
+      },
+      "metrics_std": null,
+      "judge_usage": {
+        "prompt_tokens": 801,
+        "completion_tokens": 217,
+        "cost_usd": 0.004172
+      },
+      "as_of_date": "2026-10-26",
+      "retrieved_count": 14,
+      "context_chunks": null,
+      "context_graph_items": null,
+      "context_elements": null,
+      "mode_flag": "",
+      "context_meetings": 14
+    }
+  ],
+  "aggregate": {
+    "by_mode_type": {
+      "longctx": {
+        "T1": {
+          "citation_recall": {
+            "mean": 0.875,
+            "ci_low": 0.625,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "citation_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.916667,
+            "ci_low": 0.75,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.95,
+            "ci_low": 0.85,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 0.8,
+            "ci_low": 0.4,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "context_tokens": {
+            "mean": 51633.0,
+            "ci_low": 51629.25,
+            "ci_high": 51637.25,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "T2": {
+          "citation_recall": {
+            "mean": 0.5,
+            "ci_low": 0.5,
+            "ci_high": 0.5,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "citation_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.75,
+            "ci_low": 0.75,
+            "ci_high": 0.75,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.857143,
+            "ci_low": 0.857143,
+            "ci_high": 0.857143,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 0.75,
+            "ci_low": 0.75,
+            "ci_high": 0.75,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "context_tokens": {
+            "mean": 103639.0,
+            "ci_low": 103639.0,
+            "ci_high": 103639.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "all": {
+          "citation_recall": {
+            "mean": 0.8,
+            "ci_low": 0.6,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "citation_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "fact_recall": {
+            "mean": 0.883333,
+            "ci_low": 0.75,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "fact_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "fact_f1": {
+            "mean": 0.931429,
+            "ci_low": 0.851429,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 5,
+            "note": null
+          },
+          "fact_precision_strict": {
+            "mean": 0.79,
+            "ci_low": 0.47,
+            "ci_high": 1.0,
+            "n": 5,
+            "note": null
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 5,
+            "note": null
+          },
+          "context_tokens": {
+            "mean": 62034.2,
+            "ci_low": 51630.6,
+            "ci_high": 82836.8,
+            "n": 5,
+            "note": null
+          }
+        }
+      }
+    },
+    "by_mode_lang": {
+      "longctx": {
+        "ru": {
+          "citation_recall": {
+            "mean": 0.75,
+            "ci_low": 0.5,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "citation_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 0.854167,
+            "ci_low": 0.708333,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 0.914286,
+            "ci_low": 0.828572,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 0.7375,
+            "ci_low": 0.4,
+            "ci_high": 1.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          },
+          "context_tokens": {
+            "mean": 64634.5,
+            "ci_low": 51630.0,
+            "ci_high": 90637.25,
+            "n": 4,
+            "note": "n<5, интервал не информативен"
+          }
+        },
+        "kk": {
+          "citation_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "citation_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "retrieval_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "quote_validity": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_recall": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_f1": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_hits": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "fact_precision_strict": {
+            "mean": 1.0,
+            "ci_low": 1.0,
+            "ci_high": 1.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "forbidden_rate": {
+            "mean": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          },
+          "context_tokens": {
+            "mean": 51633.0,
+            "ci_low": 51633.0,
+            "ci_high": 51633.0,
+            "n": 1,
+            "note": "n<5, интервал не информативен"
+          }
+        }
+      }
+    },
+    "abstention": {
+      "longctx": {
+        "abstain_rate_unanswerable": {
+          "mean": null,
+          "ci_low": null,
+          "ci_high": null,
+          "n": 0,
+          "note": null
+        },
+        "false_abstain_rate": {
+          "mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 5,
+          "note": null
+        }
+      }
+    },
+    "paired": {},
+    "paired_pairs": {},
+    "bootstrap": {
+      "n_boot": 10000,
+      "seed": 42,
+      "percentiles": [
+        2.5,
+        97.5
+      ],
+      "min_n": 5,
+      "paired": "graph - baseline",
+      "unit": "question",
+      "note": "интервал показывает зависимость от набора вопросов, а не разброс повторов; при температуре 0 повторы ответов детерминированы"
+    },
+    "context_symmetry": {
+      "longctx": {
+        "max": null,
+        "mean": null,
+        "n": 0,
+        "over_k": 0,
+        "context_k": 10
+      }
+    }
+  }
+}
