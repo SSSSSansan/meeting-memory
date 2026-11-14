@@ -101,11 +101,17 @@ streamlit run app/streamlit_app.py
 
 **graph** ([`src/retrieval/graph_rag.py`](src/retrieval/graph_rag.py)). Проекты и люди из вопроса (с вариантами
 написания) → обход на глубину 2 → пункты с хронологией, статусами (действует / заменено, открыта / выполнена) и связями.
+Если пунктов больше 10, остаются важнейшие: ближе к сущностям вопроса, в конфликте, действующие, свежие; цепочка
+замен решения берётся целиком — иначе из ответа «как менялся срок» выпадет середина.
 
-**hybrid** ([`src/retrieval/hybrid.py`](src/retrieval/hybrid.py)). Контекст graph без изменений + на каждый его
-пункт ближайший чанк транскрипта в пределах 45 секунд от таймкода (до 6, ближайшие к вопросу) + обычный поиск до
-12 чанков. Граф знает только то, что поймал экстракт; реплики рядом добирают пропущенное. Один фрагмент, найденный
-двумя путями, занимает одно место.
+**hybrid** ([`src/retrieval/hybrid.py`](src/retrieval/hybrid.py)). До 4 первых пунктов того же ранжирования graph +
+к ним до 3 чанков транскрипта в пределах 45 секунд от таймкода пункта (ближайшие к вопросу) + обычный поиск до 10
+элементов всего. Граф знает только то, что поймал экстракт; реплики рядом добирают пропущенное. Один фрагмент,
+найденный двумя путями, занимает одно место.
+
+**Один бюджет контекста.** Каждый режим отдаёт модели не больше `CONTEXT_K = 10` элементов (чанк транскрипта или
+пункт графа), иначе граф выигрывал бы объёмом, а не устройством. Токены у элементов разные — их eval считает
+отдельно (`context_tokens`). Контроль `longctx` (все встречи целиком) бюджетом намеренно не ограничен.
 
 У каждого ответа есть `retrieved_meetings` — встречи, попавшие в контекст до генерации: по ним eval отделяет
 «поиск не нашёл» от «модель не использовала».
@@ -257,8 +263,8 @@ api.eval_runs(); api.quality_table(api.load_eval(path))    # прогоны eval
 | `src.answer.answerer.answer(question, mode="baseline", k=10, depth=2, as_of=None) -> Answer` | ответ с проверенными цитатами; `mode`: `baseline` / `graph` / `hybrid` / `auto` |
 | `src.schemas.Answer` | `answer`, `citations`, `mode`, `usage`, `latency_ms`, `retrieved_meetings` (None — «не измерено») |
 | `src.retrieval.baseline.BaselineIndex` | `add(transcripts)`, `search(question, k=10, as_of=None)`, `save()` / `load()` |
-| `src.retrieval.graph_rag.retrieve_subgraph(question, depth=2, as_of=None) -> dict` | подграф по вопросу и контекст для модели |
-| `src.retrieval.hybrid.retrieve_hybrid(question, index, depth=2, as_of=None) -> dict` | контекст графа, чанки (`via`: graph / vector), встречи |
+| `src.retrieval.graph_rag.retrieve_subgraph(question, depth=2, as_of=None, max_items=10) -> dict` | подграф по вопросу и контекст для модели; `n_found` — сколько пунктов до обрезки |
+| `src.retrieval.hybrid.retrieve_hybrid(question, index, depth=2, as_of=None, context_k=10) -> dict` | контекст графа, чанки (`via`: graph / vector), встречи; всего не больше `context_k` |
 | `src.retrieval.router.route(question) -> Route` | выбор ветки для `auto` |
 | `src.api.list_projects()`, `graph_info()` | проекты в графе; какой граф читается и какие в нём встречи |
 | `src.api.get_timeline(project) -> list[dict]` | решения, задачи и открытые вопросы проекта по времени; у каждого `status`, `in_conflict`, `links`, цитата и встреча |
