@@ -154,31 +154,34 @@ def test_end_to_end_on_stub_backend_respects_as_of(tmp_path):
     qfile = tmp_path / "questions.json"
     qfile.write_text(json.dumps(questions, ensure_ascii=False), encoding="utf-8")
     out = tmp_path / "out"
+    # индекс готовится заранее (harness его не строит): m_001–m_005, будущее отрезает as_of_date
+    raw = ROOT / "data" / "raw"
+    api.use_index_dir(tmp_path / "idx")
+    for _ in api.index_batches(systems.load_transcripts(raw, "m_005")):
+        pass
     code = ev.main(["--mode", "both", "--split", "all", "--as-of", "m_003", "--questions", str(qfile),
-                    "--out-dir", str(out), "--index-dir", str(tmp_path / "idx"),
-                    "--raw-dir", str(ROOT / "data" / "raw")])
+                    "--out-dir", str(out), "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(raw)])
     assert code == 0
     (csv_path,) = out.glob("eval_*.csv")
     rows = list(csv.DictReader(csv_path.open(encoding="utf-8-sig")))
-    assert {(r["mode"], r["status"]) for r in rows} == {("baseline", "ok"), ("graph", "stub")}
+    assert {(r["mode"], r["status"]) for r in rows} == {("baseline", "ok"), ("graph", "ok")}
     assert all(r["cited_after_as_of"] in ("0", "") for r in rows)
+    assert all(r["as_of_date"] == "2026-08-10" for r in rows)     # дата встречи m_003: в вопросе поля нет
+    assert all(set(filter(None, r["retrieved_meetings"].split(","))) <= {"m_001", "m_002", "m_003"} for r in rows)
     (md_path,) = out.glob("summary_*.md")
     assert "## test" in md_path.read_text(encoding="utf-8")
 
 
-def test_graph_without_real_graph_is_stub_with_reason():
-    # data/graph/graph.json теперь реальный граф роли B по m_001-m_008 (не заглушка), поэтому
-    # as_of="m_008" больше не даёт причину для stub; m_003 всё ещё не совпадает по составу встреч.
-    system = systems.build_system("graph", "m_003", raw_dir=ROOT / "data" / "raw", index_root=Path("unused"))
-    assert system.is_stub and system.note
+def test_graph_without_real_graph_is_stub_with_reason(monkeypatch):
+    monkeypatch.setattr(api, "graph_info", lambda: {"is_sample": True, "path": "data/sample/graph.json",
+                                                    "meetings": [], "aliases": 0})
+    system = systems.build_system("graph", raw_dir=ROOT / "data" / "raw", index_dir=Path("unused"),
+                                  as_of_dates=["2026-08-10"])
+    assert system.is_stub and "заглушку" in system.note
 
 
-def test_baseline_index_contains_only_meetings_up_to_as_of(tmp_path):
+def test_raw_meetings_up_to_as_of_by_date_inclusive():
     raw = ROOT / "data" / "raw"
     assert systems.raw_meeting_ids(raw, "m_003") == ["m_001", "m_002", "m_003"]
-    system = systems.build_system("baseline", "m_003", raw_dir=raw, index_root=tmp_path)
-    assert not system.is_stub
-    assert {m["meeting_id"] for m in api.indexed_meetings()} == {"m_001", "m_002", "m_003"}
-    # индекс другого as_of лежит отдельно и не подмешивается
-    systems.build_system("baseline", "m_002", raw_dir=raw, index_root=tmp_path)
-    assert {m["meeting_id"] for m in api.indexed_meetings()} == {"m_001", "m_002"}
+    assert systems.raw_meeting_ids(raw, "2026-08-10") == ["m_001", "m_002", "m_003"]   # день встречи включён
+    assert systems.raw_meeting_ids(raw, "2026-08-09") == ["m_001", "m_002"]
