@@ -18,6 +18,7 @@ from src.eval.judge import JudgeResult
 from src.eval.judge_facts import Claim, FactsVerdict
 from src.eval.metrics import MeetingTexts
 from src.schemas import Answer, Citation
+from tests.eval_helpers import build_index, graph_as_stub
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURE = ROOT / "tests" / "fixtures" / "eval_fixture.json"
@@ -26,6 +27,7 @@ CITE = Citation(meeting_id="m_001", ts="00:01:05", quote="сдвинуть ре�
 
 @pytest.fixture(autouse=True)
 def _isolated(monkeypatch, tmp_path):
+    graph_as_stub(monkeypatch)
     monkeypatch.setenv("LLM_BACKEND", "stub")
     monkeypatch.setenv("EMBED_MODEL", "")
     monkeypatch.setenv("LLM_MODEL", "gpt-answer")
@@ -258,6 +260,7 @@ def questions_file(tmp_path, n_extra=0):
 
 
 def cli(tmp_path, *extra, judge_fn=None, facts_fn=None):
+    build_index(tmp_path / "idx")
     return ev.main(["--mode", "both", "--split", "test", "--as-of", "m_003", "--questions-file",
                     str(questions_file(tmp_path)), "--out-dir", str(tmp_path / "out"),
                     "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(ROOT / "data" / "raw"), *extra],

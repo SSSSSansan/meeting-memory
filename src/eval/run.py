@@ -5,8 +5,13 @@
     python -m src.eval.run --mode both --split test --repeats 3 --judge --dry-run   # то же с повторами и судьёй
     python -m src.eval.run --mode both --as-of m_008 --questions-file data/gold/questions_m008.json   # m_008
 
-Вопросы — data/gold/questions.json; в систему уходит только текст вопроса, эталон она не видит.
-У каждого вопроса свой as_of: система видит встречи до него включительно (см. src/eval/systems.py).
+Вопросы — data/gold/questions.json; в систему уходят только текст вопроса и его as_of_date, эталон она не видит:
+api.ask(question, mode, as_of=<as_of_date>) — встречи с датой не позже as_of_date включительно (src/eval/systems.py).
+Режимы: baseline | graph | hybrid | both (baseline + graph) | all (+ hybrid). Сколько чанков в контексте — CONTEXT_K
+из конфига C, своего k у harness нет. Индекс baseline (--index-dir, по умолчанию runs/index/baseline) только читается:
+нет его, старый формат или не хватает встреч — «нужна переиндексация», baseline и hybrid — stub. hybrid с
+графовой частью-заглушкой помечается «graph part: stub» и в итоговую таблицу не входит. В сводке — проверка симметрии
+(max и среднее элементов контекста по режимам, предупреждение при > CONTEXT_K) и предупреждения по retrieved_meetings.
 --as-of m_008 оставляет только вопросы с этим as_of (по умолчанию — все).
 
 Выход: results/eval_<дата>.csv (по вопросам) и results/summary_<дата>.md (по типам и по языку, режимы рядом,
@@ -31,7 +36,8 @@ judge_score 0/1/2 и judge_fabrication 0/1; в сводке accuracy = сред�
 заполняет fact_recall, fact_precision, fact_precision_strict, fact_f1, forbidden_hits; --judge-repeats N (1..5) —
 N вызовов судьи на ответ, метрики усредняются, печатается std (каждый повтор судьи идёт мимо кэша llm_client).
 Без судьи по фактам эти метрики null. Метрики без модели (citation_recall, citation_precision, retrieval_recall) —
-всегда. retrieval_recall = null («не измерено»), пока api.ask() не отдаёт retrieved_meetings.
+всегда. retrieval_recall = null («не измерено»), если api.ask() не отдал retrieved_meetings; сам список пишется и в csv
+(через запятую, плюс retrieved_count), и в json.
 Рядом с csv и md пишется results/eval_<run_id>.json (контракт — src/eval/results_v2.py; run_id по умолчанию
 <YYYYMMDD_HHMM>, свой — --run-id). После каждого ответа строка дописывается в results/eval_<run_id>.partial.jsonl;
 упавший прогон продолжается: --resume --run-id <тот же>. В сводке «Метрики v2» — бутстрап по вопросам
@@ -66,21 +72,23 @@ from src.eval import judge as judge_mod
 from src.eval import judge_facts as facts_mod
 from src.eval import results_v2, systems
 from src.eval.metrics import MeetingTexts, load_gold_events, score_answer
-from src.retrieval.baseline import STEP, WINDOW
+from src.retrieval.baseline import CONTEXT_K, DEFAULT_INDEX_DIR, STEP, WINDOW
 from src.schemas import Answer
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 QUESTIONS = ROOT / "data" / "gold" / "questions.json"
 GOLD = ROOT / "data" / "gold" / "decisions.json"
 RAW_DIR = ROOT / "data" / "raw"
-INDEX_ROOT = ROOT / "runs" / "eval_index"
+INDEX_ROOT = DEFAULT_INDEX_DIR    # индекс baseline только читается (systems.index_problem), не пересобирается
 RESULTS = ROOT / "results"
 TYPES = ["T1", "T2", "T3", "T4", "T5", "none"]
 LANGS = ["ru", "mixed", "kk"]
 MAX_REPEATS = 5
 HISTORICAL_AS_OF = "m_008"      # вопросы на состояние m_008 (q_16, questions_m008.json) — отдельная секция
 ANSWER_TEMPERATURE = 0.0        # src/answer/answerer.py::generate зовёт complete(..., temperature=0.0)
-MODES = {"baseline": ["baseline"], "graph": ["graph"], "both": ["baseline", "graph"]}
+MODES = {"baseline": ["baseline"], "graph": ["graph"], "hybrid": ["hybrid"], "both": ["baseline", "graph"],
+         "all": ["baseline", "graph", "hybrid"]}
+FINAL_MODES = ("baseline", "graph")     # итоговая таблица: baseline и graph рядом
 
 
 @dataclass
@@ -128,6 +136,13 @@ class Row:
     forbidden_hits: Optional[float] = None      # int при одном повторе судьи, иначе среднее
     # токены контекста в промпте ответа: usage.context_tokens, иначе usage.prompt_tokens (None — нет ответа)
     context_tokens: Optional[int] = None
+    # --- as_of и контекст (только добавлены) ---
+    as_of_date: str = ""                        # ISO-дата из вопроса, ушла в api.ask(as_of=...)
+    retrieved_count: Optional[int] = None       # len(retrieved_meetings); None — api.ask() список не отдал
+    context_chunks: Optional[int] = None        # чанков транскрипта в контексте (baseline, hybrid)
+    context_graph_items: Optional[int] = None   # пунктов графа в контексте (graph, hybrid)
+    context_elements: Optional[int] = None      # сумма двух выше; сравнивается с CONTEXT_K (проверка симметрии)
+    mode_flag: str = ""                         # пометка режима: у hybrid «graph part: stub»
     # Только для json и --resume, в csv не попадают:
     context_tokens_source: str = ""             # какое поле usage использовано
     citations: list = field(default_factory=list)               # [{meeting_id, ts, quote}]
@@ -137,7 +152,7 @@ class Row:
     judge_usage: Optional[dict] = None          # токены и цена вызовов судьи по фактам для этой строки
 
 
-NOT_IN_CSV = {"context_tokens_source", "citations", "retrieved_meetings", "facts_detail", "metrics_std", "judge_usage"}
+NOT_IN_CSV = {"context_tokens_source", "citations", "facts_detail", "metrics_std", "judge_usage"}
 CSV_FIELDS = [f.name for f in fields(Row) if f.name not in NOT_IN_CSV]
 
 JudgeFn = Callable[..., judge_mod.JudgeResult]
@@ -255,15 +270,19 @@ def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTe
             call_log: Optional[CallLog] = None) -> Row:
     row = Row(question_id=q.id, type=q.type, split=q.split, lang=q.lang, as_of=q.as_of, mode=system.mode,
               system="stub" if system.is_stub else "real", backend=backend, status="ok",
-              answerable=q.answerable, source_meetings=",".join(q.source_meetings), repeat=repeat)
+              answerable=q.answerable, source_meetings=",".join(q.source_meetings), repeat=repeat,
+              as_of_date=getattr(q, "as_of_date", None) or "", mode_flag=getattr(system, "flag", ""))
     if system.is_stub:
         row.status, row.error, row.answer = "stub", system.note, ""
         return row
     mark = call_log.mark() if call_log else None
+    system.last_context = None
     t0 = time.perf_counter()
     try:
         with (ask_ctx() if ask_ctx else _no_ctx()):
-            result = system.ask(q.question)  # только текст вопроса
+            # только текст вопроса и его дата as_of_date: будущее система отрезает сама
+            result = (system.ask(q.question, as_of=row.as_of_date or None) if system.uses_as_of
+                      else system.ask(q.question))
     except cost_guard.BudgetExceeded:
         raise  # лимит расходов — стоп всего прогона, а не «ошибка вопроса»
     except Exception as e:
@@ -278,14 +297,18 @@ def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTe
     row.latency_ms = (answer.latency_ms if answer and answer.latency_ms else wall_ms)
     row.answer = answer.answer if answer else ""
     citations = answer.citations if answer else []
-    # retrieved_meetings: встречи, попавшие в контекст до генерации. В Answer (4.6) такого поля пока нет, и тогда это
-    # None («не измерено»); когда роль C добавит его аддитивно, harness подхватит без правок.
+    ctx = system.last_context
+    if ctx is not None:
+        row.context_chunks, row.context_graph_items = ctx.get("chunks"), ctx.get("graph_items")
+        row.context_elements = systems.context_elements(ctx)
+    # retrieved_meetings: встречи, попавшие в контекст до генерации (Answer 4.6, аддитивно); None — «не измерено».
     retrieved = getattr(answer, "retrieved_meetings", None) if answer else None
     m = score_answer(answer=row.answer, citations=citations, answerable=q.answerable,
                      source_meetings=q.source_meetings, decision_ids=q.decision_ids, as_of=q.as_of,
                      gold=gold, texts=texts, retrieved_meetings=retrieved)
     row.citations = [c.model_dump() for c in citations]
     row.retrieved_meetings = None if retrieved is None else list(retrieved)
+    row.retrieved_count = None if retrieved is None else len(retrieved)
     row.citation_recall, row.citation_precision = m.citation_recall, m.citation_precision
     row.retrieval_recall = m.retrieval_recall
     row.cited_meetings = ",".join(m.cited_meetings)
@@ -540,6 +563,67 @@ def repeat_spread(rows: list[Row]) -> tuple[int, int]:
     return len(multi), sum(1 for g in multi if len(set(g.values())) > 1)
 
 
+def mode_flags(rows: list[Row]) -> dict[str, str]:
+    """Пометки режимов из строк: {"hybrid": "graph part: stub"} — режим настоящий, но не тот, что задуман."""
+    return {r.mode: r.mode_flag for r in rows if r.mode_flag}
+
+
+def mode_title(mode: str, flags: dict[str, str]) -> str:
+    return f"{mode} [{flags[mode]}]" if mode in flags else mode
+
+
+def symmetry_stats(rows: list[Row], modes: list[str], context_k: int = CONTEXT_K) -> dict[str, dict]:
+    """По режиму: максимум и среднее число элементов контекста (чанки + пункты графа) по ответам, где оно измерено."""
+    out = {}
+    for m in modes:
+        xs = [r.context_elements for r in rows if r.mode == m and r.status != "stub" and r.context_elements is not None]
+        out[m] = {"max": max(xs) if xs else None, "mean": round(sum(xs) / len(xs), 2) if xs else None, "n": len(xs),
+                  "over_k": sum(1 for x in xs if x > context_k), "context_k": context_k}
+    return out
+
+
+def symmetry_lines(rows: list[Row], modes: list[str], context_k: int = CONTEXT_K) -> list[str]:
+    """Проверка симметрии: сколько контекста получает каждый режим. Больше CONTEXT_K — предупреждение."""
+    stats = symmetry_stats(rows, modes, context_k)
+    flags = mode_flags(rows)
+    lines = ["## Симметрия контекста", "",
+             f"Элементов контекста на ответ (чанки транскрипта + пункты графа), CONTEXT_K = {context_k} "
+             "(конфиг C, src/retrieval/baseline.py; harness свой k не задаёт).", "",
+             "| Режим | max | среднее | ответов | больше CONTEXT_K |", "|---|---|---|---|---|"]
+    for m in modes:
+        st = stats[m]
+        lines.append(f"| {mode_title(m, flags)} | {'—' if st['max'] is None else st['max']} | "
+                     f"{'—' if st['mean'] is None else format(st['mean'], '.1f')} | {st['n']} | {st['over_k']} |")
+    over = [m for m in modes if stats[m]["max"] is not None and stats[m]["max"] > context_k]
+    if over:
+        lines += ["", "> **Предупреждение: контекст больше CONTEXT_K у режимов " + ", ".join(
+            f"{m} (max {stats[m]['max']}, среднее {stats[m]['mean']:.1f})" for m in over)
+            + ". Режимы получают разный объём контекста — разница в качестве может объясняться им, а не "
+              "архитектурой.**"]
+    if any(stats[m]["n"] == 0 for m in modes):
+        lines += ["", "_«—» — размер контекста не измерен (заглушка или ответов нет)._"]
+    return lines
+
+
+def retrieved_lines(rows: list[Row]) -> list[str]:
+    """Предупреждения по retrieved_meetings: пустой список при непустом ответе; список не отдан вовсе."""
+    real = [r for r in rows if r.status == "ok"]
+    empty = [r for r in real if r.retrieved_meetings == [] and r.answer.strip()]
+    missing = [r for r in real if r.retrieved_meetings is None]
+    out = []
+    if empty:
+        refusals = sum(1 for r in empty if r.abstained)
+        by_mode = Counter(r.mode for r in empty)
+        out.append(f"> **Предупреждение: retrieved_meetings пуст при непустом ответе — {len(empty)} из {len(real)} "
+                   "ответов (" + ", ".join(f"{m}: {c}" for m, c in sorted(by_mode.items()))
+                   + f"); из них отказов «нет в контексте»: {refusals}.** Ответ без найденных встреч: "
+                   "проверить вручную.")
+    if missing:
+        out.append(f"> api.ask() не отдал retrieved_meetings в {len(missing)} ответах: retrieval_recall для них "
+                   "не измерен.")
+    return out
+
+
 def _git_commit() -> str:
     try:
         r = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True, text=True,
@@ -555,11 +639,14 @@ def _meta_lines(rows: list[Row], modes: list[str], *, k: int, depth: int, judge:
     repeats = max((r.repeat for r in rows), default=1)
     lines = [f"- commit: {_git_commit()}, backend: {backend}, model: {os.environ.get('LLM_MODEL', 'stub-model')}, "
              f"embed: {os.environ.get('EMBED_MODEL') or 'n/a'}",
-             f"- PROMPT_VERSION: в коде не задан; k={k}, глубина обхода графа={depth}, "
+             f"- PROMPT_VERSION: в коде не задан; k={k} (CONTEXT_K из конфига C), глубина обхода графа={depth}, "
              f"чанк={WINDOW} реплик со сдвигом {STEP}; температура отвечающей системы {ANSWER_TEMPERATURE} "
              "(src/answer/answerer.py)",
-             f"- as_of в вопросах: {', '.join(sorted({r.as_of for r in rows})) or '—'}; повторов: {repeats}",
-             f"- режимы (в ячейках через « / » в этом порядке): {' / '.join(modes)}"]
+             f"- as_of в вопросах: {', '.join(sorted({r.as_of for r in rows})) or '—'}; as_of_date (уходит в "
+             "api.ask, встречи не позже неё включительно): "
+             f"{', '.join(sorted({r.as_of_date for r in rows if r.as_of_date})) or '—'}; повторов: {repeats}",
+             "- режимы (в ячейках через « / » в этом порядке): "
+             f"{' / '.join(mode_title(m, mode_flags(rows)) for m in modes)}"]
     if repeats > 1:
         real = [r for r in rows if r.status != "stub"]
         cached = sum(1 for r in real if r.from_cache is True)
@@ -599,6 +686,15 @@ def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, dept
     for mode in modes:
         if mode in notes:
             lines += ["", f"> **{mode}: stub** — {notes[mode]}. В таблице вместо цифр «stub»."]
+    for mode, flag in mode_flags(rows).items():
+        lines += ["", f"> **{mode}: {flag}** — графовая часть hybrid — временная реализация C (контекст режима graph "
+                      "через retrieve_subgraph), обход роли B (B6) не подставлен. Ответы настоящие, но это не "
+                      "задуманный hybrid: в итоговую таблицу не входит."]
+    if any(r.status != "stub" for r in rows):
+        lines += [""] + symmetry_lines(rows, modes)
+    warn = retrieved_lines(rows)
+    if warn:
+        lines += [""] + warn
     errs = Counter((r.mode, r.status) for r in rows if r.status not in ("ok", "stub"))
     if errs:
         lines += ["", "> Строки без нормального ответа (считаются в n, метрики по ним нулевые): "
@@ -674,11 +770,15 @@ def render_final_table(rows: list[Row], modes: list[str], *, date: str, k: int, 
     lines = [f"# Итоговая таблица {date} (split=test)", ""] + _meta_lines(part, modes, k=k, depth=depth, judge=judge)
     if os.environ.get("LLM_BACKEND", "stub") == "stub":
         lines += ["", "> **LLM_BACKEND=stub**: цифры ничего не значат, таблица проверяет только работу harness."]
-    for mode in ("baseline", "graph"):
+    for mode in FINAL_MODES:
         if mode in notes:
             lines += ["", f"> **{mode}: stub** — {notes[mode]}. В таблице «stub», цифры не приводятся."]
         elif mode not in modes:
             lines += ["", f"> **{mode}**: в этом прогоне не запускался."]
+    flags = mode_flags(rows)
+    for mode in (m for m in modes if m not in FINAL_MODES):
+        lines += ["", f"> **{mode}**: в таблицу не входит" + (f" ({flags[mode]}, не настоящий режим)." if mode in flags
+                                                              else " (таблица — baseline против graph).")]
     lines += ["", "| " + " | ".join(head) + " |", "|" + "|".join(["---"] * len(head)) + "|"]
     for qtype in TYPES:
         group = [r for r in part if r.type == qtype]
@@ -686,9 +786,9 @@ def render_final_table(rows: list[Row], modes: list[str], *, date: str, k: int, 
         if not n_q:
             continue
         per_mode = {m: (agg_repeats([r for r in group if r.mode == m], qtype, judge_on) if m in modes else None)
-                    for m in ("baseline", "graph")}
+                    for m in FINAL_MODES}
         cells = ["не запускался" if per_mode[m] is None else fmt_stat(per_mode[m][key], SPECS.get(key, ".2f"))
-                 for key, _ in columns for m in ("baseline", "graph")]
+                 for key, _ in columns for m in FINAL_MODES]
         lines.append("| " + " | ".join([qtype, str(n_q)] + cells) + " |")
     real = [r for r in part if r.status != "stub"]
     n_cached = sum(1 for r in real if r.from_cache is True)
@@ -707,7 +807,14 @@ def write_csv(path: Path, rows: list[Row]) -> None:
     with path.open("w", encoding="utf-8-sig", newline="") as f:  # BOM: Excel открывает кириллицу без плясок
         w = csv.DictWriter(f, fieldnames=CSV_FIELDS, extrasaction="ignore")  # json-only поля Row в csv не пишем
         w.writeheader()
-        w.writerows(asdict(r) for r in rows)
+        w.writerows(csv_record(r) for r in rows)
+
+
+def csv_record(row: Row) -> dict:
+    d = asdict(row)
+    # список встреч в csv — через запятую; пустой список от None отличает retrieved_count (0 против пусто)
+    d["retrieved_meetings"] = "" if row.retrieved_meetings is None else ",".join(row.retrieved_meetings)
+    return d
 
 
 # ---------- CLI ----------
@@ -785,8 +892,44 @@ def run_header(a: argparse.Namespace, run_id: str, questions: list[Question]) ->
             "questions_file": Path(a.questions).name, "questions": [q.id for q in questions], "repeats": a.repeats,
             "judge": a.judge, "judge_facts": a.judge_facts, "judge_repeats": a.judge_repeats,
             "model": os.environ.get("LLM_MODEL", "stub-model"), "judge_model": judge_mod.judge_model(),
-            "backend": os.environ.get("LLM_BACKEND", "stub"), "k": a.k, "depth": a.depth,
+            "backend": os.environ.get("LLM_BACKEND", "stub"), "k": CONTEXT_K, "depth": a.depth,
             "JUDGE_FACTS_PROMPT_VERSION": facts_mod.JUDGE_FACTS_PROMPT_VERSION}
+
+
+def annotate_result(result: dict, rows: list[Row], modes: list[str]) -> dict:
+    """Аддитивно к контракту results_v2: CONTEXT_K и пометки режимов в config, размер контекста и as_of_date в
+    per_question, проверка симметрии в aggregate. per_question идёт в порядке rows."""
+    flags = mode_flags(rows)
+    result["config"]["context_k"] = CONTEXT_K
+    result["config"]["mode_flags"] = flags
+    result["config"]["final_table_modes"] = [m for m in FINAL_MODES if m in modes]
+    for rec, r in zip(result["per_question"], rows):
+        rec.update({"as_of_date": r.as_of_date, "retrieved_count": r.retrieved_count,
+                    "context_chunks": r.context_chunks, "context_graph_items": r.context_graph_items,
+                    "context_elements": r.context_elements, "mode_flag": r.mode_flag})
+    result["aggregate"]["context_symmetry"] = symmetry_stats(rows, modes)
+    return result
+
+
+def readiness_lines(modes: list[str], *, raw_dir: Path, index_dir: Path, as_of_dates: list[str]) -> list[str]:
+    """Что помешает режимам ответить по-настоящему: индекс, граф, графовая часть hybrid. Ничего не пересобирает."""
+    out = []
+    if any(m in systems.INDEX_MODES for m in modes):
+        problem = systems.index_problem(index_dir, raw_dir, as_of_dates)
+        if problem:
+            users = ", ".join(m for m in modes if m in systems.INDEX_MODES)
+            out.append(f"ИНДЕКС ({users}): {problem}. Harness индекс не пересобирает: соберите его через UI "
+                       f"(«Демо-встречи») или api.index_batches в {index_dir}; до этого {users} — stub. "
+                       + est_mod.reindex_note(raw_dir))
+        else:
+            out.append(f"Индекс baseline: {index_dir} готов (chunk_format {systems.CHUNK_FORMAT}).")
+    if any(m in systems.GRAPH_MODES for m in modes) and as_of_dates:
+        problem = systems.graph_problem(raw_dir, max(as_of_dates))
+        out.append(f"ГРАФ: {problem}" if problem else "Граф: все встречи до as_of_date есть.")
+    if "hybrid" in modes and systems.hybrid_graph_part_is_stub():
+        out.append(f"hybrid: {systems.HYBRID_GRAPH_STUB} — graph_part() пока контекст режима graph, обход B (B6) не "
+                   "подставлен; в итоговую таблицу hybrid не войдёт.")
+    return out
 
 
 def row_from_dict(d: dict) -> Row:
@@ -803,13 +946,13 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     ap.add_argument("--repeats", type=repeats_arg, default=1,
                     help=f"повторов 1..{MAX_REPEATS}; ответы повторов идут мимо кэша llm_client и оплачиваются")
     ap.add_argument("--limit", type=int, help="первые N вопросов — для отладки")
-    ap.add_argument("--k", type=int, default=5, help="чанков в baseline")
     ap.add_argument("--depth", type=int, default=2, help="глубина обхода графа")
     ap.add_argument("--questions-file", "--questions", dest="questions", type=Path, default=QUESTIONS,
                     help="файл вопросов (по умолчанию data/gold/questions.json; для m_008 — questions_m008.json)")
     ap.add_argument("--gold", type=Path, default=GOLD)
     ap.add_argument("--raw-dir", type=Path, default=RAW_DIR, help="встречи для baseline и проверки цитат")
-    ap.add_argument("--index-dir", type=Path, default=INDEX_ROOT)
+    ap.add_argument("--index-dir", type=Path, default=INDEX_ROOT,
+                    help="готовый индекс baseline (только чтение; harness его не пересобирает)")
     ap.add_argument("--out-dir", type=Path, default=RESULTS)
     ap.add_argument("--judge", action="store_true",
                     help="оценить ответы судьёй v2: заполнить accuracy и fabrication_rate (платные вызовы)")
@@ -838,16 +981,25 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     if not questions:
         print("Нет вопросов под выбранные --split/--as-of.", file=sys.stderr)
         return 2
+    try:    # as_of_date — из вопроса; у исторических файлов без поля — дата встречи as_of
+        questions = [q.model_copy(update={"as_of_date": systems.question_as_of_date(q, a.raw_dir)})
+                     for q in questions]
+    except ValueError as e:
+        print(f"Вопросы без даты as_of_date: {e}", file=sys.stderr)
+        return 2
+    as_of_dates = sorted({q.as_of_date for q in questions})
     backend = os.environ.get("LLM_BACKEND", "stub")
     plan: dict[tuple[str, str], list[str]] = defaultdict(list)
     for m in modes:
         for q in questions:
-            plan[(m, q.as_of)].append(q.question)
+            plan[(m, q.as_of_date)].append(q.question)
 
     print(f"Вопросов: {len(questions)} (split={a.split}), режимы: {', '.join(modes)}, повторов: {a.repeats}, "
-          f"backend: {backend}")
+          f"backend: {backend}, as_of_date: {', '.join(as_of_dates)}, CONTEXT_K={CONTEXT_K}")
     print(cost_guard.status())
-    estimate = est_mod.estimate_run(plan, raw_dir=a.raw_dir, k=a.k, depth=a.depth, repeats=a.repeats)
+    for line in readiness_lines(modes, raw_dir=a.raw_dir, index_dir=a.index_dir, as_of_dates=as_of_dates):
+        print(line)
+    estimate = est_mod.estimate_run(plan, raw_dir=a.raw_dir, k=CONTEXT_K, depth=a.depth, repeats=a.repeats)
     judge_estimate = (est_mod.estimate_judge(questions, modes, raw_dir=a.raw_dir, repeats=a.repeats)
                       if a.judge else None)
     facts_estimate = (est_mod.estimate_judge_facts(questions, modes, raw_dir=a.raw_dir, repeats=a.repeats,
@@ -864,8 +1016,14 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
               file=sys.stderr)
         return 3
 
+    built: dict[str, systems.System] = {}
+
     def build(mode: str, as_of: str) -> systems.System:
-        return systems.build_system(mode, as_of, raw_dir=a.raw_dir, index_root=a.index_dir, k=a.k, depth=a.depth)
+        # одна система на режим для всех as_of: будущее отрезает api.ask(as_of=as_of_date вопроса)
+        if mode not in built:
+            built[mode] = systems.build_system(mode, raw_dir=a.raw_dir, index_dir=a.index_dir,
+                                               as_of_dates=as_of_dates, depth=a.depth)
+        return built[mode]
 
     # --- run_id, промежуточный файл и --resume ---
     now = dt.datetime.now()
@@ -933,9 +1091,9 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
         modes=modes, split=a.split, n_questions=len({q.id for q in questions}),
         as_of=results_v2.as_of_label(q.as_of for q in questions), judge_repeats=a.judge_repeats,
         repeats=a.repeats, backend=backend, commit=_git_commit(), judge_facts=a.judge_facts)
-    result = results_v2.build_result(run_id=run_id, timestamp=now.astimezone().isoformat(timespec="seconds"),
-                                    config=config, rows=rows)
-    v2 = results_v2.render_v2_section(
+    result = annotate_result(results_v2.build_result(
+        run_id=run_id, timestamp=now.astimezone().isoformat(timespec="seconds"), config=config, rows=rows), rows, modes)
+    v2 =results_v2.render_v2_section(
         result["aggregate"], result["per_question"], modes, judge_facts=a.judge_facts,
         judge_repeats=a.judge_repeats, split=a.split,
         header_lines=([f"- судья по фактам: {facts_mod.JUDGE_FACTS_PROMPT_VERSION} (без транскриптов), модель "
@@ -943,7 +1101,7 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
                        f"{facts_runner.reused}, без вердикта (ошибка формата) {facts_runner.failed}. "
                        "Судья и система по умолчанию на одной модели; судья без транскриптов не проверяет факты "
                        "вне списка, поэтому extra не штрафуется."] if facts_runner else []))
-    summary = render_summary(rows, modes, date=date, k=a.k, depth=a.depth, notes=notes,
+    summary = render_summary(rows, modes, date=date, k=CONTEXT_K, depth=a.depth, notes=notes,
                              splits=["dev", "test"] if a.split == "all" else [a.split], judge=info, v2=v2)
     md_path.write_text(summary, encoding="utf-8")
     results_v2.write_result(json_path, result)
@@ -951,13 +1109,14 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     print(f"\n{summary}\nCSV: {csv_path}\nСводка: {md_path}\nJSON: {json_path}")
     # Итоговая таблица — только полный прогон both по test (отладка с --limit её не затирает); при stub — отдельное
     # имя, чтобы заглушка не перезаписала платный результат того же дня.
-    if a.mode == "both" and not a.limit and final_rows(rows):
+    if a.mode in ("both", "all") and not a.limit and final_rows(rows):
         final_path = a.out_dir / f"final_table_{date}{'_stub' if backend == 'stub' else ''}.md"
-        final_path.write_text(render_final_table(rows, modes, date=date, k=a.k, depth=a.depth, notes=notes,
+        final_path.write_text(render_final_table(rows, modes, date=date, k=CONTEXT_K, depth=a.depth, notes=notes,
                                                  judge=info), encoding="utf-8")
         print(f"Итоговая таблица: {final_path}")
     else:
-        print("Итоговая таблица не записана: нужны --mode both, вопросы split=test с основным as_of и без --limit.")
+        print("Итоговая таблица не записана: нужны --mode both или all, вопросы split=test с основным as_of и без "
+              "--limit.")
     return 0
 
 
