@@ -32,8 +32,14 @@ import networkx as nx
 
 from src.graph.queries import load_graph, project_meetings
 from src.resolve.entities import resolve_people, resolve_projects
-from src.retrieval.baseline import CONTEXT_K  # один бюджет контекста на все режимы
+from src.retrieval.baseline import CONTEXT_K, check_as_of  # один бюджет контекста и одна проверка as_of
 from src.utils.text import normalize
+
+
+def _not_after(date: Optional[str], as_of: Optional[str]) -> bool:
+    """Пункт или встреча не позже as_of. Без даты при заданном as_of — не проходит: «» <= любая дата."""
+    return as_of is None or bool(date) and date <= as_of
+
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 GRAPH_PATH = ROOT / "data" / "graph" / "graph.json"
@@ -364,6 +370,7 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
     """
     if depth < 1:
         raise ValueError("depth должен быть ≥ 1")
+    check_as_of(as_of)
     if G is None:
         G, aliases = get_graph(), get_aliases() if aliases is None else aliases
     seeds = find_entities(G, question, aliases)
@@ -374,11 +381,11 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
 
     fallback = not seeds
     if fallback:
-        items = [n for n in _fallback_items(G, len(G)) if as_of is None or G.nodes[n].get("date", "") <= as_of]
+        items = [n for n in _fallback_items(G, len(G)) if _not_after(G.nodes[n].get("date"), as_of)]
         items = items[:FALLBACK_MAX_ITEMS]
         dist = {n: i for i, n in enumerate(items)}  # порядок важности _fallback_items
     else:
-        items = [n for n in found if as_of is None or G.nodes[n].get("date", "") <= as_of]
+        items = [n for n in found if _not_after(G.nodes[n].get("date"), as_of)]
         dist = {n: found[n] for n in items}
 
     n_last = last_n_meetings(question)
@@ -387,10 +394,10 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
         if projects:
             allowed = {m["meeting_id"] for p in projects
                        for m in [m for m in project_meetings(G, p)
-                                 if as_of is None or m.get("date", "") <= as_of][-n_last:]}
+                                 if _not_after(m.get("date"), as_of)][-n_last:]}
         else:
             meetings = sorted((d.get("date", ""), d["meeting_id"]) for _, d in G.nodes(data=True)
-                              if d.get("type") == "Meeting" and (as_of is None or d.get("date", "") <= as_of))
+                              if d.get("type") == "Meeting" and _not_after(d.get("date"), as_of))
             allowed = {mid for _, mid in meetings[-n_last:]}
         items = [n for n in items if G.nodes[n].get("meeting_id") in allowed]
 

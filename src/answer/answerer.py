@@ -33,7 +33,7 @@ from typing import Optional
 
 from src.answer.prompts import SYSTEM_PROMPT, retry_prompt, user_prompt
 from src.llm_client import complete
-from src.retrieval.baseline import CONTEXT_K, ROOT, BaselineIndex, load_transcripts
+from src.retrieval.baseline import CONTEXT_K, ROOT, BaselineIndex, check_as_of, load_transcripts
 from src.retrieval.bm25 import bm25_search
 from src.retrieval.graph_rag import get_graph, retrieve_subgraph
 from src.retrieval.hybrid import retrieve_hybrid
@@ -235,8 +235,9 @@ def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
 
     k — бюджет контекста в элементах, один на все режимы: чанков у baseline и bm25, пунктов графа у graph,
     пунктов и чанков вместе у hybrid (longctx — контроль без бюджета). depth и graph — параметры графовой части.
-    as_of — ISO-дата вопроса: обе ветки видят только встречи не позже неё.
+    as_of — ISO-дата вопроса (YYYY-MM-DD, иначе ValueError): все режимы видят только встречи не позже неё.
     """
+    check_as_of(as_of)
     t0 = time.perf_counter()
     requested, context, chosen, retrieved = mode, None, None, []
     if mode == "auto":

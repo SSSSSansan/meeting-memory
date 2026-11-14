@@ -100,6 +100,24 @@ def test_graph_context_cut_to_context_k_on_real_graph():
     assert len(retrieve_subgraph("Как менялся срок релиза Zhol?", G=big, max_items=None)["items"]) == sub["n_found"]
 
 
+@pytest.mark.parametrize("bad", ["m_015", "2026-9-1", "15.09.2026"])
+def test_as_of_must_be_iso_date_everywhere(bad, index, G):
+    """Номер встречи вместо даты молча отключал фильтр будущего: «2026-…» <= «m_015» всегда верно (нашла A)."""
+    with pytest.raises(ValueError):
+        index.search("релиз", as_of=bad)
+    with pytest.raises(ValueError):
+        retrieve_subgraph(QUESTION, G=G, as_of=bad)
+    with pytest.raises(ValueError):
+        ans.answer(QUESTION, mode="hybrid", index=index, graph=G, as_of=bad)
+
+
+def test_graph_item_without_date_is_not_let_through_by_as_of(G):
+    H = G.copy()
+    del H.nodes["d_m002_01"]["date"]
+    assert "d_m002_01" in retrieve_subgraph(QUESTION, G=H)["items"]
+    assert "d_m002_01" not in retrieve_subgraph(QUESTION, G=H, as_of="2026-12-31")["items"]
+
+
 @pytest.mark.parametrize("question, focus", [
     ("Как менялся срок релиза Zhol?", "T2"),
     ("Есть ли конфликты по загрузке людей?", "T4"),
