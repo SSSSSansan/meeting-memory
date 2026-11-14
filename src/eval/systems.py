@@ -10,6 +10,9 @@
 hybrid: пока графовая часть (src.retrieval.hybrid.graph_part) — временная реализация C на retrieve_subgraph, а не
 обход роли B (B6), ответы hybrid настоящие, но режим помечается HYBRID_GRAPH_STUB и в итоговую таблицу не входит.
 Заглушки не изображают ответ системы: у них нет метрик, в таблице стоит «stub».
+
+Контрольные режимы (A5) читают тот же индекс baseline: bm25 — поиск по словам по тем же чанкам и с тем же CONTEXT_K;
+longctx — все встречи до as_of без поиска (CONTEXT_K не применяется, переполнение окна модели — ошибка вопроса).
 """
 from __future__ import annotations
 
@@ -30,8 +33,10 @@ from src.schemas import Answer, Transcript
 
 AskFn = Callable[..., Answer]  # ask(question) или, при uses_as_of, ask(question, as_of=<ISO-дата>)
 
-MODES = ("baseline", "graph", "hybrid")
-INDEX_MODES = ("baseline", "hybrid")     # читают индекс baseline
+MODES = ("baseline", "graph", "hybrid", "bm25", "longctx")
+INDEX_MODES = ("baseline", "hybrid", "bm25", "longctx")     # читают индекс baseline
+CONTROL_MODES = ("bm25", "longctx")      # контроли A5: запускаются только явно, не входят в all
+UNBOUNDED_MODES = ("longctx",)           # CONTEXT_K не применяется: все встречи до as_of
 GRAPH_MODES = ("graph", "hybrid")        # читают граф
 REINDEX = "нужна переиндексация"
 HYBRID_GRAPH_STUB = "graph part: stub"
@@ -171,6 +176,7 @@ def count_context() -> Iterator[dict]:
     """
     seen: dict = {"chunks": None, "graph_items": None}
     saved = answerer.format_context, answerer.retrieve_subgraph, answerer.retrieve_hybrid
+    saved_long = answerer.build_longctx
 
     def fmt(hits, *a, **kw):
         seen["chunks"] = len(hits)
@@ -186,11 +192,19 @@ def count_context() -> Iterator[dict]:
         seen["graph_items"], seen["chunks"] = len(out["graph_items"]), len(out["chunks"])
         return out
 
+    def long(*a, **kw):
+        # longctx: элементы не считаются (бюджета нет), вместо них — встречи и токены контекста
+        out = saved_long(*a, **kw)
+        seen["meetings"], seen["context_tokens"] = len(out["meetings"]), out["context_tokens"]
+        return out
+
     answerer.format_context, answerer.retrieve_subgraph, answerer.retrieve_hybrid = fmt, sub, hyb
+    answerer.build_longctx = long
     try:
         yield seen
     finally:
         answerer.format_context, answerer.retrieve_subgraph, answerer.retrieve_hybrid = saved
+        answerer.build_longctx = saved_long
 
 
 def context_elements(ctx: Optional[dict]) -> Optional[int]:

@@ -161,7 +161,9 @@ class Usage(BaseModel):
 class Answer(BaseModel):
     answer: str
     citations: list[Citation] = []
-    mode: Literal["baseline", "graph", "hybrid"]  # hybrid — граф + фрагменты транскрипта (C4), 2026-11-13
+    # hybrid — граф + фрагменты транскрипта (C4), 2026-11-13.
+    # bm25, longctx — контрольные режимы eval (A5), 2026-11-14: поиск по словам и «все встречи до as_of в контексте».
+    mode: Literal["baseline", "graph", "hybrid", "bm25", "longctx"]
     usage: Usage = Usage()
     latency_ms: int = 0
     # Встречи, попавшие в контекст ДО генерации (порядок ранжирования). Нужны для полноты поиска (A4):
