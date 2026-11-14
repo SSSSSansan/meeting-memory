@@ -7,7 +7,7 @@ import src.answer.answerer as ans
 from src.graph.queries import load_graph
 from src.llm_client import LLMResponse
 from src.retrieval.baseline import CONTEXT_K, BaselineIndex
-from src.retrieval.graph_rag import retrieve_subgraph, select_items
+from src.retrieval.graph_rag import question_focus, retrieve_subgraph, select_items
 from src.retrieval.hybrid import BACKFILL_MAX, HYBRID_GRAPH_K, backfill_candidates, retrieve_hybrid, ts_seconds
 from src.schemas import Segment, Transcript
 
@@ -98,6 +98,41 @@ def test_graph_context_cut_to_context_k_on_real_graph():
     assert sub["n_found"] > CONTEXT_K and len(sub["items"]) == CONTEXT_K
     assert {"d_m001_01", "d_m006_01", "d_m011_01"} <= set(sub["items"])   # вся цепочка переносов срока
     assert len(retrieve_subgraph("Как менялся срок релиза Zhol?", G=big, max_items=None)["items"]) == sub["n_found"]
+
+
+@pytest.mark.parametrize("bad", ["m_015", "2026-9-1", "15.09.2026"])
+def test_as_of_must_be_iso_date_everywhere(bad, index, G):
+    """Номер встречи вместо даты молча отключал фильтр будущего: «2026-…» <= «m_015» всегда верно (нашла A)."""
+    with pytest.raises(ValueError):
+        index.search("релиз", as_of=bad)
+    with pytest.raises(ValueError):
+        retrieve_subgraph(QUESTION, G=G, as_of=bad)
+    with pytest.raises(ValueError):
+        ans.answer(QUESTION, mode="hybrid", index=index, graph=G, as_of=bad)
+
+
+def test_graph_item_without_date_is_not_let_through_by_as_of(G):
+    H = G.copy()
+    del H.nodes["d_m002_01"]["date"]
+    assert "d_m002_01" in retrieve_subgraph(QUESTION, G=H)["items"]
+    assert "d_m002_01" not in retrieve_subgraph(QUESTION, G=H, as_of="2026-12-31")["items"]
+
+
+@pytest.mark.parametrize("question, focus", [
+    ("Как менялся срок релиза Zhol?", "T2"),
+    ("Есть ли конфликты по загрузке людей?", "T4"),
+    ("Что по Qamqor ещё не закрыто?", "T5"),
+    ("Кто делает экран статистики?", None),
+])
+def test_question_focus_uses_router_words(question, focus):
+    assert question_focus(question) == focus
+
+
+def test_change_question_keeps_whole_chain_even_in_hybrid_share():
+    """q_05: без учёта типа вопроса графовая часть hybrid (4 пункта) теряла цепочку и покрывала 1 встречу из 4."""
+    big = load_graph(ans.ROOT / "data/graph_raw/graph.json")
+    sub = retrieve_subgraph("Как менялся срок релиза Zhol?", G=big, max_items=HYBRID_GRAPH_K)
+    assert {"d_m001_01", "d_m006_01", "d_m011_01"} <= set(sub["items"])
 
 
 def test_graph_chunk_found_again_by_vector_takes_one_place(index, G):

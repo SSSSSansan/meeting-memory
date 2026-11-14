@@ -204,6 +204,17 @@ def _embed_meta() -> dict:
             "chunk_format": CHUNK_FORMAT}
 
 
+_ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def check_as_of(as_of: Optional[str]) -> Optional[str]:
+    """as_of — только ISO-дата. Даты сравниваются строками: «2026-…» <= «m_015» всегда верно, и с номером встречи
+    вместо даты фильтр будущего молча отключился бы (нашла A, 2026-11-14)."""
+    if as_of is not None and not _ISO_DATE.match(as_of):
+        raise ValueError(f"as_of={as_of!r}: нужна дата YYYY-MM-DD, а не номер встречи")
+    return as_of
+
+
 def chunk_lines(chunk: dict) -> set:
     """Реплики чанка — по ним чанки сравниваются на почти-дубли (см. NEAR_DUP_SHARE)."""
     return {(chunk["meeting_id"], s["ts"], s["text"]) for s in chunk["segments"]}
@@ -265,6 +276,7 @@ class BaselineIndex:
         Без as_of в eval на вопрос «что решили к марту» утекает будущее и метрики завышены.
         query_vec — вектор вопроса из query_vector(), чтобы не эмбеддить вопрос второй раз.
         """
+        check_as_of(as_of)
         if not self.chunks:
             return []
         allowed = np.array([i for i, c in enumerate(self.chunks) if as_of is None or c["date"] <= as_of],

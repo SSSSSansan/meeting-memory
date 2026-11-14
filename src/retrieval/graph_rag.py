@@ -32,8 +32,14 @@ import networkx as nx
 
 from src.graph.queries import load_graph, project_meetings
 from src.resolve.entities import resolve_people, resolve_projects
-from src.retrieval.baseline import CONTEXT_K  # один бюджет контекста на все режимы
+from src.retrieval.baseline import CONTEXT_K, check_as_of  # один бюджет контекста и одна проверка as_of
 from src.utils.text import normalize
+
+
+def _not_after(date: Optional[str], as_of: Optional[str]) -> bool:
+    """Пункт или встреча не позже as_of. Без даты при заданном as_of — не проходит: «» <= любая дата."""
+    return as_of is None or bool(date) and date <= as_of
+
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 GRAPH_PATH = ROOT / "data" / "graph" / "graph.json"
@@ -249,12 +255,37 @@ def select_items(G: nx.MultiDiGraph, ranked: list[str], limit: Optional[int]) ->
     return out[:limit]
 
 
-def _rank(G: nx.MultiDiGraph, dist: dict[str, int]) -> list[str]:
-    """Важнее: ближе к сущностям вопроса, в конфликте, действующее или открытое, свежее."""
+def question_focus(question: str) -> Optional[str]:
+    """T2 (как менялось) | T4 (конфликты) | T5 (что не закрыто) | None — по тем же словам, что роутер auto, без LLM."""
+    from src.retrieval.router import _PATTERNS, _has  # локально: router сам импортирует этот модуль
+
+    text = normalize(question)
+    return next((t for t in ("T4", "T2", "T5") if _has(text, _PATTERNS[t])), None)
+
+
+def _rank(G: nx.MultiDiGraph, dist: dict[str, int], focus: Optional[str] = None) -> list[str]:
+    """Важнее: то, о чём спрашивают (focus), затем ближе к сущностям вопроса, в конфликте, действующее или
+    открытое, свежее.
+
+    Без focus на «как менялся срок» конфликты и действующие пункты обгоняли заменённые решения, и в маленький
+    бюджет hybrid цепочка замен не попадала: на q_05 графовая часть покрывала 1 встречу-источник из 4.
+    """
+    pool = set(dist)
+
+    def asked(n: str) -> bool:
+        d = G.nodes[n]
+        if focus == "T2":
+            return len(_chain(G, n, pool)) > 1
+        if focus == "T4":
+            return bool(d.get("in_conflict"))
+        if focus == "T5":
+            return d["type"] == "OpenQuestion" or (d["type"] == "Task" and d.get("status") == "open")
+        return True
+
     def key(n: str) -> tuple:
         d = G.nodes[n]
         current = d.get("status") in ("active", "open") or d["type"] == "OpenQuestion"
-        return (dist[n], not d.get("in_conflict"), not current, _neg(d.get("date", "")), n)
+        return (not asked(n), dist[n], not d.get("in_conflict"), not current, _neg(d.get("date", "")), n)
     return sorted(dist, key=key)
 
 
@@ -339,6 +370,7 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
     """
     if depth < 1:
         raise ValueError("depth должен быть ≥ 1")
+    check_as_of(as_of)
     if G is None:
         G, aliases = get_graph(), get_aliases() if aliases is None else aliases
     seeds = find_entities(G, question, aliases)
@@ -349,11 +381,11 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
 
     fallback = not seeds
     if fallback:
-        items = [n for n in _fallback_items(G, len(G)) if as_of is None or G.nodes[n].get("date", "") <= as_of]
+        items = [n for n in _fallback_items(G, len(G)) if _not_after(G.nodes[n].get("date"), as_of)]
         items = items[:FALLBACK_MAX_ITEMS]
         dist = {n: i for i, n in enumerate(items)}  # порядок важности _fallback_items
     else:
-        items = [n for n in found if as_of is None or G.nodes[n].get("date", "") <= as_of]
+        items = [n for n in found if _not_after(G.nodes[n].get("date"), as_of)]
         dist = {n: found[n] for n in items}
 
     n_last = last_n_meetings(question)
@@ -362,15 +394,15 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
         if projects:
             allowed = {m["meeting_id"] for p in projects
                        for m in [m for m in project_meetings(G, p)
-                                 if as_of is None or m.get("date", "") <= as_of][-n_last:]}
+                                 if _not_after(m.get("date"), as_of)][-n_last:]}
         else:
             meetings = sorted((d.get("date", ""), d["meeting_id"]) for _, d in G.nodes(data=True)
-                              if d.get("type") == "Meeting" and (as_of is None or d.get("date", "") <= as_of))
+                              if d.get("type") == "Meeting" and _not_after(d.get("date"), as_of))
             allowed = {mid for _, mid in meetings[-n_last:]}
         items = [n for n in items if G.nodes[n].get("meeting_id") in allowed]
 
     n_found = len(items)
-    items = select_items(G, _rank(G, {n: dist[n] for n in items}), max_items)
+    items = select_items(G, _rank(G, {n: dist[n] for n in items}, question_focus(question)), max_items)
     items = sorted(items, key=lambda n: (G.nodes[n].get("date", ""), G.nodes[n].get("ts", ""), n))
     return {"entities": seeds, "items": items, "n_found": n_found, "last_meetings": n_last, "fallback": fallback,
             "context": format_context(G, items)}
