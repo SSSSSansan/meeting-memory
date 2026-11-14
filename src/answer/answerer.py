@@ -4,6 +4,8 @@
     python -m src.answer.answerer "Как менялся срок?" --mode graph
     python -m src.answer.answerer "Как менялся срок?" --mode hybrid
     python -m src.answer.answerer "Как менялся срок?" --mode auto   # ветку выбирает src.retrieval.router
+    python -m src.answer.answerer "Когда релиз?" --mode bm25        # контроль: поиск по словам (A5)
+    python -m src.answer.answerer "Когда релиз?" --mode longctx     # контроль: все встречи до as_of (A5)
 
 Возвращает src.schemas.Answer — единый формат 4.6 для всех веток:
     answer(question, mode="baseline")   — поиск по чанкам → контекст → LLM
@@ -32,8 +34,10 @@ from typing import Optional
 from src.answer.prompts import SYSTEM_PROMPT, retry_prompt, user_prompt
 from src.llm_client import complete
 from src.retrieval.baseline import CONTEXT_K, ROOT, BaselineIndex, load_transcripts
+from src.retrieval.bm25 import bm25_search
 from src.retrieval.graph_rag import get_graph, retrieve_subgraph
 from src.retrieval.hybrid import retrieve_hybrid
+from src.retrieval.longctx import build_longctx
 from src.retrieval.router import route
 from src.schemas import Answer, Citation, Usage
 from src.utils.text import normalize
@@ -227,7 +231,7 @@ def _graph_meetings(G, items: list[str]) -> list[str]:
 def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
            index: Optional[BaselineIndex] = None, stats: Optional[AnswerStats] = None,
            depth: int = 2, graph=None, as_of: Optional[str] = None) -> Answer:
-    """mode: baseline | graph | hybrid | auto (выбирает src.retrieval.router).
+    """mode: baseline | graph | hybrid | auto (выбирает src.retrieval.router); контроли A5: bm25 | longctx.
 
     k — сколько чанков берёт baseline; depth и graph — параметры graph-ветки (и графовой части hybrid).
     as_of — ISO-дата вопроса: обе ветки видят только встречи не позже неё.
@@ -261,8 +265,21 @@ def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
         retrieved = h["retrieved_meetings"]
         parts = {"graph_items": len(h["graph_items"]), "backfill_chunks": h["n_backfill"],
                  "vector_chunks": h["n_vector"]}
+    elif mode == "bm25":
+        # контроль A5: те же чанки и тот же k, что у baseline, но поиск по словам, без эмбеддингов
+        hits = bm25_search(index or default_index(), question, k=k, as_of=as_of)
+        context = format_context(hits)
+        retrieved = list(dict.fromkeys(h["meeting_id"] for h in hits))
+    elif mode == "longctx":
+        # контроль A5: без поиска, все встречи до as_of; k не применяется, переполнение окна — ошибка
+        lc = build_longctx(index or default_index(), as_of=as_of,
+                           prompt_overhead=SYSTEM_PROMPT + user_prompt(question, ""))
+        context, retrieved = lc["context"], lc["meetings"]
+        parts = {"meetings": len(lc["meetings"]), "context_tokens": lc["context_tokens"]}
+        print(f"longctx: контекст ≈{lc['context_tokens']} токенов, встреч {len(lc['meetings'])} "
+              f"(лимит модели {lc['limit_tokens']})", file=sys.stderr)
     else:
-        raise ValueError(f"mode={mode!r}: допустимо baseline | graph | hybrid | auto")
+        raise ValueError(f"mode={mode!r}: допустимо baseline | graph | hybrid | bm25 | longctx | auto")
 
     stats = stats or AnswerStats(mode=mode, question=question)
     stats.mode, stats.requested_mode = mode, requested
@@ -288,7 +305,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("question")
     ap.add_argument("-k", type=int, default=CONTEXT_K)
-    ap.add_argument("--mode", choices=["baseline", "graph", "hybrid", "auto"], default="baseline")
+    ap.add_argument("--mode", choices=["baseline", "graph", "hybrid", "bm25", "longctx", "auto"], default="baseline")
     ap.add_argument("--depth", type=int, default=2)
     ap.add_argument("--as-of", default=None, help="ISO-дата: только встречи не позже неё")
     a = ap.parse_args()
