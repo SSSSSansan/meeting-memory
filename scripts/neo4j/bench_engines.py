@@ -34,6 +34,13 @@ from src.graph.queries import load_graph  # noqa: E402
 
 Q_DECISION, Q_PERSON, Q_ASOF = "d_m001_01", "person:Николай", "2026-10-26"
 WARM_RUNS = 20
+META = {
+    "warm_runs": WARM_RUNS, "statistic": "median по прогретым запускам; cold = один первый запуск",
+    "neo4j_indexes": ["Node(nid)", "Decision(project)", "Node(type, status)"],
+    "neo4j_includes_network": "время Neo4j включает запрос по bolt (минимум около 2-4 мс); NetworkX работает в памяти",
+    "cold_caveat": "холодным по-настоящему считать только первый масштаб (×1): дальше JVM и кэш уже прогреты",
+    "neo4j_session": "новая сессия драйвера на каждый запрос",
+}
 
 
 # ---------- NetworkX: полный перебор (как в queries.py) ----------
@@ -166,6 +173,9 @@ def neo4j_load(driver, G: nx.MultiDiGraph) -> float:
         s.run("MATCH (n) DETACH DELETE n")
         s.run("CREATE INDEX node_nid IF NOT EXISTS FOR (n:Node) ON (n.nid)")
         s.run("CREATE INDEX dec_project IF NOT EXISTS FOR (n:Decision) ON (n.project)")
+        # S4 ищет Task со status='open': без этого индекса Neo4j перебирает все узлы (так был сделан первый замер)
+        s.run("CREATE INDEX node_type_status IF NOT EXISTS FOR (n:Node) ON (n.type, n.status)")
+        s.run("CALL db.awaitIndexes(60)").consume()
         for i in range(0, len(nodes), 5000):
             s.run("UNWIND $rows AS r CREATE (n:Node {nid:r.nid, type:r.type, project:r.project, date:r.date, "
             "status:r.status, due:r.due})",
@@ -195,7 +205,8 @@ def main() -> int:
         driver = GraphDatabase.driver(a.uri, auth=(user, pwd))
         driver.verify_connectivity()
 
-    report = {"scales": {}, "loc": {}, "notes": __doc__.split("Честная оговорка:")[1].split("Результат")[0].strip()}
+    notes = __doc__.split("Честная оговорка:")[1].split("Результат")[0].strip()
+    report = {"meta": META, "scales": {}, "loc": {}, "notes": notes}
     report["loc"] = {s: {"python_scan": loc(PY_SRC[s]), "python_index": loc(PYX_SRC[s]), "cypher": loc(CYPHER[s][0])}
                      for s in CYPHER}
     for k in a.scales:
@@ -209,7 +220,8 @@ def main() -> int:
         if driver:
             entry["neo4j_load_ms"] = round(neo4j_load(driver, G), 1)
         for s in CYPHER:
-            row = {"networkx": measure(lambda s=s: PY[s](G, ix)), "networkx_index": measure(lambda s=s: PYX[s](ix))}
+            row = {"networkx": measure(lambda s=s: PY[s](G, ix)),
+                   "networkx_index": measure(lambda s=s: PYX[s](ix))}
             if driver:
                 cy, params = CYPHER[s]
 
