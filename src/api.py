@@ -262,13 +262,17 @@ GRAPH_LABELS = {B_GRAPH_PATH: "полный граф B (data/graph_raw)",
                 SAMPLE_GRAPH_PATH: "заглушка: старый сюжет Атлас/Горизонт (data/sample)"}
 
 
+def plural(n: int, one: str, few: str, many: str) -> str:
+    """«1 встреча», «2 встречи», «5 встреч»."""
+    word = one if n % 10 == 1 and n % 100 != 11 else (few if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14 else many)
+    return f"{n} {word}"
+
+
 def _meetings_label(meetings: list[str]) -> str:
-    n = len(meetings)
-    if not n:
+    if not meetings:
         return "встреч нет"
-    word = "встреча" if n % 10 == 1 and n % 100 != 11 else (
-        "встречи" if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14 else "встреч")
-    return f"{n} {word}, {meetings[0]}–{meetings[-1]}" if n > 1 else f"{n} {word}, {meetings[0]}"
+    head = plural(len(meetings), "встреча", "встречи", "встреч")
+    return f"{head}, {meetings[0]}–{meetings[-1]}" if len(meetings) > 1 else f"{head}, {meetings[0]}"
 
 
 def available_graphs() -> list[dict]:
@@ -481,6 +485,7 @@ SOURCE_METRICS = {"citation_recall": "полнота по источникам",
 EXTRACTION_QUALITY = "extraction_quality.json"   # B: {"hallucination_rate", "n_meetings"}
 INDEXING_COST = "indexing_cost.json"             # B: {"full_corpus": {"meetings", "cost_usd"}}
 JUDGE_AGREEMENT = "judge_agreement.json"         # A: {"accuracy", "kappa", "n"}
+JUDGE_FACTS_AGREEMENT_MD = "judge_facts_labeling/agreement.md"  # A: отчёт калибровки, если json нет
 
 
 def _read_json(path: Path) -> Optional[dict]:
@@ -494,25 +499,61 @@ def _read_json(path: Path) -> Optional[dict]:
 def _run_info(path: Path, data: dict) -> dict:
     cfg = data.get("config") or {}
     fixture = bool(cfg.get("fixture"))
-    label = f"{data.get('run_id', path.stem)} · {cfg.get('split', '?')} · {cfg.get('n_questions', '?')} вопросов"
+    n = cfg.get("n_questions")
+    questions = plural(n, "вопрос", "вопроса", "вопросов") if isinstance(n, int) else "? вопросов"
+    label = f"{data.get('run_id', path.stem)} · {cfg.get('split', '?')} · {', '.join(_run_modes(data))} · {questions}"
     return {"path": str(path), "run_id": data.get("run_id", path.stem), "timestamp": data.get("timestamp") or "",
             "split": cfg.get("split"), "modes": cfg.get("modes") or [], "fixture": fixture,
             "label": label + (" · ФИКСТУРА, числа выдуманы" if fixture else "")}
 
 
-def eval_runs(results_dir: Optional[Path] = None) -> list[dict]:
-    """Прогоны eval из results/, свежие первыми. Если настоящих нет — фикстура роли A с пометкой."""
-    runs = []
+MODE_ORDER = ("baseline", "graph", "hybrid", "bm25", "longctx")
+# Что должно совпадать у прогонов, чтобы их строки можно было ставить в одну таблицу.
+_SAME_IN_RUNS = {"model": "модель ответа", "embed_model": "эмбеддинги", "judge_model": "судья",
+                 "JUDGE_FACTS_PROMPT_VERSION": "версия судьи", "judge_facts": "судья по фактам", "as_of": "as_of"}
+
+
+def _ordered(modes) -> list[str]:
+    return sorted(set(modes), key=lambda m: (MODE_ORDER.index(m) if m in MODE_ORDER else len(MODE_ORDER), m))
+
+
+def _real_results(results_dir: Optional[Path]) -> list[tuple[Path, dict]]:
+    """Настоящие прогоны (не фикстура) из results/, свежие первыми."""
+    out = []
     for p in Path(results_dir or RESULTS_DIR).glob("eval_*.json"):
         data = _read_json(p)
-        if data and "aggregate" in data:
-            runs.append(_run_info(p, data))
-    runs.sort(key=lambda r: (r["timestamp"], r["run_id"]), reverse=True)
+        if data and "aggregate" in data and not (data.get("config") or {}).get("fixture"):
+            out.append((p, data))
+    out.sort(key=lambda pd: (pd[1].get("timestamp") or "", pd[1].get("run_id") or ""), reverse=True)
+    return out
+
+
+def _run_modes(data: dict) -> list[str]:
+    return (data.get("config") or {}).get("modes") or list(data["aggregate"].get("by_mode_type") or {})
+
+
+def eval_runs(results_dir: Optional[Path] = None) -> list[dict]:
+    """Прогоны eval из results/, свежие первыми; если режимы одного split лежат в разных файлах — первой идёт
+    сводная по ним (combined_eval). Если настоящих прогонов нет — фикстура роли A с пометкой."""
+    real = _real_results(results_dir)
+    runs = [_run_info(p, d) for p, d in real]
+    by_split: dict[str, list[dict]] = {}
+    for _, d in real:
+        by_split.setdefault((d.get("config") or {}).get("split") or "?", []).append(d)
+    combined = []
+    for split, items in by_split.items():
+        modes = _ordered(m for d in items for m in _run_modes(d))
+        # нужна, только если ни один файл не содержит всех режимов split'а
+        if len(modes) > 1 and not any(set(modes) <= set(_run_modes(d)) for d in items):
+            combined.append({"path": None, "combined": split, "run_id": f"combined_{split}",
+                             "timestamp": items[0].get("timestamp") or "", "split": split, "modes": modes,
+                             "fixture": False,
+                             "label": f"сводная {split}: {', '.join(modes)} — последний прогон каждого режима"})
     if not runs and EVAL_FIXTURE.exists():
         data = _read_json(EVAL_FIXTURE)
         if data:
             runs.append(_run_info(EVAL_FIXTURE, data))
-    return runs
+    return combined + runs
 
 
 def load_eval(path: str | Path) -> dict:
@@ -520,6 +561,59 @@ def load_eval(path: str | Path) -> dict:
     if data is None or "aggregate" not in data:
         raise ValueError(f"{path}: не json-результат eval (нет aggregate)")
     return data
+
+
+def load_run(run: dict, results_dir: Optional[Path] = None) -> dict:
+    """Результат для вкладки по записи из eval_runs(): файл прогона или сводная по split."""
+    return combined_eval(run["combined"], results_dir) if run.get("combined") else load_eval(run["path"])
+
+
+def combined_eval(split: str, results_dir: Optional[Path] = None) -> dict:
+    """Сводная по прогонам одного split: на каждый режим — его последний прогон, ячейки aggregate как есть.
+
+    Ничего не пересчитывается: среднее и интервал каждого режима — из его файла. Разность graph − baseline
+    (парный бутстрап) есть, только если оба режима из одного прогона: пары вопросов из разных файлов харнес не
+    сравнивал. warnings — чем прогоны различаются (набор вопросов, модель, судья, as_of): такие строки ставить
+    рядом можно, но сравнивать осторожно.
+    """
+    source: dict[str, dict] = {}
+    for _, d in _real_results(results_dir):
+        if ((d.get("config") or {}).get("split") or "?") == split:
+            for m in _run_modes(d):
+                source.setdefault(m, d)
+    if not source:
+        raise ValueError(f"нет прогонов split={split}")
+    modes = _ordered(source)
+
+    def part(key: str) -> dict:
+        return {m: (source[m]["aggregate"].get(key) or {}).get(m, {}) for m in modes}
+
+    same = "graph" in source and "baseline" in source and source["graph"] is source["baseline"]
+    per_question = [r for m in modes for r in source[m].get("per_question") or [] if r.get("mode") == m]
+    qsets = {m: {r["question_id"] for r in per_question if r.get("mode") == m} for m in modes}
+    full = max(qsets.values(), key=len)
+    warnings = [f"{m}: {len(qs)} вопросов из {len(full)} — среднее посчитано по другому набору, сравнивать осторожно"
+                for m, qs in qsets.items() if qs != full]
+    cfgs = {m: source[m].get("config") or {} for m in modes}
+    for key, title in _SAME_IN_RUNS.items():
+        values = {str(c.get(key)) for c in cfgs.values()}
+        if len(values) > 1:
+            warnings.append(f"разные {title}: " + "; ".join(f"{m} — {cfgs[m].get(key)}" for m in modes))
+    if "graph" in source and "baseline" in source and not same:
+        warnings.append("baseline и graph из разных прогонов: разность graph − baseline с интервалом не показывается")
+
+    first = cfgs[modes[0]]
+    config = {**{k: (first.get(k) if len({str(c.get(k)) for c in cfgs.values()}) == 1 else "разные")
+                 for k in _SAME_IN_RUNS},
+              "modes": modes, "split": split, "n_questions": len(full), "combined": True,
+              "sources": {m: source[m].get("run_id") for m in modes},
+              "commit": ", ".join(sorted({str(c.get("commit")) for c in cfgs.values()}))}
+    newest = max((d.get("timestamp") or "") for d in source.values())
+    return {"run_id": f"сводная {split}", "timestamp": newest, "config": config, "per_question": per_question,
+            "aggregate": {"by_mode_type": part("by_mode_type"), "by_mode_lang": part("by_mode_lang"),
+                          "abstention": part("abstention"),
+                          "paired": (source["graph"]["aggregate"].get("paired") or {}) if same else {}},
+            "warnings": warnings}
 
 
 def fmt_interval(cell: Optional[dict], spec: str = ".2f") -> str:
@@ -625,12 +719,36 @@ def abstention_table(result: dict) -> list[dict]:
             for k, title in titles.items()]
 
 
+# строка таблицы: | **в целом** | строк | совпало | % совпадения | kappa |
+_AGREEMENT_TOTAL = re.compile(r"\|\s*\*\*в целом\*\*\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"
+                              r"\s*([\d.,]+)\s*%\s*\|\s*(-?[\d.,]+)\s*\|")
+
+
+def judge_agreement(results_dir: Optional[Path] = None) -> dict:
+    """Согласие судьи с человеком: results/judge_agreement.json, иначе строка «в целом» из отчёта калибровки A
+    (results/judge_facts_labeling/agreement.md, scripts/score_facts_calibration.py). {} — калибровки нет."""
+    folder = Path(results_dir or RESULTS_DIR)
+    data = _read_json(folder / JUDGE_AGREEMENT)
+    if data:
+        return {**data, "source": f"results/{JUDGE_AGREEMENT}"}
+    md = folder / JUDGE_FACTS_AGREEMENT_MD
+    try:
+        m = _AGREEMENT_TOTAL.search(md.read_text(encoding="utf-8"))
+    except OSError:
+        return {}
+    if not m:
+        return {}
+    n, _, pct, kappa = m.groups()
+    return {"accuracy": float(pct.replace(",", ".")) / 100, "kappa": float(kappa.replace(",", ".")), "n": int(n),
+            "source": f"results/{JUDGE_FACTS_AGREEMENT_MD}"}
+
+
 def metric_cards(results_dir: Optional[Path] = None) -> list[dict]:
     """Плашки над таблицами: {title, value | None, hint}. None — файла ещё нет, в hint сказано, чей он."""
     folder = Path(results_dir or RESULTS_DIR)
     ext = _read_json(folder / EXTRACTION_QUALITY) or {}
     cost = (_read_json(folder / INDEXING_COST) or {}).get("full_corpus") or {}
-    judge = _read_json(folder / JUDGE_AGREEMENT) or {}
+    judge = judge_agreement(folder)
     hal, idx = ext.get("hallucination_rate"), cost.get("cost_usd")
     acc, kappa = judge.get("accuracy"), judge.get("kappa")
     return [
@@ -641,6 +759,7 @@ def metric_cards(results_dir: Optional[Path] = None) -> list[dict]:
          "hint": (f"{cost.get('meetings', '?')} встреч: извлечение и связи" if idx is not None
                   else f"нет results/{INDEXING_COST} (роль B, B8)")},
         {"title": "Судья совпадает с человеком", "value": None if acc is None else f"{acc:.0%}",
-         "hint": (f"каппа {kappa:.2f}, n={judge.get('n', '?')}" if kappa is not None
-                  else f"нет results/{JUDGE_AGREEMENT} (роль A, A8)")},
+         "hint": (f"каппа {kappa:.2f}, n={judge.get('n', '?')} решений «факт есть / нет» · {judge['source']}"
+                  if kappa is not None
+                  else f"нет results/{JUDGE_AGREEMENT} и results/{JUDGE_FACTS_AGREEMENT_MD} (роль A, A8)")},
     ]

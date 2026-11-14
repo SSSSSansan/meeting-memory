@@ -39,6 +39,100 @@ def _write(results: Path, name: str, data) -> None:
     (results / name).write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
 
+def _mode_run(run_id: str, timestamp: str, mode: str, n_questions=None, **config) -> dict:
+    """Прогон одного режима, как A запускает их по отдельности: baseline, bm25, longctx — разные файлы."""
+    data = _real_run(run_id, timestamp)
+    rows = [r for r in data["per_question"] if r["mode"] == "baseline"]
+    keep = sorted({r["question_id"] for r in rows})[:n_questions]
+    data["per_question"] = [{**r, "mode": mode} for r in rows if r["question_id"] in keep]
+    agg = data["aggregate"]
+    for key in ("by_mode_type", "by_mode_lang", "abstention"):
+        agg[key] = {mode: agg[key]["baseline"]}
+    agg["paired"], agg["paired_pairs"] = {}, {}
+    data["config"].update(modes=[mode], n_questions=len(keep), **config)
+    return data
+
+
+def _write_split_runs():
+    _write(api.RESULTS_DIR, "eval_a.json", _mode_run("a", "2026-11-14T09:35:00+05:00", "baseline"))
+    _write(api.RESULTS_DIR, "eval_b.json", _mode_run("b", "2026-11-14T10:53:00+05:00", "bm25"))
+    _write(api.RESULTS_DIR, "eval_c.json", _mode_run("c", "2026-11-14T11:00:00+05:00", "longctx", n_questions=5))
+
+
+def test_runs_split_by_mode_get_a_combined_view_first():
+    _write_split_runs()
+    runs = api.eval_runs()
+    assert runs[0]["combined"] == "dev" and runs[0]["modes"] == ["baseline", "bm25", "longctx"]
+    assert [r["run_id"] for r in runs[1:]] == ["c", "b", "a"]
+    assert "· bm25 ·" in runs[2]["label"] and runs[1]["label"].endswith("· longctx · 5 вопросов")
+    assert api.plural(34, "вопрос", "вопроса", "вопросов") == "34 вопроса"
+
+    combined = api.load_run(runs[0])
+    assert combined["config"]["sources"] == {"baseline": "a", "bm25": "b", "longctx": "c"}
+    assert [r["режим"] for r in api.quality_table(combined)["rows"]] == ["baseline", "bm25", "longctx"]
+    # ячейки — ровно из файла режима, без пересчёта
+    base = json.loads((api.RESULTS_DIR / "eval_a.json").read_text(encoding="utf-8"))
+    assert combined["aggregate"]["by_mode_type"]["baseline"] == base["aggregate"]["by_mode_type"]["baseline"]
+    assert {r["mode"] for r in combined["per_question"]} == {"baseline", "bm25", "longctx"}
+    assert any(w.startswith("longctx: 5 вопросов из") for w in combined["warnings"])
+
+
+def test_combined_takes_newest_run_per_mode_and_flags_config_differences():
+    _write_split_runs()
+    _write(api.RESULTS_DIR, "eval_a2.json",
+           _mode_run("a2", "2026-11-14T12:00:00+05:00", "baseline", model="gpt-4o-mini"))
+    combined = api.combined_eval("dev")
+    assert combined["config"]["sources"]["baseline"] == "a2"
+    assert combined["config"]["model"] == "разные"
+    assert any(w.startswith("разные модель ответа") for w in combined["warnings"])
+
+
+def test_paired_diff_only_when_graph_and_baseline_come_from_one_run():
+    _write(api.RESULTS_DIR, "eval_both.json", _real_run("both", "2026-11-14T09:00:00+05:00"))
+    _write(api.RESULTS_DIR, "eval_bm25.json", _mode_run("bm", "2026-11-14T10:00:00+05:00", "bm25"))
+    together = api.combined_eval("dev")
+    assert together["aggregate"]["paired"] and api.quality_table(together)["paired"]
+
+    _write(api.RESULTS_DIR, "eval_graph.json", _mode_run("g", "2026-11-14T11:00:00+05:00", "baseline"))
+    apart = api.combined_eval("dev")   # baseline теперь из другого файла, чем graph
+    assert apart["aggregate"]["paired"] == {}
+    assert any("разность graph − baseline" in w for w in apart["warnings"])
+
+
+def test_no_combined_view_when_one_run_has_all_modes():
+    _write(api.RESULTS_DIR, "eval_both.json", _real_run("both", "2026-11-14T09:00:00+05:00"))
+    _write(api.RESULTS_DIR, "eval_old.json", _mode_run("old", "2026-11-13T09:00:00+05:00", "baseline"))
+    assert not any(r.get("combined") for r in api.eval_runs())
+
+
+AGREEMENT_MD = """# Согласие ручной разметки фактов с судьёй judge-facts-v1
+
+| Факты | Строк | Совпало | % совпадения | Cohen's kappa |
+|---|---|---|---|---|
+| required (факт есть в ответе) | 62 | 59 | 95.2% | 0.901 |
+| **в целом** | 121 | 115 | 95.0% | 0.870 |
+"""
+
+
+def test_judge_card_reads_role_a_calibration_report_then_prefers_json():
+    (api.RESULTS_DIR / "judge_facts_labeling").mkdir()
+    (api.RESULTS_DIR / api.JUDGE_FACTS_AGREEMENT_MD).write_text(AGREEMENT_MD, encoding="utf-8")
+    assert api.judge_agreement() == {"accuracy": 0.95, "kappa": 0.87, "n": 121,
+                                     "source": f"results/{api.JUDGE_FACTS_AGREEMENT_MD}"}
+    card = api.metric_cards()[2]
+    assert card["value"] == "95%" and "каппа 0.87, n=121" in card["hint"]
+    _write(api.RESULTS_DIR, api.JUDGE_AGREEMENT, {"accuracy": 0.8, "kappa": 0.6, "n": 30})
+    assert api.metric_cards()[2]["value"] == "80%"
+
+
+def test_tab_renders_combined_view_with_warnings():
+    _write_split_runs()
+    at = AppTest.from_file(APP, default_timeout=30).run()
+    assert not at.exception
+    assert any("longctx: 5 вопросов из" in w.value for w in at.warning)
+    assert any(c.value.startswith("Источники: baseline — прогон a") for c in at.caption)
+
+
 def test_without_real_runs_shows_fixture_marked_as_fake():
     runs = api.eval_runs()
     assert len(runs) == 1 and runs[0]["fixture"] and "ФИКСТУРА" in runs[0]["label"]
