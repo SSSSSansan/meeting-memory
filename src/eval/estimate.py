@@ -38,6 +38,7 @@ class Estimate:
     completion_tokens: int = 0
     embed_tokens: int = 0
     notes: list[str] = field(default_factory=list)
+    longctx_tokens: list[int] = field(default_factory=list)   # токены контекста longctx на каждый ответ (один повтор)
 
     @staticmethod
     def priced() -> bool:
@@ -65,6 +66,16 @@ class Estimate:
 
 def _chunks_until(raw_dir: Path, as_of: str) -> list[dict]:
     return [c for t in systems.load_transcripts(raw_dir, as_of) for c in chunk_transcript(t)]
+
+
+def _longctx_text(raw_dir: Path, as_of: str) -> str:
+    """Контекст longctx так, как его соберёт система: из чанков встреч до as_of (src.retrieval.longctx)."""
+    from src.retrieval.baseline import BaselineIndex
+    from src.retrieval.longctx import meeting_blocks
+
+    index = BaselineIndex(projects=[])
+    index.chunks = _chunks_until(raw_dir, as_of)
+    return "\n\n".join(text for _, text in meeting_blocks(index, as_of))
 
 
 def reindex_note(raw_dir: Path) -> str:
@@ -102,16 +113,31 @@ def estimate_run(plan: dict[tuple[str, str], list[str]], *, raw_dir: Path, k: in
             if not chunks:
                 est.notes.append(f"{mode} до {as_of_date}: нет встреч, вызовов 0")
                 continue
-            avg = sum(len(c["text"]) for c in chunks) // len(chunks)
-            n_chunks = HYBRID_CHUNKS if mode == "hybrid" else k
-            est.embed_calls += n * repeats  # индекс готов: только вектор вопроса на ответ и повтор
-            est.embed_tokens += repeats * sum(len(q) for q in questions) // CHARS_PER_TOKEN
-            ctx_chars = [c + n_chunks * avg + 150 for c in ctx_chars]
+            if mode == "longctx":
+                # контроль A5: все встречи до as_of целиком, без поиска и без эмбеддингов
+                full = len(_longctx_text(raw_dir, as_of_date))
+                ctx_chars = [full] * n
+                est.longctx_tokens += [full // CHARS_PER_TOKEN] * n
+            else:
+                avg = sum(len(c["text"]) for c in chunks) // len(chunks)
+                n_chunks = HYBRID_CHUNKS if mode == "hybrid" else k
+                if mode != "bm25":  # bm25 ищет по словам: вектор вопроса не нужен
+                    est.embed_calls += n * repeats  # индекс готов: только вектор вопроса на ответ и повтор
+                    est.embed_tokens += repeats * sum(len(q) for q in questions) // CHARS_PER_TOKEN
+                ctx_chars = [c + n_chunks * avg + 150 for c in ctx_chars]
         est.chat_calls_min += n * repeats
         est.chat_calls_max += 2 * n * repeats
         chars_in = sum(len(SYSTEM_PROMPT) + len(q) + c for q, c in zip(questions, ctx_chars))
         est.prompt_tokens += repeats * chars_in // CHARS_PER_TOKEN
         est.completion_tokens += repeats * n * ANSWER_TOKENS
+    if est.longctx_tokens:
+        xs = est.longctx_tokens
+        est.notes.append(f"longctx: контекст ≈{sum(xs) // len(xs)} токенов в среднем (min {min(xs)}, max {max(xs)}) "
+                         f"на {len(xs)} ответов; CONTEXT_K не применяется (контроль, бюджет контекста не ограничен)")
+        from src.retrieval.longctx import ANSWER_RESERVE_TOKENS, model_limit_tokens
+        if max(xs) + ANSWER_RESERVE_TOKENS > model_limit_tokens():
+            est.notes.append(f"longctx: ВНИМАНИЕ — max контекст больше окна модели ({model_limit_tokens()}): "
+                             "такие вопросы упадут с LongContextTooLarge, контекст не обрезается")
     if repeats > 1:
         est.notes.append(f"повторов: {repeats}; ответы повторов идут мимо кэша и оплачиваются все "
                          f"(оценка уже ×{repeats})")

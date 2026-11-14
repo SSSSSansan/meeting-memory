@@ -13,6 +13,10 @@ api.ask(question, mode, as_of=<as_of_date>) — встречи с датой н�
 графовой частью-заглушкой помечается «graph part: stub» и в итоговую таблицу не входит. В сводке — проверка симметрии
 (max и среднее элементов контекста по режимам, предупреждение при > CONTEXT_K) и предупреждения по retrieved_meetings.
 --as-of m_008 оставляет только вопросы с этим as_of (по умолчанию — все).
+Контрольные режимы A5 — только явно: --mode bm25, --mode longctx или список через запятую (--mode baseline,graph,bm25);
+all их не включает. bm25 (поиск по словам по тем же чанкам, тот же CONTEXT_K) входит в итоговую таблицу, longctx (все
+встречи до as_of, CONTEXT_K не применяется) — нет; в симметрии longctx помечен «контроль, бюджет контекста
+не ограничен».
 
 Выход: results/eval_<дата>.csv (по вопросам) и results/summary_<дата>.md (по типам и по языку, режимы рядом,
 dev и test отдельно; вопросы as_of m_008 — отдельной секцией, в основные таблицы не входят). Если задан --as-of или
@@ -93,8 +97,10 @@ MAX_REPEATS = 5
 HISTORICAL_AS_OF = "m_008"      # вопросы на состояние m_008 (q_16, questions_m008.json) — отдельная секция
 ANSWER_TEMPERATURE = 0.0        # src/answer/answerer.py::generate зовёт complete(..., temperature=0.0)
 MODES = {"baseline": ["baseline"], "graph": ["graph"], "hybrid": ["hybrid"], "both": ["baseline", "graph"],
-         "all": ["baseline", "graph", "hybrid"]}
+         "all": ["baseline", "graph", "hybrid"], "bm25": ["bm25"], "longctx": ["longctx"]}
 FINAL_MODES = ("baseline", "graph")     # итоговая таблица: baseline и graph рядом
+FINAL_EXTRA_MODES = ("bm25",)           # контроль A5: в итоговую таблицу, если запускался; longctx — нет
+UNBOUNDED_NOTE = "контроль, бюджет контекста не ограничен"
 TEST_RUNS_FILE = "test_runs.jsonl"      # журнал запусков на test, лежит в RESULTS
 TEST_LOCKED_CODE = 4
 TEST_UNLOCK_WARNING = "Запуск на test: после него код, промпты и настройки не меняются"
@@ -152,6 +158,7 @@ class Row:
     context_graph_items: Optional[int] = None   # пунктов графа в контексте (graph, hybrid)
     context_elements: Optional[int] = None      # сумма двух выше; сравнивается с CONTEXT_K (проверка симметрии)
     mode_flag: str = ""                         # пометка режима: у hybrid «graph part: stub»
+    context_meetings: Optional[int] = None      # longctx: встреч в контексте (элементы не считаются, бюджета нет)
     # Только для json и --resume, в csv не попадают:
     context_tokens_source: str = ""             # какое поле usage использовано
     citations: list = field(default_factory=list)               # [{meeting_id, ts, quote}]
@@ -310,6 +317,7 @@ def run_one(q: Question, system: systems.System, *, gold: dict, texts: MeetingTe
     if ctx is not None:
         row.context_chunks, row.context_graph_items = ctx.get("chunks"), ctx.get("graph_items")
         row.context_elements = systems.context_elements(ctx)
+        row.context_meetings = ctx.get("meetings")
     # retrieved_meetings: встречи, попавшие в контекст до генерации (Answer 4.6, аддитивно); None — «не измерено».
     retrieved = getattr(answer, "retrieved_meetings", None) if answer else None
     m = score_answer(answer=row.answer, citations=citations, answerable=q.answerable,
@@ -591,6 +599,14 @@ def symmetry_stats(rows: list[Row], modes: list[str], context_k: int = CONTEXT_K
     return out
 
 
+def unbounded_stats(rows: list[Row], mode: str) -> dict:
+    """longctx: сколько встреч и токенов было в контексте (элементы не считаются — бюджета нет)."""
+    real = [r for r in rows if r.mode == mode and r.status != "stub"]
+    ms = [r.context_meetings for r in real if r.context_meetings is not None]
+    ts = [r.context_tokens for r in real if r.context_tokens is not None]
+    return {"max": max(ms) if ms else None, "tokens": round(sum(ts) / len(ts)) if ts else None, "n": len(real)}
+
+
 def symmetry_lines(rows: list[Row], modes: list[str], context_k: int = CONTEXT_K) -> list[str]:
     """Проверка симметрии: сколько контекста получает каждый режим. Больше CONTEXT_K — предупреждение."""
     stats = symmetry_stats(rows, modes, context_k)
@@ -601,15 +617,24 @@ def symmetry_lines(rows: list[Row], modes: list[str], context_k: int = CONTEXT_K
              "| Режим | max | среднее | ответов | больше CONTEXT_K |", "|---|---|---|---|---|"]
     for m in modes:
         st = stats[m]
+        if m in systems.UNBOUNDED_MODES:
+            ub = unbounded_stats(rows, m)
+            lines.append(f"| {m} ({UNBOUNDED_NOTE}) | встреч max {'—' if ub['max'] is None else ub['max']} | "
+                         f"токенов ≈{'—' if ub['tokens'] is None else ub['tokens']} | {ub['n']} | — |")
+            continue
         lines.append(f"| {mode_title(m, flags)} | {'—' if st['max'] is None else st['max']} | "
                      f"{'—' if st['mean'] is None else format(st['mean'], '.1f')} | {st['n']} | {st['over_k']} |")
-    over = [m for m in modes if stats[m]["max"] is not None and stats[m]["max"] > context_k]
+    over = [m for m in modes if m not in systems.UNBOUNDED_MODES
+            and stats[m]["max"] is not None and stats[m]["max"] > context_k]
     if over:
         lines += ["", "> **Предупреждение: контекст больше CONTEXT_K у режимов " + ", ".join(
             f"{m} (max {stats[m]['max']}, среднее {stats[m]['mean']:.1f})" for m in over)
             + ". Режимы получают разный объём контекста — разница в качестве может объясняться им, а не "
               "архитектурой.**"]
-    if any(stats[m]["n"] == 0 for m in modes):
+    if any(m in systems.UNBOUNDED_MODES for m in modes):
+        lines += ["", f"_longctx — {UNBOUNDED_NOTE}: в контексте все встречи до as_of, CONTEXT_K не применяется; "
+                      "вместо элементов — встречи и средние токены промпта ответа (usage.prompt_tokens)._"]
+    if any(stats[m]["n"] == 0 for m in modes if m not in systems.UNBOUNDED_MODES):
         lines += ["", "_«—» — размер контекста не измерен (заглушка или ответов нет)._"]
     return lines
 
@@ -776,9 +801,10 @@ def render_final_table(rows: list[Row], modes: list[str], *, date: str, k: int, 
     judge_on = judge is not None
     lat = latency_title(part)
     columns = FINAL_METRICS + [("lat", lat)]
+    cols = table_modes(modes)
     head = ["Тип", "n"]
     for _, title in columns:
-        head += [f"{title}: baseline", f"{title}: graph"]
+        head += [f"{title}: {m}" for m in cols]
     lines = [f"# Итоговая таблица {date} (split=test)", ""] + _meta_lines(part, modes, k=k, depth=depth, judge=judge)
     if os.environ.get("LLM_BACKEND", "stub") == "stub":
         lines += ["", "> **LLM_BACKEND=stub**: цифры ничего не значат, таблица проверяет только работу harness."]
@@ -788,9 +814,16 @@ def render_final_table(rows: list[Row], modes: list[str], *, date: str, k: int, 
         elif mode not in modes:
             lines += ["", f"> **{mode}**: в этом прогоне не запускался."]
     flags = mode_flags(rows)
-    for mode in (m for m in modes if m not in FINAL_MODES):
-        lines += ["", f"> **{mode}**: в таблицу не входит" + (f" ({flags[mode]}, не настоящий режим)." if mode in flags
-                                                              else " (таблица — baseline против graph).")]
+    for mode in (m for m in modes if m in FINAL_EXTRA_MODES):
+        lines += ["", f"> **{mode}**: контрольный режим A5 (поиск по словам по тем же чанкам, CONTEXT_K)."]
+    for mode in (m for m in modes if m not in cols):
+        if mode in flags:
+            why = f" ({flags[mode]}, не настоящий режим)."
+        elif mode in systems.UNBOUNDED_MODES:
+            why = f" ({UNBOUNDED_NOTE})."
+        else:
+            why = " (таблица — baseline против graph)."
+        lines += ["", f"> **{mode}**: в таблицу не входит" + why]
     lines += ["", "| " + " | ".join(head) + " |", "|" + "|".join(["---"] * len(head)) + "|"]
     for qtype in TYPES:
         group = [r for r in part if r.type == qtype]
@@ -798,9 +831,9 @@ def render_final_table(rows: list[Row], modes: list[str], *, date: str, k: int, 
         if not n_q:
             continue
         per_mode = {m: (agg_repeats([r for r in group if r.mode == m], qtype, judge_on) if m in modes else None)
-                    for m in FINAL_MODES}
+                    for m in cols}
         cells = ["не запускался" if per_mode[m] is None else fmt_stat(per_mode[m][key], SPECS.get(key, ".2f"))
-                 for key, _ in columns for m in FINAL_MODES]
+                 for key, _ in columns for m in cols]
         lines.append("| " + " | ".join([qtype, str(n_q)] + cells) + " |")
     real = [r for r in part if r.status != "stub"]
     n_cached = sum(1 for r in real if r.from_cache is True)
@@ -906,6 +939,27 @@ def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], bac
                   "при ретраях может не хватить.")
 
 
+def mode_arg(value: str) -> str:
+    """Имя из MODES или список одиночных режимов через запятую: «baseline,graph,bm25»."""
+    if value in MODES:
+        return value
+    parts = [p.strip() for p in value.split(",") if p.strip()]
+    bad = [p for p in parts if p not in systems.MODES]
+    if not parts or bad or len(set(parts)) != len(parts):
+        raise argparse.ArgumentTypeError(
+            f"{value!r}: нужен один из {', '.join(MODES)} или список без повторов из {', '.join(systems.MODES)}")
+    return ",".join(parts)
+
+
+def modes_of(mode: str) -> list[str]:
+    return list(MODES[mode]) if mode in MODES else mode.split(",")
+
+
+def table_modes(modes: list[str]) -> tuple[str, ...]:
+    """Столбцы итоговой таблицы: baseline и graph всегда, контроль bm25 — если запускался."""
+    return FINAL_MODES + tuple(m for m in FINAL_EXTRA_MODES if m in modes)
+
+
 def repeats_arg(value: str) -> int:
     try:
         n = int(value)
@@ -939,7 +993,7 @@ RUN_ID_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]*")
 
 def run_header(a: argparse.Namespace, run_id: str, questions: list[Question]) -> dict:
     """Что должно совпасть при --resume: тот же прогон, а не просто тот же run_id."""
-    return {"run_id": run_id, "modes": MODES[a.mode], "split": a.split, "as_of_filter": a.as_of, "limit": a.limit,
+    return {"run_id": run_id, "modes": modes_of(a.mode), "split": a.split, "as_of_filter": a.as_of, "limit": a.limit,
             "questions_file": Path(a.questions).name, "questions": [q.id for q in questions], "repeats": a.repeats,
             "judge": a.judge, "judge_facts": a.judge_facts, "judge_repeats": a.judge_repeats,
             "model": os.environ.get("LLM_MODEL", "stub-model"), "judge_model": judge_mod.judge_model(),
@@ -953,11 +1007,12 @@ def annotate_result(result: dict, rows: list[Row], modes: list[str]) -> dict:
     flags = mode_flags(rows)
     result["config"]["context_k"] = CONTEXT_K
     result["config"]["mode_flags"] = flags
-    result["config"]["final_table_modes"] = [m for m in FINAL_MODES if m in modes]
+    result["config"]["final_table_modes"] = [m for m in table_modes(modes) if m in modes]
     for rec, r in zip(result["per_question"], rows):
         rec.update({"as_of_date": r.as_of_date, "retrieved_count": r.retrieved_count,
                     "context_chunks": r.context_chunks, "context_graph_items": r.context_graph_items,
-                    "context_elements": r.context_elements, "mode_flag": r.mode_flag})
+                    "context_elements": r.context_elements, "mode_flag": r.mode_flag,
+                    "context_meetings": r.context_meetings})
     result["aggregate"]["context_symmetry"] = symmetry_stats(rows, modes)
     return result
 
@@ -991,7 +1046,8 @@ def row_from_dict(d: dict) -> Row:
 def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
          facts_fn: Optional[Callable[..., facts_mod.FactsVerdict]] = None) -> int:
     ap = argparse.ArgumentParser(description="Eval-harness: вопросы → api.ask → метрики, повторы, срезы")
-    ap.add_argument("--mode", choices=list(MODES), default="both")
+    ap.add_argument("--mode", type=mode_arg, default="both",
+                    help=f"{' | '.join(MODES)} или список через запятую (контроли bm25, longctx — только явно)")
     ap.add_argument("--split", choices=["dev", "test", "all"], default="test")
     ap.add_argument("--as-of", dest="as_of", help="только вопросы с этим as_of (m_008); по умолчанию все")
     ap.add_argument("--repeats", type=repeats_arg, default=1,
@@ -1030,7 +1086,7 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     if a.run_id and not RUN_ID_RE.fullmatch(a.run_id):
         ap.error("--run-id: только латиница, цифры, «_» и «-»")
 
-    modes = MODES[a.mode]
+    modes = modes_of(a.mode)
     questions = select_questions(a.questions, a.split, a.as_of, a.limit)
     if not questions:
         print("Нет вопросов под выбранные --split/--as-of.", file=sys.stderr)
@@ -1182,14 +1238,14 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     print(f"\n{summary}\nCSV: {csv_path}\nСводка: {md_path}\nJSON: {json_path}")
     # Итоговая таблица — только полный прогон both по test (отладка с --limit её не затирает); при stub — отдельное
     # имя, чтобы заглушка не перезаписала платный результат того же дня.
-    if a.mode in ("both", "all") and not a.limit and final_rows(rows):
+    if set(FINAL_MODES) <= set(modes) and not a.limit and final_rows(rows):
         final_path = a.out_dir / f"final_table_{date}{'_stub' if backend == 'stub' else ''}.md"
         final_path.write_text(render_final_table(rows, modes, date=date, k=CONTEXT_K, depth=a.depth, notes=notes,
                                                  judge=info), encoding="utf-8")
         print(f"Итоговая таблица: {final_path}")
     else:
-        print("Итоговая таблица не записана: нужны --mode both или all, вопросы split=test с основным as_of и без "
-              "--limit.")
+        print("Итоговая таблица не записана: нужны режимы baseline и graph (both, all или список), вопросы "
+              "split=test с основным as_of и без --limit.")
     return 0
 
 
