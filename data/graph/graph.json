@@ -76,13 +76,14 @@
       "label": "Сделать миграцию базы данных для Zhol.",
       "owner": "Николай",
       "due": "2026-08-14",
-      "status": "open",
+      "status": "done",
       "project": "Zhol",
       "meeting_id": "m_001",
       "date": "2026-08-03",
       "ts": "00:07:12",
       "quote": "до четырнадцатого сделаю. ок.",
       "statement": "Сделать миграцию базы данных для Zhol.",
+      "closed_at": "2026-08-17",
       "id": "t_m001_01"
     },
     {
@@ -142,13 +143,14 @@
       "label": "Показать прототип Qamqor к 26 августа.",
       "owner": "Сандуғаш",
       "due": "2026-08-26",
-      "status": "open",
+      "status": "done",
       "project": "Qamqor",
       "meeting_id": "m_002",
       "date": "2026-08-05",
       "ts": "00:05:33",
       "quote": "Иә, жиырма алтысына дейін прототипті көрсете аламын.",
       "statement": "Показать прототип Qamqor к 26 августа.",
+      "closed_at": "2026-09-07",
       "id": "t_m002_01"
     },
     {
@@ -239,13 +241,14 @@
       "label": "Отправить коммерческое предложение до 14 августа.",
       "owner": null,
       "due": "2026-08-14",
-      "status": "open",
+      "status": "done",
       "project": "Squad",
       "meeting_id": "m_003",
       "date": "2026-08-10",
       "ts": "00:13:30",
       "quote": "я тогда по деньгам. я отправлю коммерческое предложение до четырнадцатого августа.",
       "statement": "Отправить коммерческое предложение до 14 августа.",
+      "closed_at": "2026-08-31",
       "id": "t_m003_02"
     },
     {
@@ -394,13 +397,14 @@
       "label": "Абду делает экран статистики до четвертого сентября.",
       "owner": "Абдурахман",
       "due": "2026-09-04",
-      "status": "open",
+      "status": "done",
       "project": "Zhol",
       "meeting_id": "m_006",
       "date": "2026-08-24",
       "ts": "00:06:25",
       "quote": "Абду, ты делаешь экран статистики до четвертого сентября.",
       "statement": "Абду делает экран статистики до четвертого сентября.",
+      "closed_at": "2026-09-21",
       "id": "t_m006_01"
     },
     {
@@ -603,13 +607,14 @@
       "label": "Сандуғаш жинап бітір тестовый выборканы",
       "owner": "Сандуғаш",
       "due": "2026-10-09",
-      "status": "open",
+      "status": "done",
       "project": "Qamqor",
       "meeting_id": "m_012",
       "date": "2026-09-28",
       "ts": "00:06:16",
       "quote": "Сандуғаш, сен тоғызыншы қазанға дейін осы тестовый выборканы жинап бітір.",
       "statement": "Сандуғаш жинап бітір тестовый выборканы",
+      "closed_at": "2026-10-26",
       "id": "t_m012_01"
     },
     {
@@ -739,6 +744,54 @@
       "quote": "и тут у нас открытый вопрос висит. кто вообще проводит qa перед релизом Zhol.",
       "statement": "Кто проводит QA перед релизом Zhol?",
       "id": "q_m015_01"
+    },
+    {
+      "type": "Closure",
+      "origin": "closes",
+      "label": "Сообщено, что прототип Qamqor готов и функционирует.",
+      "statement": "Сообщено, что прототип Qamqor готов и функционирует.",
+      "project": "Qamqor",
+      "meeting_id": "m_009",
+      "date": "2026-09-07",
+      "ts": "00:00:55",
+      "quote": "прототип Qamqor готов. пайплайн весь работает.",
+      "id": "t_m009_c01"
+    },
+    {
+      "type": "Closure",
+      "origin": "closes",
+      "label": "Сообщено, что коммерческое предложение уже отправлено клиенту.",
+      "statement": "Сообщено, что коммерческое предложение уже отправлено клиенту.",
+      "project": "Squad",
+      "meeting_id": "m_007",
+      "date": "2026-08-31",
+      "ts": "00:00:10",
+      "quote": "коммерческое предложение клиенту отправлено.",
+      "id": "t_m007_c01"
+    },
+    {
+      "type": "Closure",
+      "origin": "closes",
+      "label": "Сообщено, что экран статистики готов и графики работают.",
+      "statement": "Сообщено, что экран статистики готов и графики работают.",
+      "project": "Zhol",
+      "meeting_id": "m_011",
+      "date": "2026-09-21",
+      "ts": "00:00:48",
+      "quote": "ну по экранам в общем экран статистики готов. графики отрисовываются нормально.",
+      "id": "t_m011_c01"
+    },
+    {
+      "type": "Closure",
+      "origin": "closes",
+      "label": "Сообщено, что тестовая выборка собрана полностью.",
+      "statement": "Сообщено, что тестовая выборка собрана полностью.",
+      "project": "Qamqor",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "ts": "00:03:05",
+      "quote": "тестовая выборка собрана полностью.",
+      "id": "t_m015_c01"
     }
   ],
   "edges": [
@@ -1283,6 +1336,19 @@
       "key": "ASSIGNED_TO"
     },
     {
+      "type": "CLOSES",
+      "confidence": 1.0,
+      "rationale": "Сообщено, что миграция базы данных выполнена.",
+      "quote": "это готово. миграция базы данных выполнена. скрипты все отработали.",
+      "ts": "00:00:21",
+      "meeting_id": "m_004",
+      "date": "2026-08-17",
+      "origin": "closes",
+      "source": "t_m004_01",
+      "target": "t_m001_01",
+      "key": "CLOSES"
+    },
+    {
       "type": "BELONGS_TO",
       "source": "t_m004_02",
       "target": "project:Zhol",
@@ -1475,6 +1541,19 @@
       "source": "d_m009_01",
       "target": "meeting:m_009",
       "key": "STATED_IN"
+    },
+    {
+      "type": "CLOSES",
+      "confidence": 1.0,
+      "rationale": "Сообщено, кто будет делать интерфейс бота.",
+      "quote": "интерфейс бота қамқор делает Абду.",
+      "ts": "00:03:27",
+      "meeting_id": "m_009",
+      "date": "2026-09-07",
+      "origin": "closes",
+      "source": "d_m009_01",
+      "target": "q_m002_01",
+      "key": "CLOSES"
     },
     {
       "type": "DISCUSSES",
@@ -1705,6 +1784,106 @@
       "source": "q_m015_01",
       "target": "meeting:m_015",
       "key": "STATED_IN"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m009_c01",
+      "target": "project:Qamqor",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m009_c01",
+      "target": "meeting:m_009",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "CLOSES",
+      "confidence": 1.0,
+      "rationale": "Сообщено, что прототип Qamqor готов и функционирует.",
+      "quote": "прототип Qamqor готов. пайплайн весь работает.",
+      "ts": "00:00:55",
+      "meeting_id": "m_009",
+      "date": "2026-09-07",
+      "origin": "closes",
+      "source": "t_m009_c01",
+      "target": "t_m002_01",
+      "key": "CLOSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m007_c01",
+      "target": "project:Squad",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m007_c01",
+      "target": "meeting:m_007",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "CLOSES",
+      "confidence": 1.0,
+      "rationale": "Сообщено, что коммерческое предложение уже отправлено клиенту.",
+      "quote": "коммерческое предложение клиенту отправлено.",
+      "ts": "00:00:10",
+      "meeting_id": "m_007",
+      "date": "2026-08-31",
+      "origin": "closes",
+      "source": "t_m007_c01",
+      "target": "t_m003_02",
+      "key": "CLOSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m011_c01",
+      "target": "project:Zhol",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m011_c01",
+      "target": "meeting:m_011",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "CLOSES",
+      "confidence": 1.0,
+      "rationale": "Сообщено, что экран статистики готов и графики работают.",
+      "quote": "ну по экранам в общем экран статистики готов. графики отрисовываются нормально.",
+      "ts": "00:00:48",
+      "meeting_id": "m_011",
+      "date": "2026-09-21",
+      "origin": "closes",
+      "source": "t_m011_c01",
+      "target": "t_m006_01",
+      "key": "CLOSES"
+    },
+    {
+      "type": "BELONGS_TO",
+      "source": "t_m015_c01",
+      "target": "project:Qamqor",
+      "key": "BELONGS_TO"
+    },
+    {
+      "type": "STATED_IN",
+      "source": "t_m015_c01",
+      "target": "meeting:m_015",
+      "key": "STATED_IN"
+    },
+    {
+      "type": "CLOSES",
+      "confidence": 1.0,
+      "rationale": "Сообщено, что тестовая выборка собрана полностью.",
+      "quote": "тестовая выборка собрана полностью.",
+      "ts": "00:03:05",
+      "meeting_id": "m_015",
+      "date": "2026-10-26",
+      "origin": "closes",
+      "source": "t_m015_c01",
+      "target": "t_m012_01",
+      "key": "CLOSES"
     }
   ]
 }
