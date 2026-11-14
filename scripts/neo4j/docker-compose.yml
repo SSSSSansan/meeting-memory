@@ -1,0 +1,9 @@
+# NetworkX против Neo4j (задача 4). Запуск на Mac: docker compose -f scripts/neo4j/docker-compose.yml up -d
+# Данные только синтетика, пароль локальный. Остановка: docker compose -f scripts/neo4j/docker-compose.yml down -v
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    ports: ["7474:7474", "7687:7687"]
+    environment:
+      NEO4J_AUTH: neo4j/k02-local-pass
+      NEO4J_server_memory_heap_max__size: 1G
