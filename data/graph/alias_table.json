@@ -1,0 +1,191 @@
+{
+  "Boost": {
+    "kind": "project",
+    "node_id": "project:Boost",
+    "variants": [
+      {
+        "alias": "Boost",
+        "occurrences": 9,
+        "source": "graph"
+      },
+      {
+        "alias": "Boost-ты",
+        "occurrences": 1,
+        "source": "transcripts"
+      }
+    ],
+    "speaker_labels": {}
+  },
+  "Qamqor": {
+    "kind": "project",
+    "node_id": "project:Qamqor",
+    "variants": [
+      {
+        "alias": "Qamqor",
+        "occurrences": 10,
+        "source": "graph"
+      },
+      {
+        "alias": "қамқор",
+        "occurrences": 1,
+        "source": "transcripts"
+      }
+    ],
+    "speaker_labels": {}
+  },
+  "Squad": {
+    "kind": "project",
+    "node_id": "project:Squad",
+    "variants": [
+      {
+        "alias": "Squad",
+        "occurrences": 25,
+        "source": "graph"
+      }
+    ],
+    "speaker_labels": {}
+  },
+  "Zhol": {
+    "kind": "project",
+    "node_id": "project:Zhol",
+    "variants": [
+      {
+        "alias": "Zhol",
+        "occurrences": 27,
+        "source": "graph"
+      },
+      {
+        "alias": "Zhol-ға",
+        "occurrences": 1,
+        "source": "transcripts"
+      },
+      {
+        "alias": "жол",
+        "occurrences": 1,
+        "source": "transcripts"
+      }
+    ],
+    "speaker_labels": {}
+  },
+  "Абдурахман": {
+    "kind": "person",
+    "node_id": "person:Абдурахман",
+    "variants": [
+      {
+        "alias": "Абду",
+        "occurrences": 29,
+        "source": "transcripts"
+      },
+      {
+        "alias": "Абдурахман",
+        "occurrences": 0,
+        "source": "graph"
+      }
+    ],
+    "speaker_labels": {
+      "m_004": "SPEAKER_03",
+      "m_006": "SPEAKER_03",
+      "m_010": "SPEAKER_02"
+    }
+  },
+  "Амина": {
+    "kind": "person",
+    "node_id": "person:Амина",
+    "variants": [
+      {
+        "alias": "Амина",
+        "occurrences": 3,
+        "source": "graph"
+      }
+    ],
+    "speaker_labels": {}
+  },
+  "Данияр": {
+    "kind": "person",
+    "node_id": "person:Данияр",
+    "variants": [
+      {
+        "alias": "Данияр",
+        "occurrences": 8,
+        "source": "graph"
+      },
+      {
+        "alias": "Даниярдың",
+        "occurrences": 1,
+        "source": "transcripts"
+      },
+      {
+        "alias": "Данияру",
+        "occurrences": 1,
+        "source": "transcripts"
+      }
+    ],
+    "speaker_labels": {}
+  },
+  "Ержан": {
+    "kind": "person",
+    "node_id": "person:Ержан",
+    "variants": [
+      {
+        "alias": "Ержан",
+        "occurrences": 10,
+        "source": "graph"
+      }
+    ],
+    "speaker_labels": {
+      "m_003": "SPEAKER_03",
+      "m_013": "SPEAKER_03"
+    }
+  },
+  "Николай": {
+    "kind": "person",
+    "node_id": "person:Николай",
+    "variants": [
+      {
+        "alias": "Коля",
+        "occurrences": 26,
+        "source": "aliases.json"
+      },
+      {
+        "alias": "Николай",
+        "occurrences": 3,
+        "source": "graph"
+      }
+    ],
+    "speaker_labels": {}
+  },
+  "Нұралы": {
+    "kind": "person",
+    "node_id": "person:Нұралы",
+    "variants": [
+      {
+        "alias": "Нұралы",
+        "occurrences": 8,
+        "source": "graph"
+      }
+    ],
+    "speaker_labels": {
+      "m_002": "SPEAKER_02",
+      "m_003": "SPEAKER_02"
+    }
+  },
+  "Сандуғаш": {
+    "kind": "person",
+    "node_id": "person:Сандуғаш",
+    "variants": [
+      {
+        "alias": "Санду",
+        "occurrences": 6,
+        "source": "transcripts"
+      },
+      {
+        "alias": "Сандуғаш",
+        "occurrences": 1,
+        "source": "graph"
+      }
+    ],
+    "speaker_labels": {
+      "m_002": "SPEAKER_00"
+    }
+  }
+}
