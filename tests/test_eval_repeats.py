@@ -320,7 +320,7 @@ def test_questions_file_runs_only_m008_and_main_section_is_empty(tmp_path, capsy
     qfile.write_text(json.dumps(items, ensure_ascii=False), encoding="utf-8")
     out = tmp_path / "out"
     build_index(tmp_path / "idx")
-    code = ev.main(["--mode", "baseline", "--questions-file", str(qfile), "--out-dir", str(out),
+    code = ev.main(["--mode", "baseline", "--unlock-test", "--questions-file", str(qfile), "--out-dir", str(out),
                     "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(ROOT / "data" / "raw")])
     assert code == 0
     (md_path,) = out.glob("summary_*.md")
@@ -401,7 +401,7 @@ def questions_file(tmp_path):
 
 def cli(tmp_path, *extra, judge_fn=None):
     build_index(tmp_path / "idx")
-    return ev.main(["--mode", "both", "--split", "test", "--as-of", "m_003", "--questions-file",
+    return ev.main(["--mode", "both", "--split", "test", "--unlock-test", "--as-of", "m_003", "--questions-file",
                     str(questions_file(tmp_path)), "--out-dir", str(tmp_path / "out"),
                     "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(ROOT / "data" / "raw"), *extra],
                    judge_fn=judge_fn)

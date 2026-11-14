@@ -1,8 +1,8 @@
 """РОЛЬ A. Eval-harness (черновик): прогон вопросов через src.api.ask и простые метрики, без судьи.
 
     python -m src.eval.run --mode baseline|graph|both --split dev|test|all [--as-of m_008] [--repeats 1..5]
-    python -m src.eval.run --mode both --split test --dry-run      # только план и оценка стоимости
-    python -m src.eval.run --mode both --split test --repeats 3 --judge --dry-run   # то же с повторами и судьёй
+    python -m src.eval.run --mode both --split dev --dry-run       # только план и оценка стоимости
+    python -m src.eval.run --mode both --split test --unlock-test --repeats 3 --judge --dry-run   # test: нужен флаг
     python -m src.eval.run --mode both --as-of m_008 --questions-file data/gold/questions_m008.json   # m_008
 
 Вопросы — data/gold/questions.json; в систему уходят только текст вопроса и его as_of_date, эталон она не видит:
@@ -42,6 +42,12 @@ N вызовов судьи на ответ, метрики усредняютс
 <YYYYMMDD_HHMM>, свой — --run-id). После каждого ответа строка дописывается в results/eval_<run_id>.partial.jsonl;
 упавший прогон продолжается: --resume --run-id <тот же>. В сводке «Метрики v2» — бутстрап по вопросам
 (src/eval/bootstrap.py): интервалы режимов и разности graph − baseline.
+
+Защита test: если среди выбранных вопросов есть split=test (--split test, --split all или --questions-file с
+test-вопросами), без --unlock-test harness завершается с ошибкой (код 4) до оценки стоимости и вызовов модели, в
+том числе при --dry-run. С --unlock-test печатается предупреждение, а в results/test_runs.jsonl дописывается запись
+(время, commit, режимы, число вопросов, dry_run). В сводке — «test запускался N раз» (без dry-run).
+Правило из memory.md: test открываем один раз, в воскресенье.
 
 Если LLM_BACKEND не stub, прогон платный: сначала печатается оценка (ответы + судья), запуск — только с --confirm-paid.
 Лимит расходов держит scripts/cost_guard через src/llm_client (complete/embed).
@@ -89,6 +95,9 @@ ANSWER_TEMPERATURE = 0.0        # src/answer/answerer.py::generate зовёт co
 MODES = {"baseline": ["baseline"], "graph": ["graph"], "hybrid": ["hybrid"], "both": ["baseline", "graph"],
          "all": ["baseline", "graph", "hybrid"]}
 FINAL_MODES = ("baseline", "graph")     # итоговая таблица: baseline и graph рядом
+TEST_RUNS_FILE = "test_runs.jsonl"      # журнал запусков на test, лежит в RESULTS
+TEST_LOCKED_CODE = 4
+TEST_UNLOCK_WARNING = "Запуск на test: после него код, промпты и настройки не меняются"
 
 
 @dataclass
@@ -677,9 +686,12 @@ def _meta_lines(rows: list[Row], modes: list[str], *, k: int, depth: int, judge:
 
 
 def render_summary(rows: list[Row], modes: list[str], *, date: str, k: int, depth: int, notes: dict[str, str],
-                   splits: list[str], judge: Optional[JudgeInfo] = None, v2: Optional[list[str]] = None) -> str:
+                   splits: list[str], judge: Optional[JudgeInfo] = None, v2: Optional[list[str]] = None,
+                   test_runs: Optional[int] = None) -> str:
     backend = os.environ.get("LLM_BACKEND", "stub")
     lines = [f"# Eval summary {date}", ""] + _meta_lines(rows, modes, k=k, depth=depth, judge=judge)
+    if test_runs is not None:
+        lines.append(f"- test запускался {test_runs} раз (по {TEST_RUNS_FILE}, без dry-run)")
     if backend == "stub":
         lines += ["", "> **LLM_BACKEND=stub**: модель и эмбеддинги — заглушки. Таблица проверяет только "
                       "работу harness, цифры качества ничего не значат."]
@@ -828,6 +840,45 @@ def select_questions(path: Path, split: str, as_of: Optional[str], limit: Option
     return questions[:limit] if limit else questions
 
 
+def journal_path() -> Path:
+    # RESULTS читается в момент вызова: тесты подменяют его на tmp
+    return RESULTS / TEST_RUNS_FILE
+
+
+def has_test_questions(questions: list[Question]) -> bool:
+    return any(q.split == "test" for q in questions)
+
+
+def record_test_run(*, modes: list[str], split: str, questions: list[Question], questions_file: Path,
+                    dry_run: bool, path: Optional[Path] = None) -> dict:
+    """Дописывает запись о запуске на test в журнал; журнал коммитится (git add -f), чтобы запуски было видно всем."""
+    rec = {"time": dt.datetime.now().astimezone().isoformat(timespec="seconds"), "commit": _git_commit(),
+           "modes": modes, "split": split, "questions_file": Path(questions_file).name,
+           "n_questions": len(questions), "n_test": sum(1 for q in questions if q.split == "test"),
+           "dry_run": dry_run}
+    path = path or journal_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    return rec
+
+
+def count_test_runs(path: Optional[Path] = None) -> int:
+    """Сколько раз test запускался по-настоящему (dry-run не считается); битые строки пропускаются."""
+    path = path or journal_path()
+    if not path.exists():
+        return 0
+    n = 0
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            rec = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(rec, dict) and not rec.get("dry_run"):
+            n += 1
+    return n
+
+
 def print_plan(est: est_mod.Estimate, jest: Optional[est_mod.JudgeEstimate], backend: str,
                dry_run: bool = False, fest: Optional[est_mod.FactsJudgeEstimate] = None) -> None:
     """Оценка прогона: ответы, судья (v2 и/или по фактам) отдельно, итог и сравнение с остатком бюджета (в --dry-run —
@@ -968,6 +1019,9 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
                     help="продолжить прерванный прогон с тем же --run-id по промежуточному файлу")
     ap.add_argument("--dry-run", action="store_true", help="план и оценка стоимости, без прогона")
     ap.add_argument("--confirm-paid", action="store_true", help="разрешить прогон с платным backend")
+    ap.add_argument("--unlock-test", action="store_true",
+                    help="разрешить вопросы split=test (в том числе --dry-run); запуск пишется в "
+                         "results/test_runs.jsonl")
     a = ap.parse_args(argv)
     if a.judge_repeats > 1 and not a.judge_facts:
         ap.error("--judge-repeats имеет смысл только вместе с --judge-facts")
@@ -981,6 +1035,14 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     if not questions:
         print("Нет вопросов под выбранные --split/--as-of.", file=sys.stderr)
         return 2
+    if has_test_questions(questions):
+        if not a.unlock_test:
+            n_test = sum(1 for q in questions if q.split == "test")
+            print(f"Среди выбранных вопросов {n_test} с split=test (--split {a.split}, файл {Path(a.questions).name}). "
+                  "test открываем один раз, в воскресенье, после заморозки кода, промптов и настроек: запуск — с "
+                  "флагом --unlock-test (и для --dry-run тоже). Для отладки — --split dev.", file=sys.stderr)
+            return TEST_LOCKED_CODE
+        print(TEST_UNLOCK_WARNING)
     try:    # as_of_date — из вопроса; у исторических файлов без поля — дата встречи as_of
         questions = [q.model_copy(update={"as_of_date": systems.question_as_of_date(q, a.raw_dir)})
                      for q in questions]
@@ -1005,7 +1067,15 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     facts_estimate = (est_mod.estimate_judge_facts(questions, modes, raw_dir=a.raw_dir, repeats=a.repeats,
                                                    judge_repeats=a.judge_repeats) if a.judge_facts else None)
     print_plan(estimate, judge_estimate, backend, dry_run=a.dry_run, fest=facts_estimate)
+    test_run = has_test_questions(questions)
+
+    def log_test_run(dry_run: bool) -> None:
+        if test_run:
+            record_test_run(modes=modes, split=a.split, questions=questions, questions_file=a.questions,
+                            dry_run=dry_run)
+
     if a.dry_run:
+        log_test_run(True)
         return 0
     if ((a.judge and judge_fn is None) or (a.judge_facts and facts_fn is None)) and backend == "stub":
         print("--judge / --judge-facts при LLM_BACKEND=stub: заглушка не оценивает ответы. Для проверки без денег — "
@@ -1055,6 +1125,8 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
     if not part_path.exists():
         results_v2.append_jsonl(part_path, {"header": header})
 
+    log_test_run(False)    # запись — только когда прогон действительно стартует (все проверки выше пройдены)
+
     def save_row(row: Row) -> None:
         results_v2.append_jsonl(part_path, {"row": asdict(row)})
 
@@ -1102,7 +1174,8 @@ def main(argv: Optional[list[str]] = None, judge_fn: Optional[JudgeFn] = None,
                        "Судья и система по умолчанию на одной модели; судья без транскриптов не проверяет факты "
                        "вне списка, поэтому extra не штрафуется."] if facts_runner else []))
     summary = render_summary(rows, modes, date=date, k=CONTEXT_K, depth=a.depth, notes=notes,
-                             splits=["dev", "test"] if a.split == "all" else [a.split], judge=info, v2=v2)
+                             splits=["dev", "test"] if a.split == "all" else [a.split], judge=info, v2=v2,
+                             test_runs=count_test_runs())
     md_path.write_text(summary, encoding="utf-8")
     results_v2.write_result(json_path, result)
     part_path.unlink(missing_ok=True)   # итог записан целиком, промежуточный файл больше не нужен
