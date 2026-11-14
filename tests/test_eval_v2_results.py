@@ -261,7 +261,7 @@ def questions_file(tmp_path, n_extra=0):
 
 def cli(tmp_path, *extra, judge_fn=None, facts_fn=None):
     build_index(tmp_path / "idx")
-    return ev.main(["--mode", "both", "--split", "test", "--as-of", "m_003", "--questions-file",
+    return ev.main(["--mode", "both", "--split", "test", "--unlock-test", "--as-of", "m_003", "--questions-file",
                     str(questions_file(tmp_path)), "--out-dir", str(tmp_path / "out"),
                     "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(ROOT / "data" / "raw"), *extra],
                    judge_fn=judge_fn, facts_fn=facts_fn)

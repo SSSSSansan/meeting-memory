@@ -1,12 +1,13 @@
 import csv
 import json
+from collections import Counter
 from pathlib import Path
 
 import pytest
 
 import src.answer.answerer as answerer
 from scripts.cost_guard import BudgetExceeded
-from src import api
+from src import api, llm_client
 from src.eval import run as ev
 from src.eval import systems
 from src.eval.metrics import MeetingTexts
@@ -137,7 +138,7 @@ def test_repeats_outside_1_to_5_rejected(value, capsys):
 
 def test_paid_backend_needs_confirmation(monkeypatch, tmp_path, capsys):
     monkeypatch.setenv("LLM_BACKEND", "openai")
-    code = ev.main(["--mode", "baseline", "--limit", "1", "--out-dir", str(tmp_path / "out"),
+    code = ev.main(["--mode", "baseline", "--unlock-test", "--limit", "1", "--out-dir", str(tmp_path / "out"),
                     "--index-dir", str(tmp_path / "idx")])
     assert code == 3 and not (tmp_path / "out").exists()
     assert "--confirm-paid" in capsys.readouterr().err
@@ -159,7 +160,7 @@ def test_end_to_end_on_stub_backend_respects_as_of(tmp_path):
     api.use_index_dir(tmp_path / "idx")
     for _ in api.index_batches(systems.load_transcripts(raw, "m_005")):
         pass
-    code = ev.main(["--mode", "both", "--split", "all", "--as-of", "m_003", "--questions", str(qfile),
+    code = ev.main(["--mode", "both", "--split", "all", "--unlock-test", "--as-of", "m_003", "--questions", str(qfile),
                     "--out-dir", str(out), "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(raw)])
     assert code == 0
     (csv_path,) = out.glob("eval_*.csv")
@@ -185,3 +186,84 @@ def test_raw_meetings_up_to_as_of_by_date_inclusive():
     assert systems.raw_meeting_ids(raw, "m_003") == ["m_001", "m_002", "m_003"]
     assert systems.raw_meeting_ids(raw, "2026-08-10") == ["m_001", "m_002", "m_003"]   # день встречи включён
     assert systems.raw_meeting_ids(raw, "2026-08-09") == ["m_001", "m_002"]
+
+
+# ---------- защита test (--unlock-test) ----------
+
+def guard_questions(tmp_path, splits):
+    data = [{"id": f"q_{i:02d}", "type": "T1", "split": s, "lang": "ru", "question": f"вопрос {i}", "as_of": "m_003",
+             "expected_answer": "x", "source_meetings": ["m_001"], "decision_ids": ["ev_m001_01"],
+             "answerable": True} for i, s in enumerate(splits, 1)]
+    path = tmp_path / "questions.json"
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    return path
+
+
+@pytest.fixture
+def model_calls(monkeypatch):
+    """Счётчик всего, что могло бы стоить денег: вызовы модели, оценка стоимости, сборка систем.
+    build_system отдаёт систему-заглушку с готовым ответом, чтобы прогон на dev шёл без индекса."""
+    calls = Counter()
+
+    def counting(name, result=None):
+        def fn(*args, **kwargs):
+            calls[name] += 1
+            return result(*args, **kwargs) if result else None
+        return fn
+    monkeypatch.setattr(llm_client, "complete", counting("complete"))
+    monkeypatch.setattr(llm_client, "embed", counting("embed"))
+    monkeypatch.setattr(ev.est_mod, "estimate_run", counting("estimate", ev.est_mod.estimate_run))
+    monkeypatch.setattr(systems, "build_system",
+                        counting("build", lambda mode, **kw: systems.System(mode=mode, ask=lambda q: good_answer())))
+    return calls
+
+
+def guard_main(tmp_path, qfile, *extra):
+    return ev.main(["--mode", "baseline", "--questions-file", str(qfile), "--out-dir", str(tmp_path / "out"),
+                    "--index-dir", str(tmp_path / "idx"), "--raw-dir", str(ROOT / "data" / "raw"), *extra])
+
+
+@pytest.mark.parametrize("splits,args", [
+    (["test"], ["--split", "test"]),
+    (["test"], ["--split", "test", "--dry-run"]),
+    (["dev", "test"], ["--split", "all"]),
+    (["test", "test"], []),                         # --split по умолчанию test, вопросы из --questions-file
+])
+def test_test_split_without_unlock_fails_before_any_model_call(tmp_path, capsys, model_calls, splits, args):
+    code = guard_main(tmp_path, guard_questions(tmp_path, splits), *args)
+    captured = capsys.readouterr()
+    assert code == ev.TEST_LOCKED_CODE and "--unlock-test" in captured.err
+    assert sum(model_calls.values()) == 0          # ни модели, ни оценки стоимости, ни сборки систем
+    assert "Оценка ответов" not in captured.out
+    assert not ev.journal_path().exists() and not (tmp_path / "out").exists()
+
+
+def test_unlock_test_prints_warning_and_appends_to_journal(tmp_path, capsys, model_calls):
+    qfile = guard_questions(tmp_path, ["dev", "test", "test"])
+    assert guard_main(tmp_path, qfile, "--split", "all", "--unlock-test", "--dry-run") == 0
+    assert guard_main(tmp_path, qfile, "--split", "all", "--unlock-test") == 0
+    out = capsys.readouterr().out
+    assert ev.TEST_UNLOCK_WARNING in out
+    recs = [json.loads(line) for line in ev.journal_path().read_text(encoding="utf-8").splitlines()]
+    assert [r["dry_run"] for r in recs] == [True, False]
+    assert all(r["modes"] == ["baseline"] and r["n_questions"] == 3 and r["n_test"] == 2 and r["commit"]
+               and r["time"] for r in recs)
+    assert ev.count_test_runs() == 1                # dry-run не считается
+    (md,) = (tmp_path / "out").glob("summary_*.md")
+    assert "test запускался 1 раз" in md.read_text(encoding="utf-8")
+
+
+def test_dev_split_runs_without_unlock_and_leaves_no_journal(tmp_path, capsys, model_calls):
+    qfile = guard_questions(tmp_path, ["dev", "test"])
+    assert guard_main(tmp_path, qfile, "--split", "dev", "--dry-run") == 0
+    assert guard_main(tmp_path, qfile, "--split", "dev") == 0
+    assert model_calls["build"] == 1 and not ev.journal_path().exists()
+    assert ev.TEST_UNLOCK_WARNING not in capsys.readouterr().out
+    (md,) = (tmp_path / "out").glob("summary_*.md")
+    assert "test запускался 0 раз" in md.read_text(encoding="utf-8")
+
+
+def test_count_test_runs_skips_dry_runs_and_broken_lines(tmp_path):
+    path = tmp_path / "test_runs.jsonl"
+    path.write_text('{"dry_run": false}\n{"dry_run": true}\nне json\n{"dry_run": false}\n', encoding="utf-8")
+    assert ev.count_test_runs(path) == 2 and ev.count_test_runs(tmp_path / "нет.jsonl") == 0
