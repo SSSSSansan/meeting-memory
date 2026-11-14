@@ -317,13 +317,19 @@ with tab_metrics:
     if not runs:
         st.info("В results/ нет eval_*.json. Прогон: `python -m src.eval.run --mode both --judge-facts …`")
     else:
-        run = st.selectbox("Прогон", runs, format_func=lambda r: r["label"], key="metrics_run")
-        result = api.load_eval(run["path"])
+        run = st.selectbox("Прогон", runs, format_func=lambda r: r["label"], key="metrics_run",
+                           help="«Сводная» ставит в одну таблицу режимы, прогнанные отдельными файлами: "
+                                "у каждого режима — его последний прогон, числа из его файла без пересчёта.")
+        result = api.load_run(run)
         cfg = result.get("config") or {}
         st.caption(f"{result.get('timestamp', '')} · модель {cfg.get('model')} · эмбеддинги {cfg.get('embed_model')}"
                    f" · судья {cfg.get('judge_model')} ({cfg.get('JUDGE_FACTS_PROMPT_VERSION')}) · "
                    f"split {cfg.get('split')} · вопросов {cfg.get('n_questions')} · as_of {cfg.get('as_of')} · "
                    f"commit {cfg.get('commit')}")
+        if cfg.get("combined"):
+            st.caption("Источники: " + ", ".join(f"{m} — прогон {rid}" for m, rid in cfg["sources"].items()))
+            for w in result.get("warnings") or []:
+                st.warning(w, icon=":material/rule:")
         if cfg.get("fixture"):
             st.warning("Фикстура роли A: числа выдуманы, это не результат системы. "
                        "Вкладка покажет настоящий прогон, как только в results/ появится eval_*.json.",
