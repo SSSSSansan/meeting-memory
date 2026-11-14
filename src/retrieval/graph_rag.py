@@ -32,6 +32,7 @@ import networkx as nx
 
 from src.graph.queries import load_graph, project_meetings
 from src.resolve.entities import resolve_people, resolve_projects
+from src.retrieval.baseline import CONTEXT_K  # один бюджет контекста на все режимы
 from src.utils.text import normalize
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -210,6 +211,53 @@ def _fallback_items(G: nx.MultiDiGraph, limit: int) -> list[str]:
     return sorted(items, key=priority)[:limit]
 
 
+def _chain(G: nx.MultiDiGraph, n: str, pool: set[str]) -> list[str]:
+    """Вся цепочка замен вокруг пункта (SUPERSEDES в обе стороны), только среди кандидатов pool."""
+    seen, stack = {n}, [n]
+    while stack:
+        m = stack.pop()
+        nbrs = [v for _, v, e in G.out_edges(m, data=True) if e.get("type") == "SUPERSEDES"] + \
+               [u for u, _, e in G.in_edges(m, data=True) if e.get("type") == "SUPERSEDES"]
+        for x in nbrs:
+            if x in pool and x not in seen:
+                seen.add(x)
+                stack.append(x)
+    return sorted(seen, key=lambda x: (G.nodes[x].get("date", ""), G.nodes[x].get("ts", ""), x))
+
+
+def select_items(G: nx.MultiDiGraph, ranked: list[str], limit: Optional[int]) -> list[str]:
+    """Не больше limit пунктов: бюджет контекста тот же, что у baseline (CONTEXT_K), иначе граф выигрывал бы объёмом.
+
+    ranked — кандидаты по важности. Пункт идёт вместе со всей своей цепочкой замен, если она помещается:
+    без середины цепочки ответ на «как менялся срок» неполон при формально верных цитатах (план, B6).
+    Цепочка, которая не влезает целиком, пропускается в пользу следующих пунктов; если не влезает и в пустой
+    контекст — берётся её начало по важности.
+    """
+    if limit is None or len(ranked) <= limit:
+        return list(ranked)
+    pool, out = set(ranked), []
+    for n in ranked:
+        if n in out:
+            continue
+        unit = [m for m in _chain(G, n, pool) if m not in out]
+        if len(out) + len(unit) <= limit:
+            out += unit
+        elif not out:
+            out = [m for m in ranked if m in set(unit)][:limit]
+        if len(out) >= limit:
+            break
+    return out[:limit]
+
+
+def _rank(G: nx.MultiDiGraph, dist: dict[str, int]) -> list[str]:
+    """Важнее: ближе к сущностям вопроса, в конфликте, действующее или открытое, свежее."""
+    def key(n: str) -> tuple:
+        d = G.nodes[n]
+        current = d.get("status") in ("active", "open") or d["type"] == "OpenQuestion"
+        return (dist[n], not d.get("in_conflict"), not current, _neg(d.get("date", "")), n)
+    return sorted(dist, key=key)
+
+
 def _neg(date: str) -> str:
     # для сортировки «свежие раньше» без datetime: инвертируем цифры
     return date.translate(str.maketrans("0123456789", "9876543210"))
@@ -279,12 +327,15 @@ def format_context(G: nx.MultiDiGraph, items: list[str]) -> str:
 # ---------- Точка входа ----------
 
 def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph] = None,
-                      aliases: Optional[dict[str, str]] = None, as_of: Optional[str] = None) -> dict:
+                      aliases: Optional[dict[str, str]] = None, as_of: Optional[str] = None,
+                      max_items: Optional[int] = CONTEXT_K) -> dict:
     """Подграф по вопросу. depth — сколько шагов от сущностей (1: их пункты; 2: + связанные решения; 3: ещё шаг).
 
     Без G читается граф по умолчанию вместе с его aliases.json.
     as_of (ISO-дата) — только пункты встреч не позже неё, как у baseline.
-    Возвращает {"entities", "items", "last_meetings", "fallback", "context"}.
+    max_items — бюджет контекста в пунктах, по умолчанию CONTEXT_K, как у baseline в чанках; None — без обрезки.
+    Возвращает {"entities", "items", "n_found", "last_meetings", "fallback", "context"}; n_found — сколько
+    пунктов нашёл обход до обрезки.
     """
     if depth < 1:
         raise ValueError("depth должен быть ≥ 1")
@@ -300,8 +351,10 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
     if fallback:
         items = [n for n in _fallback_items(G, len(G)) if as_of is None or G.nodes[n].get("date", "") <= as_of]
         items = items[:FALLBACK_MAX_ITEMS]
+        dist = {n: i for i, n in enumerate(items)}  # порядок важности _fallback_items
     else:
         items = [n for n in found if as_of is None or G.nodes[n].get("date", "") <= as_of]
+        dist = {n: found[n] for n in items}
 
     n_last = last_n_meetings(question)
     if n_last:
@@ -316,8 +369,10 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
             allowed = {mid for _, mid in meetings[-n_last:]}
         items = [n for n in items if G.nodes[n].get("meeting_id") in allowed]
 
+    n_found = len(items)
+    items = select_items(G, _rank(G, {n: dist[n] for n in items}), max_items)
     items = sorted(items, key=lambda n: (G.nodes[n].get("date", ""), G.nodes[n].get("ts", ""), n))
-    return {"entities": seeds, "items": items, "last_meetings": n_last, "fallback": fallback,
+    return {"entities": seeds, "items": items, "n_found": n_found, "last_meetings": n_last, "fallback": fallback,
             "context": format_context(G, items)}
 
 

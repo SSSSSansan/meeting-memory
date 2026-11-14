@@ -6,9 +6,9 @@ import pytest
 import src.answer.answerer as ans
 from src.graph.queries import load_graph
 from src.llm_client import LLMResponse
-from src.retrieval.baseline import BaselineIndex
-from src.retrieval.graph_rag import retrieve_subgraph
-from src.retrieval.hybrid import backfill_candidates, retrieve_hybrid, ts_seconds
+from src.retrieval.baseline import CONTEXT_K, BaselineIndex
+from src.retrieval.graph_rag import retrieve_subgraph, select_items
+from src.retrieval.hybrid import BACKFILL_MAX, HYBRID_GRAPH_K, backfill_candidates, retrieve_hybrid, ts_seconds
 from src.schemas import Segment, Transcript
 
 QUESTION = "Как менялся срок релиза Атласа?"
@@ -62,22 +62,46 @@ def test_backfill_has_no_repeats(index):
     assert len(got) == 1
 
 
-def test_graph_part_is_exactly_graph_mode_context(index, G):
+def test_graph_part_is_graph_mode_ranking_cut_to_its_share(index, G):
     h = retrieve_hybrid(QUESTION, index, G=G)
-    sub = retrieve_subgraph(QUESTION, G=G)
+    sub = retrieve_subgraph(QUESTION, G=G, max_items=HYBRID_GRAPH_K)
     assert h["graph_context"] == sub["context"] and h["graph_items"] == sub["items"]
 
 
 def test_budget_and_no_duplicates(index, G):
-    h = retrieve_hybrid(QUESTION, index, G=G, max_chunks=5, backfill_max=2)
+    h = retrieve_hybrid(QUESTION, index, G=G, context_k=7, graph_k=2, backfill_max=2)
     ids = [c["chunk_id"] for c in h["chunks"]]
-    assert len(ids) == len(set(ids)) == 5
+    assert len(h["graph_items"]) == 2 and len(ids) == len(set(ids)) == 5   # всего 7 = context_k
     assert h["n_backfill"] == 2 and h["n_vector"] == 3
     assert [c["via"] for c in h["chunks"]] == ["graph"] * 2 + ["vector"] * 3
 
 
+def test_hybrid_total_never_exceeds_context_k(index, G):
+    h = retrieve_hybrid(QUESTION, index, G=G)
+    assert len(h["graph_items"]) + len(h["chunks"]) == CONTEXT_K
+    assert len(h["graph_items"]) <= HYBRID_GRAPH_K and h["n_backfill"] <= BACKFILL_MAX
+
+
+# ---------- бюджет контекста графа: тот же CONTEXT_K, что у baseline ----------
+
+def test_select_items_keeps_supersede_chain_whole(G):
+    # d_m002_01 заменяет d_m001_01: цепочка из двух
+    ranked = ["d_m002_01", "t_m001_01", "q_m001_01", "d_m001_01"]
+    assert select_items(G, ranked, 3) == ["d_m001_01", "d_m002_01", "t_m001_01"]
+    assert select_items(G, ranked, 1) == ["d_m002_01"]       # цепочка не влезает даже одна — её начало
+    assert select_items(G, ranked, None) == ranked
+
+
+def test_graph_context_cut_to_context_k_on_real_graph():
+    big = load_graph(ans.ROOT / "data/graph_raw/graph.json")
+    sub = retrieve_subgraph("Как менялся срок релиза Zhol?", G=big)
+    assert sub["n_found"] > CONTEXT_K and len(sub["items"]) == CONTEXT_K
+    assert {"d_m001_01", "d_m006_01", "d_m011_01"} <= set(sub["items"])   # вся цепочка переносов срока
+    assert len(retrieve_subgraph("Как менялся срок релиза Zhol?", G=big, max_items=None)["items"]) == sub["n_found"]
+
+
 def test_graph_chunk_found_again_by_vector_takes_one_place(index, G):
-    h = retrieve_hybrid(QUESTION, index, G=G, max_chunks=40, backfill_max=40)
+    h = retrieve_hybrid(QUESTION, index, G=G, context_k=44, backfill_max=40)
     lines = [(c["meeting_id"], s["ts"]) for c in h["chunks"] for s in c["segments"]]
     assert h["n_vector"] > 0
     graph_ids = {c["chunk_id"] for c in h["chunks"] if c["via"] == "graph"}

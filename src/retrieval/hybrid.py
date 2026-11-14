@@ -4,14 +4,14 @@
     r = retrieve_hybrid("Как менялся срок релиза Zhol?", index, as_of="2026-10-01")
     r["graph_context"], r["chunks"], r["retrieved_meetings"]
 
-Контекст из трёх частей, в таком порядке:
-  1. Пункты графа — ровно то, что получил бы режим graph (решения и задачи со статусами, заменами,
-     конфликтами). Поэтому сравнение честное: hybrid = graph + текст, а не другой граф.
-  2. Backfill: к пунктам графа — чанк транскрипта вокруг таймкода пункта (не дальше BACKFILL_WINDOW_S).
+Бюджет тот же, что у baseline и graph: всего CONTEXT_K элементов (пункт графа или чанк транскрипта = один
+элемент), иначе гибрид выигрывал бы объёмом. Контекст из трёх частей, в таком порядке:
+  1. Пункты графа — первые HYBRID_GRAPH_K из того же ранжирования, что у режима graph (тот же обход, тот же порядок
+     важности, цепочки замен целиком), со статусами, заменами и конфликтами.
+  2. Backfill: к этим пунктам — чанк транскрипта вокруг таймкода пункта (не дальше BACKFILL_WINDOW_S), до BACKFILL_MAX.
      Граф знает только то, что поймал экстракт; соседние реплики добирают пропущенное.
-     Если пунктов много, в бюджет BACKFILL_MAX проходят чанки, ближе всего к вопросу по косинусу:
-     граф решает, ГДЕ смотреть, вектор — что важнее при нехватке места.
-  3. Обычный поиск baseline (as_of, буст проекта, без почти-дублей) добивает до HYBRID_CHUNKS.
+     Если кандидатов больше, проходят ближайшие к вопросу по косинусу: граф решает, ГДЕ смотреть, вектор — что важнее.
+  3. Обычный поиск baseline (as_of, буст проекта, без почти-дублей) добивает до CONTEXT_K элементов.
 Чанк, пришедший и из графа, и из поиска, занимает одно место: сравнение по chunk_id и по общим репликам
 (как почти-дубли в baseline). Фиксированное окно «встреча + N секунд» не нужно — чанк уже окно реплик.
 
@@ -24,12 +24,13 @@ from typing import Optional
 
 import networkx as nx
 
-from src.retrieval.baseline import BaselineIndex, chunk_lines, is_near_duplicate
+from src.retrieval.baseline import CONTEXT_K, BaselineIndex, chunk_lines, is_near_duplicate
 from src.retrieval.graph_rag import get_graph, retrieve_subgraph
 
 BACKFILL_WINDOW_S = 45  # план B6: «секунд по сорок пять в обе стороны» от таймкода пункта
-BACKFILL_MAX = 6        # половина чанкового бюджета: вторая половина остаётся поиску по смыслу
-HYBRID_CHUNKS = 12      # план C4: в контекст до 12 фрагментов транскрипта
+HYBRID_GRAPH_K = 4      # 4 пункта графа + 3 чанка вокруг них + не меньше 3 из поиска = CONTEXT_K
+BACKFILL_MAX = 3        # навигация графа и полнота поиска получают примерно поровну места
+HYBRID_CHUNKS = CONTEXT_K  # верхняя граница чанков (если граф ничего не нашёл); её читает src/eval/estimate.py
 
 
 def ts_seconds(ts: str) -> int:
@@ -41,10 +42,11 @@ def _segment_seconds(seg: dict) -> float:
     return seg["start_s"] if seg.get("start_s") is not None else ts_seconds(seg["ts"])
 
 
-def graph_part(question: str, depth: int, G: Optional[nx.MultiDiGraph], as_of: Optional[str]) -> dict:
+def graph_part(question: str, depth: int, G: Optional[nx.MultiDiGraph], as_of: Optional[str],
+               max_items: int = HYBRID_GRAPH_K) -> dict:
     """Пункты графа и их якоря (встреча, таймкод) для backfill. Сюда встанет обход роли B."""
     G = G if G is not None else get_graph()
-    sub = retrieve_subgraph(question, depth=depth, G=G, as_of=as_of)
+    sub = retrieve_subgraph(question, depth=depth, G=G, as_of=as_of, max_items=max_items)
     anchors = [(G.nodes[n]["meeting_id"], G.nodes[n]["ts"]) for n in sub["items"]
                if G.nodes[n].get("meeting_id") and G.nodes[n].get("ts")]
     meetings = list(dict.fromkeys(m for m, _ in anchors))
@@ -74,15 +76,17 @@ def backfill_candidates(index: BaselineIndex, anchors: list[tuple[str, str]], as
 
 
 def retrieve_hybrid(question: str, index: BaselineIndex, *, depth: int = 2, G: Optional[nx.MultiDiGraph] = None,
-                    as_of: Optional[str] = None, max_chunks: int = HYBRID_CHUNKS,
+                    as_of: Optional[str] = None, context_k: int = CONTEXT_K, graph_k: int = HYBRID_GRAPH_K,
                     backfill_max: int = BACKFILL_MAX) -> dict:
     """Возвращает {graph_context, graph_items, chunks, n_backfill, n_vector, retrieved_meetings}.
 
+    Пунктов графа + чанков всего не больше context_k (тот же бюджет, что у baseline и graph).
     chunks — в формате baseline (для answerer.format_context), у каждого поле via: "graph" | "vector".
     retrieved_meetings — встречи пунктов графа, затем встречи чанков, без повторов.
     """
-    graph = graph_part(question, depth, G, as_of)
-    q = index.query_vector(question) if index.chunks else None
+    graph = graph_part(question, depth, G, as_of, max_items=min(graph_k, context_k))
+    max_chunks = context_k - len(graph["items"])
+    q = index.query_vector(question) if index.chunks and max_chunks > 0 else None
 
     backfill = backfill_candidates(index, graph["anchors"], as_of)
     if q is not None:
