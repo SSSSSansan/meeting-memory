@@ -162,16 +162,19 @@ def show_sources(result) -> None:
 
 def show_context_graph(context: dict) -> None:
     """Пункты графа, ушедшие в контекст ответа, с их проектами — видно, как сработал поиск по графу."""
-    n = len(context["items"])
+    n, found = len(context["items"]), context.get("n_found", len(context["items"]))
     how = ("сущностей в вопросе нет — взяты конфликты и действующие пункты" if context["fallback"]
            else "от сущностей вопроса: " + ", ".join(e.split(":", 1)[-1] for e in context["entities"]))
+    cut = (f" Обход нашёл {found}, в контекст прошли самые важные: бюджет контекста у всех режимов один."
+           if found > n else "")
     with st.expander(f"Из графа в контекст: {n} пунктов", icon=":material/hub:"):
-        st.caption(how + ". Жирная рамка — ушло в контекст.")
+        st.caption(how + ". Жирная рамка — ушло в контекст." + cut)
         if n:
             st.graphviz_chart(api.graph_dot(highlight=context, focus=True), width="stretch")
 
 
-def show_answer(result, chosen=None, context=None) -> None:
+def show_answer(result, chosen=None, contexts=None) -> None:
+    context = (contexts or {}).get(result.mode)
     with st.container(border=True):
         name, color = MODE_BADGE[result.mode]
         st.badge(name, color=color)
@@ -180,7 +183,7 @@ def show_answer(result, chosen=None, context=None) -> None:
             st.caption(f"auto → {result.mode} ({chosen.qtype}): {chosen.reason}{fallback}")
         st.markdown(api.readable_ids(result.answer))
         show_sources(result)
-        if context and result.mode in ("graph", "hybrid"):
+        if context:
             show_context_graph(context)
         st.caption(f"Токены: {result.usage.prompt_tokens} + {result.usage.completion_tokens} · "
                    f"${result.usage.cost_usd:.5f} · {result.latency_ms} мс")
@@ -229,11 +232,11 @@ with tab_qa:
             modes = list(COMPARE) if mode == "сравнить" else [mode]
             with st.spinner("Ищу и отвечаю…"):
                 results = [api.ask(question, mode=m) for m in modes]
-            # тот же детерминированный обход, что внутри ответа: для подсветки на рисунке графа
-            context = (api.context_subgraph(question) if any(r.mode in ("graph", "hybrid") for r in results)
-                       else None)
+            # тот же детерминированный обход с тем же бюджетом, что внутри ответа: для подсветки на рисунке графа
+            contexts = {r.mode: api.context_subgraph(question, mode=r.mode)
+                        for r in results if r.mode in ("graph", "hybrid")}
             st.session_state.last = {"question": question, "mode": mode, "results": results, "chosen": chosen,
-                                     "context": context}
+                                     "contexts": contexts}
 
     last = st.session_state.get("last")
     if last:  # ответ живёт в сессии: переключение вкладок и выбор проекта его не стирают
@@ -242,9 +245,9 @@ with tab_qa:
             for col, m, result in zip(st.columns(len(COMPARE)), COMPARE, last["results"]):
                 with col:
                     st.subheader(m)
-                    show_answer(result, context=last.get("context"))
+                    show_answer(result, contexts=last.get("contexts"))
         else:
-            show_answer(last["results"][0], last["chosen"], context=last.get("context"))
+            show_answer(last["results"][0], last["chosen"], contexts=last.get("contexts"))
 
 projects = api.list_projects()
 # по умолчанию — проект, где больше всего пунктов: на нём видны и замены, и конфликты
@@ -274,7 +277,8 @@ with tab_graph:
     scope = st.selectbox("Что показать", ["все проекты"] + projects, index=busiest + 1 if projects else 0,
                          key="graph_project")
     last = st.session_state.get("last") or {}
-    context = last.get("context")
+    contexts = last.get("contexts") or {}
+    context = contexts.get("graph") or contexts.get("hybrid")  # в «сравнить» показываем подграф режима graph
     lit = None
     if context:
         if st.toggle(f"Подсветить, что ушло в контекст последнего ответа: «{last['question']}»", value=True,

@@ -233,7 +233,8 @@ def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
            depth: int = 2, graph=None, as_of: Optional[str] = None) -> Answer:
     """mode: baseline | graph | hybrid | auto (выбирает src.retrieval.router); контроли A5: bm25 | longctx.
 
-    k — сколько чанков берёт baseline; depth и graph — параметры graph-ветки (и графовой части hybrid).
+    k — бюджет контекста в элементах, один на все режимы: чанков у baseline и bm25, пунктов графа у graph,
+    пунктов и чанков вместе у hybrid (longctx — контроль без бюджета). depth и graph — параметры графовой части.
     as_of — ISO-дата вопроса: обе ветки видят только встречи не позже неё.
     """
     t0 = time.perf_counter()
@@ -242,7 +243,7 @@ def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
         chosen = route(question, graph)
         mode = chosen.mode
         if mode == "graph":
-            sub = retrieve_subgraph(question, depth=depth, G=graph, as_of=as_of)
+            sub = retrieve_subgraph(question, depth=depth, G=graph, as_of=as_of, max_items=k)
             if sub["items"]:
                 context = sub["context"]
                 retrieved = _graph_meetings(graph or get_graph(), sub["items"])
@@ -256,11 +257,12 @@ def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
         retrieved = list(dict.fromkeys(h["meeting_id"] for h in hits))
     elif mode == "graph":
         if context is None:
-            sub = retrieve_subgraph(question, depth=depth, G=graph, as_of=as_of)
+            sub = retrieve_subgraph(question, depth=depth, G=graph, as_of=as_of, max_items=k)
             context = sub["context"]
             retrieved = _graph_meetings(graph or get_graph(), sub["items"])
     elif mode == "hybrid":
-        h = retrieve_hybrid(question, index or default_index(), depth=depth, G=graph, as_of=as_of)
+        h = retrieve_hybrid(question, index or default_index(), depth=depth, G=graph, as_of=as_of,
+                            context_k=k)
         context = hybrid_context(h)
         retrieved = h["retrieved_meetings"]
         parts = {"graph_items": len(h["graph_items"]), "backfill_chunks": h["n_backfill"],

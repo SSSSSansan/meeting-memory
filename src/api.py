@@ -237,23 +237,38 @@ def _graph_of(G, keep: set[str]) -> dict:
     return {"nodes": nodes, "edges": edges}
 
 
-def context_subgraph(question: str, depth: int = 2, as_of: Optional[str] = None) -> dict:
-    """Что из графа уходит в контекст на этот вопрос (режимы graph и hybrid) — для подсветки на рисунке.
+def context_subgraph(question: str, mode: str = "graph", depth: int = 2, as_of: Optional[str] = None,
+                     k: int = CONTEXT_K) -> dict:
+    """Что из графа уходит в контекст на этот вопрос в режиме graph или hybrid — для подсветки на рисунке.
 
-    Тот же retrieve_subgraph, что и при ответе: детерминированно и без LLM, поэтому пересчёт совпадает с
-    контекстом ответа. {"items": [id пунктов], "entities": [id стартовых сущностей], "fallback": bool}.
+    Тот же retrieve_subgraph с тем же бюджетом, что и при ответе (graph — k пунктов, hybrid — HYBRID_GRAPH_K):
+    детерминированно и без LLM, поэтому пересчёт совпадает с контекстом ответа.
+    {"items": [id пунктов], "entities": [id стартовых сущностей], "fallback": bool, "n_found": сколько нашёл обход}.
     """
     from src.retrieval.graph_rag import retrieve_subgraph
+    from src.retrieval.hybrid import HYBRID_GRAPH_K
 
-    sub = retrieve_subgraph(question, depth=depth, G=_load_graph(), as_of=as_of)
-    return {"items": sub["items"], "entities": sub["entities"], "fallback": sub["fallback"]}
+    limit = min(HYBRID_GRAPH_K, k) if mode == "hybrid" else k
+    sub = retrieve_subgraph(question, depth=depth, G=_load_graph(), as_of=as_of, max_items=limit)
+    return {"items": sub["items"], "entities": sub["entities"], "fallback": sub["fallback"],
+            "n_found": sub["n_found"]}
 
 
 # ---------- Демо-UI (C7): выбор графа, конфликты и замены, источник цитаты, рисунок ----------
 
-GRAPH_LABELS = {B_GRAPH_PATH: "полный: все встречи графа B (data/graph_raw)",
-                GRAPH_PATH: "для eval: встречи до m_008 (data/graph)",
+# Назначение файла; какие в нём встречи — считается из самого графа, а не пишется руками (подпись устаревала).
+GRAPH_LABELS = {B_GRAPH_PATH: "полный граф B (data/graph_raw)",
+                GRAPH_PATH: "граф для eval (data/graph)",
                 SAMPLE_GRAPH_PATH: "заглушка: старый сюжет Атлас/Горизонт (data/sample)"}
+
+
+def _meetings_label(meetings: list[str]) -> str:
+    n = len(meetings)
+    if not n:
+        return "встреч нет"
+    word = "встреча" if n % 10 == 1 and n % 100 != 11 else (
+        "встречи" if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14 else "встреч")
+    return f"{n} {word}, {meetings[0]}–{meetings[-1]}" if n > 1 else f"{n} {word}, {meetings[0]}"
 
 
 def available_graphs() -> list[dict]:
@@ -262,7 +277,8 @@ def available_graphs() -> list[dict]:
     for path in (p for p in GRAPH_LABELS if p.exists()):
         G = _load_graph(path)
         meetings = sorted({d["meeting_id"] for _, d in G.nodes(data=True) if d.get("type") == "Meeting"})
-        out.append({"path": path, "label": GRAPH_LABELS[path], "meetings": meetings})
+        out.append({"path": path, "label": f"{GRAPH_LABELS[path]}: {_meetings_label(meetings)}",
+                    "meetings": meetings})
     return out
 
 

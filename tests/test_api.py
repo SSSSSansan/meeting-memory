@@ -182,6 +182,15 @@ def test_available_graphs_and_switching():
     assert api.graph_info()["is_sample"]
 
 
+def test_graph_labels_count_meetings_from_the_file():
+    """Подпись в UI берёт встречи из графа: раньше она писала «до m_008», когда в файле были все 14."""
+    for g in api.available_graphs():
+        assert f"{len(g['meetings'])} встреч" in g["label"] or len(g["meetings"]) == 1
+        if len(g["meetings"]) > 1:
+            assert g["label"].endswith(f"{g['meetings'][0]}–{g['meetings'][-1]}")
+        assert "до m_008" not in g["label"]
+
+
 def test_demo_default_graph_prefers_full_graph_without_env(monkeypatch):
     monkeypatch.delenv("MEETING_GRAPH")
     assert api.demo_default_graph() == api.available_graphs()[0]["path"]
