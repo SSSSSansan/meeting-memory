@@ -137,7 +137,8 @@ def test_header_counters_and_example_question(monkeypatch):
     example.click().run()
     assert not at.exception
     assert at.text_input[0].value == "Есть ли конфликты по загрузке людей?"
-    assert any("Ответ по примеру" in m.value for m in at.markdown)
+    # в графе-заглушке конфликтов нет: граф ничего не отдаёт, и система честно говорит, что информации нет
+    assert any(answerer.NO_CONTEXT_ANSWER in m.value for m in at.markdown)
 
 
 def test_answer_survives_rerun(monkeypatch):

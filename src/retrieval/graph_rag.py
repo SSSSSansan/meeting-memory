@@ -11,10 +11,10 @@ MEETING_GRAPH из .env, иначе первый существующий из d
 data/graph_raw/graph.json (туда сейчас пишет scripts/build_graph.py), data/sample/graph.json (заглушка).
 Рядом с графом может лежать aliases.json от resolve роли B — варианты имён тоже ищутся в вопросе.
 
-Обход: от узлов-сущностей (проекты и люди из вопроса) на depth шагов по рёбрам
-BELONGS_TO / ASSIGNED_TO / IMPLEMENTS и связям решений (SUPERSEDES, CONTRADICTS, ...).
-Через встречи не ходим: встреча связана со всем, что на ней звучало, и подграф стал бы всем графом.
-Через чужие проекты и людей тоже не ходим — иначе на втором шаге подтянется весь соседний проект.
+Обход — src.graph.traverse роли B (план B6, описание — docs/GRAPH_RETRIEVAL.md): сущности и пункты по словам и
+типу вопроса → цепочки замен целиком → противоречия и закрытия → остальные пункты сущностей. Этот модуль режет
+результат до бюджета контекста (CONTEXT_K, как у baseline) и собирает текст для модели: статусы на дату as_of,
+связи и реплики вокруг каждого пункта.
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ import os
 import re
 import sys
 import unicodedata
-from collections import deque
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -48,10 +48,6 @@ SAMPLE_GRAPH_PATH = ROOT / "data" / "sample" / "graph.json"
 GRAPH_CANDIDATES = [GRAPH_PATH, B_GRAPH_PATH, SAMPLE_GRAPH_PATH]
 
 ITEM_TYPES = ("Decision", "Task", "OpenQuestion")
-TRAVERSE_EDGES = {"BELONGS_TO", "ASSIGNED_TO", "IMPLEMENTS",
-                  "SUPERSEDES", "CONTRADICTS", "DEPENDS_ON", "REFINES", "SAME_TOPIC"}
-FALLBACK_MAX_ITEMS = 40  # вопрос без названных сущностей: весь граф в контекст не влезет
-
 _NUMBERS = {"одн": 1, "две": 2, "двух": 2, "три": 3, "трех": 3, "трёх": 3, "четыр": 4,
             "пят": 5, "шест": 6, "сем": 7, "восьм": 8, "девят": 9, "десят": 10}
 _LAST_N = re.compile(r"последн\w*\s+(\d+|[а-яё]+)\s+встреч", re.I)
@@ -172,88 +168,7 @@ def last_n_meetings(question: str) -> Optional[int]:
     return next((n for stem, n in _NUMBERS.items() if word.startswith(stem)), None)
 
 
-# ---------- 2. Обход ----------
-
-def _traverse(G: nx.MultiDiGraph, seeds: list[str], depth: int) -> dict[str, int]:
-    """BFS по разрешённым рёбрам в обе стороны. Возвращает {узел-пункт: на каком шаге найден}."""
-    dist = {s: 0 for s in seeds}
-    queue = deque(seeds)
-    while queue:
-        n = queue.popleft()
-        if dist[n] >= depth:
-            continue
-        neighbours = [(v, d) for _, v, d in G.out_edges(n, data=True)] + \
-                     [(u, d) for u, _, d in G.in_edges(n, data=True)]
-        for m, d in neighbours:
-            if d.get("type") not in TRAVERSE_EDGES or m in dist:
-                continue
-            if G.nodes[m].get("type") not in ITEM_TYPES:
-                continue  # чужие проекты и люди — тупик
-            dist[m] = dist[n] + 1
-            queue.append(m)
-    return {n: k for n, k in dist.items() if G.nodes[n].get("type") in ITEM_TYPES}
-
-
-def _mentioned_person_items(G: nx.MultiDiGraph, person: str) -> list[str]:
-    """Пункты, где человек назван в тексте, хотя ребра к нему нет: «Айгерим будет вторым бэкендером»."""
-    label = G.nodes[person].get("label", "")
-    out = []
-    for n, d in G.nodes(data=True):
-        if d.get("type") in ITEM_TYPES and n not in G.successors(person):
-            text = f"{d.get('statement', '')} {d.get('quote', '')}"
-            if d.get("made_by") == label or d.get("owner") == label or _mentions(label, _tokens(text), False):
-                out.append(n)
-    return out
-
-
-def _fallback_items(G: nx.MultiDiGraph, limit: int) -> list[str]:
-    """Без сущностей в вопросе: сначала конфликты, потом действующие решения и открытое, свежие раньше."""
-    def priority(n: str) -> tuple:
-        d = G.nodes[n]
-        important = d.get("in_conflict") or d.get("status") in ("active", "open") or d["type"] == "OpenQuestion"
-        return (not d.get("in_conflict"), not important, _neg(d.get("date", "")), n)
-
-    items = [n for n, d in G.nodes(data=True) if d.get("type") in ITEM_TYPES]
-    return sorted(items, key=priority)[:limit]
-
-
-def _chain(G: nx.MultiDiGraph, n: str, pool: set[str]) -> list[str]:
-    """Вся цепочка замен вокруг пункта (SUPERSEDES в обе стороны), только среди кандидатов pool."""
-    seen, stack = {n}, [n]
-    while stack:
-        m = stack.pop()
-        nbrs = [v for _, v, e in G.out_edges(m, data=True) if e.get("type") == "SUPERSEDES"] + \
-               [u for u, _, e in G.in_edges(m, data=True) if e.get("type") == "SUPERSEDES"]
-        for x in nbrs:
-            if x in pool and x not in seen:
-                seen.add(x)
-                stack.append(x)
-    return sorted(seen, key=lambda x: (G.nodes[x].get("date", ""), G.nodes[x].get("ts", ""), x))
-
-
-def select_items(G: nx.MultiDiGraph, ranked: list[str], limit: Optional[int]) -> list[str]:
-    """Не больше limit пунктов: бюджет контекста тот же, что у baseline (CONTEXT_K), иначе граф выигрывал бы объёмом.
-
-    ranked — кандидаты по важности. Пункт идёт вместе со всей своей цепочкой замен, если она помещается:
-    без середины цепочки ответ на «как менялся срок» неполон при формально верных цитатах (план, B6).
-    Цепочка, которая не влезает целиком, пропускается в пользу следующих пунктов; если не влезает и в пустой
-    контекст — берётся её начало по важности.
-    """
-    if limit is None or len(ranked) <= limit:
-        return list(ranked)
-    pool, out = set(ranked), []
-    for n in ranked:
-        if n in out:
-            continue
-        unit = [m for m in _chain(G, n, pool) if m not in out]
-        if len(out) + len(unit) <= limit:
-            out += unit
-        elif not out:
-            out = [m for m in ranked if m in set(unit)][:limit]
-        if len(out) >= limit:
-            break
-    return out[:limit]
-
+# ---------- 2. Обход — src.graph.traverse роли B; здесь только тип вопроса для него ----------
 
 def question_focus(question: str) -> Optional[str]:
     """T2 (как менялось) | T4 (конфликты) | T5 (что не закрыто) | None — по тем же словам, что роутер auto, без LLM."""
@@ -263,77 +178,65 @@ def question_focus(question: str) -> Optional[str]:
     return next((t for t in ("T4", "T2", "T5") if _has(text, _PATTERNS[t])), None)
 
 
-def _rank(G: nx.MultiDiGraph, dist: dict[str, int], focus: Optional[str] = None) -> list[str]:
-    """Важнее: то, о чём спрашивают (focus), затем ближе к сущностям вопроса, в конфликте, действующее или
-    открытое, свежее.
-
-    Без focus на «как менялся срок» конфликты и действующие пункты обгоняли заменённые решения, и в маленький
-    бюджет hybrid цепочка замен не попадала: на q_05 графовая часть покрывала 1 встречу-источник из 4.
-    """
-    pool = set(dist)
-
-    def asked(n: str) -> bool:
-        d = G.nodes[n]
-        if focus == "T2":
-            return len(_chain(G, n, pool)) > 1
-        if focus == "T4":
-            return bool(d.get("in_conflict"))
-        if focus == "T5":
-            return d["type"] == "OpenQuestion" or (d["type"] == "Task" and d.get("status") == "open")
-        return True
-
-    def key(n: str) -> tuple:
-        d = G.nodes[n]
-        current = d.get("status") in ("active", "open") or d["type"] == "OpenQuestion"
-        return (not asked(n), dist[n], not d.get("in_conflict"), not current, _neg(d.get("date", "")), n)
-    return sorted(dist, key=key)
-
-
-def _neg(date: str) -> str:
-    # для сортировки «свежие раньше» без datetime: инвертируем цифры
-    return date.translate(str.maketrans("0123456789", "9876543210"))
-
-
 # ---------- 3. Контекст ----------
 
 _LINK_TEXT = {"SUPERSEDES": ("заменяет", "заменено решением"),
               "CONTRADICTS": ("противоречит", "противоречит"),
               "DEPENDS_ON": ("зависит от", "от него зависит"),
               "REFINES": ("уточняет", "уточнено решением"),
-              "SAME_TOPIC": ("на ту же тему, что", "на ту же тему, что")}
+              "SAME_TOPIC": ("на ту же тему, что", "на ту же тему, что"),
+              "CLOSES": ("закрывает", "закрыта пунктом")}
 _KIND = {"Decision": "Решение", "Task": "Задача", "OpenQuestion": "Открытый вопрос"}
-_TASK_STATUS = {"open": "открыта", "done": "выполнена", "cancelled": "отменена"}
+# Состояние задачи на дату вопроса — src.graph.status.task_state роли B (B7), а не итоговый status узла.
+_TASK_STATE = {"closed": "выполнена", "open": "открыта", "overdue_mentioned": "ПРОСРОЧЕНА, упоминалась позже",
+               "overdue_forgotten": "ПРОСРОЧЕНА, после выдачи не упоминалась"}
 
 
-def _item_block(G: nx.MultiDiGraph, n: str, keep: set[str]) -> str:
+def _visible(G: nx.MultiDiGraph, n: str, as_of: Optional[str]) -> bool:
+    return n in G and _not_after(G.nodes[n].get("date"), as_of)
+
+
+def _item_block(G: nx.MultiDiGraph, n: str, keep: set[str], as_of: Optional[str] = None,
+                raw: Optional[dict] = None) -> str:
+    """Пункт для модели. Статусы и связи — только по тому, что видно на as_of: итоговый граф знает про будущие
+    замены и закрытия, и без отсечки «ЗАМЕНЕНО» и id будущего решения утекали бы в ответ на вопрос о прошлом."""
+    from src.graph.status import task_state  # локально: status тянет traverse, а тот — этот модуль
+
     d = G.nodes[n]
     meeting = G.nodes.get(f"meeting:{d['meeting_id']}", {})
     head = f"{_KIND[d['type']]} {n} — встреча {d['meeting_id']} «{meeting.get('label', '')}», {d.get('date', '')}"
+    ins = [(u, e) for u, _, e in G.in_edges(n, data=True) if _visible(G, u, as_of)]
+    outs = [(v, e) for _, v, e in G.out_edges(n, data=True) if _visible(G, v, as_of)]
     marks = []
     if d["type"] == "Decision":
-        marks.append("ЗАМЕНЕНО" if d.get("status") == "superseded" else "действует")
-        if d.get("in_conflict"):
+        superseded = any(e["type"] == "SUPERSEDES" for _, e in ins)
+        marks.append("ЗАМЕНЕНО" if superseded else "действует")
+        if any(e["type"] == "CONTRADICTS" for _, e in ins + outs):
             marks.append("В КОНФЛИКТЕ")
         if d.get("made_by"):
             marks.append(f"решил: {d['made_by']}")
-    elif d["type"] == "Task":
-        marks.append(_TASK_STATUS.get(d.get("status"), d.get("status", "")))
+    else:
+        state = task_state(G, n, as_of)
+        marks.append(_TASK_STATE.get(state.get("state"), state.get("state", "")))
         if d.get("owner"):
             marks.append(f"исполнитель: {d['owner']}")
         if d.get("due"):
             marks.append(f"срок: {d['due']}")
     marks = [m for m in marks if m]
     lines = [f"{head} [{'; '.join(marks)}]" if marks else head, f"Суть: {d.get('statement', '')}"]
-    for _, v, e in G.out_edges(n, data=True):
-        if e["type"] in _LINK_TEXT and v in G:
+    for v, e in outs:
+        if e["type"] in _LINK_TEXT:
             lines.append(f"Связь: {_LINK_TEXT[e['type']][0]} {v}" + _rationale(e, v, keep))
-    for u, _, e in G.in_edges(n, data=True):
-        if e["type"] in _LINK_TEXT and e["type"] != "CONTRADICTS" and u in G:
-            lines.append(f"Связь: {_LINK_TEXT[e['type']][1]} {u}" + _rationale(e, u, keep))
-        elif e["type"] == "CONTRADICTS":
+    for u, e in ins:
+        if e["type"] == "CONTRADICTS":
             lines.append(f"Связь: противоречит {u}" + _rationale(e, u, keep))
+        elif e["type"] in _LINK_TEXT:
+            lines.append(f"Связь: {_LINK_TEXT[e['type']][1]} {u}" + _rationale(e, u, keep))
     # Строка-источник в том же формате, что у baseline: по ней answerer проверяет цитаты.
     lines.append(f"[{d['meeting_id']} {d.get('ts', '00:00:00')}] цитата: {d.get('quote', '')}")
+    text = (raw or {}).get(n, {}).get("text")
+    if text:  # третий слой обхода B: реплики вокруг пункта — то, что экстракт мог не поймать
+        lines.append("Реплики рядом:\n" + text)
     return "\n".join(lines)
 
 
@@ -342,7 +245,8 @@ def _rationale(edge: dict, other: str, keep: set[str]) -> str:
     return out + ("" if other in keep else " — этого пункта нет в контексте")
 
 
-def format_context(G: nx.MultiDiGraph, items: list[str]) -> str:
+def format_context(G: nx.MultiDiGraph, items: list[str], as_of: Optional[str] = None,
+                   raw: Optional[dict] = None) -> str:
     """Пункты по проектам, внутри проекта — по времени: так модель видит хронологию решений."""
     keep = set(items)
     by_project: dict[str, list[str]] = {}
@@ -351,43 +255,63 @@ def format_context(G: nx.MultiDiGraph, items: list[str]) -> str:
     blocks = []
     for project in sorted(by_project):
         nodes = sorted(by_project[project], key=lambda n: (G.nodes[n].get("date", ""), G.nodes[n].get("ts", ""), n))
-        blocks.append(f"=== Проект {project} ===\n" + "\n\n".join(_item_block(G, n, keep) for n in nodes))
+        blocks.append(f"=== Проект {project} ===\n" +
+                      "\n\n".join(_item_block(G, n, keep, as_of, raw) for n in nodes))
     return "\n\n".join(blocks)
+
+
+@lru_cache(maxsize=64)
+def _raw_title(meeting_id: str) -> Optional[str]:
+    path = ROOT / "data" / "raw" / f"{meeting_id}.meeting.json"
+    try:
+        return json.loads(path.read_text(encoding="utf-8")).get("title")
+    except (OSError, json.JSONDecodeError):
+        return None
+
+
+def _raw_matches(G: nx.MultiDiGraph, meeting_id: str) -> bool:
+    """Реплики из data/raw подходят графу, только если это та же встреча: у заглушки data/sample те же id m_001,
+    m_002, но другой сюжет (Атлас), и чужие реплики сбивали бы проверку цитат."""
+    label = G.nodes.get(f"meeting:{meeting_id}", {}).get("label")
+    return bool(label) and label == _raw_title(meeting_id)
 
 
 # ---------- Точка входа ----------
 
 def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph] = None,
                       aliases: Optional[dict[str, str]] = None, as_of: Optional[str] = None,
-                      max_items: Optional[int] = CONTEXT_K) -> dict:
-    """Подграф по вопросу. depth — сколько шагов от сущностей (1: их пункты; 2: + связанные решения; 3: ещё шаг).
+                      max_items: Optional[int] = CONTEXT_K, with_text: bool = True) -> dict:
+    """Подграф по вопросу — обход роли B (src.graph.traverse, план B6) с бюджетом контекста режима graph.
 
-    Без G читается граф по умолчанию вместе с его aliases.json.
-    as_of (ISO-дата) — только пункты встреч не позже неё, как у baseline.
+    Обход B: стартовые сущности и пункты по словам и типу вопроса → цепочки замен целиком → связи (противоречия,
+    закрытия, уточнения) → остальные пункты сущностей; первые max_items уже собраны так, чтобы цепочка не резалась.
+    Здесь — обрезка до бюджета, фильтр «последние N встреч» и контекст для модели: статусы на дату as_of, связи и
+    реплики вокруг каждого пункта (третий слой обхода, ±45 с, размером с чанк baseline).
+
+    Без G читается граф по умолчанию вместе с его aliases.json. as_of (ISO-дата) — только пункты встреч не позже неё.
     max_items — бюджет контекста в пунктах, по умолчанию CONTEXT_K, как у baseline в чанках; None — без обрезки.
-    Возвращает {"entities", "items", "n_found", "last_meetings", "fallback", "context"}; n_found — сколько
-    пунктов нашёл обход до обрезки.
+    with_text=False — без реплик вокруг пунктов (рисунок графа в UI).
+    Возвращает {"entities", "items", "n_found", "last_meetings", "fallback", "context", "raw", "details"};
+    n_found — сколько пунктов нашёл обход до обрезки, details — почему пункт попал (ярус обхода B).
     """
+    from src.graph.traverse import traverse
+
     if depth < 1:
         raise ValueError("depth должен быть ≥ 1")
     check_as_of(as_of)
     if G is None:
         G, aliases = get_graph(), get_aliases() if aliases is None else aliases
-    seeds = find_entities(G, question, aliases)
-    found = _traverse(G, seeds, depth)
-    for s in seeds:
-        if G.nodes[s]["type"] == "Person":
-            found.update({n: 1 for n in _mentioned_person_items(G, s) if n not in found})
+    r = traverse(question, G=G, aliases=aliases, as_of=as_of, depth=depth, with_text=False, k=max_items)
+    return graph_context(G, question, r, as_of, max_items, with_text)
 
-    fallback = not seeds
-    if fallback:
-        items = [n for n in _fallback_items(G, len(G)) if _not_after(G.nodes[n].get("date"), as_of)]
-        items = items[:FALLBACK_MAX_ITEMS]
-        dist = {n: i for i, n in enumerate(items)}  # порядок важности _fallback_items
-    else:
-        items = [n for n in found if _not_after(G.nodes[n].get("date"), as_of)]
-        dist = {n: found[n] for n in items}
 
+def graph_context(G: nx.MultiDiGraph, question: str, traversal: dict, as_of: Optional[str],
+                  max_items: Optional[int], with_text: bool = True) -> dict:
+    """Результат traverse() → то, что уходит модели: фильтр «последние N встреч», обрезка до max_items, реплики
+    вокруг пунктов, текст со статусами на as_of. Общий для режима graph и графовой части hybrid."""
+    from src.graph.traverse import LINES_PER_ITEM, MAX_CHARS, WINDOW_S, raw_text_around
+
+    seeds, fallback, items = traversal["entities"], traversal["fallback"], list(traversal["items"])
     n_last = last_n_meetings(question)
     if n_last:
         projects = [G.nodes[s]["label"] for s in seeds if G.nodes[s]["type"] == "Project"]
@@ -402,10 +326,17 @@ def retrieve_subgraph(question: str, depth: int = 2, G: Optional[nx.MultiDiGraph
         items = [n for n in items if G.nodes[n].get("meeting_id") in allowed]
 
     n_found = len(items)
-    items = select_items(G, _rank(G, {n: dist[n] for n in items}, question_focus(question)), max_items)
-    items = sorted(items, key=lambda n: (G.nodes[n].get("date", ""), G.nodes[n].get("ts", ""), n))
-    return {"entities": seeds, "items": items, "n_found": n_found, "last_meetings": n_last, "fallback": fallback,
-            "context": format_context(G, items)}
+    kept = items if max_items is None else items[:max_items]
+    raw = {}
+    if with_text:
+        for n in kept:
+            d = G.nodes[n]
+            if d.get("meeting_id") and d.get("ts") and _raw_matches(G, d["meeting_id"]):
+                raw[n] = raw_text_around(d["meeting_id"], d["ts"], WINDOW_S, None, LINES_PER_ITEM, MAX_CHARS)
+    kept = sorted(kept, key=lambda n: (G.nodes[n].get("date", ""), G.nodes[n].get("ts", ""), n))
+    return {"entities": seeds, "items": kept, "n_found": n_found, "last_meetings": n_last, "fallback": fallback,
+            "context": format_context(G, kept, as_of, raw), "raw": raw,
+            "details": {n: traversal["details"].get(n, {}) for n in kept}}
 
 
 def main() -> int:

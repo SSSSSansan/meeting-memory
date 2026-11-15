@@ -64,10 +64,12 @@ def test_t5_open_items_are_marked():
     assert "[выполнена; исполнитель: Айгерим Нурланова]" in ctx
 
 
-def test_depth_controls_cross_project_links():
+def test_conflict_reaches_item_of_other_project():
+    """Обход B (src.graph.traverse) расширяется по связям от пунктов, подходящих к вопросу: конфликт решения Атласа
+    с решением Горизонта приходит вместе с ним. На «Что по Атласу?» без слов и типа вопроса пункты проекта берутся
+    без расширения — так решила роль B (docs/GRAPH_RETRIEVAL.md)."""
     G = _graph([CROSS_CONFLICT])
-    assert "d_m002_02" not in retrieve_subgraph("Что по Атласу?", depth=1, G=G)["items"]
-    sub = retrieve_subgraph("Что по Атласу?", depth=2, G=G)
+    sub = retrieve_subgraph("Что решили по релизу Атласа?", G=G)
     assert "d_m002_02" in sub["items"]
     assert "В КОНФЛИКТЕ" in sub["context"] and "Айгерим нужна и на релизе Атласа" in sub["context"]
     with pytest.raises(ValueError):
@@ -90,10 +92,16 @@ def test_last_meetings_filter():
     assert "этого пункта нет в контексте" in sub["context"]
 
 
-def test_no_entities_falls_back_with_conflicts_first():
+def test_conflict_question_without_entities_finds_both_sides_by_its_type():
     sub = retrieve_subgraph("Есть ли конфликты по загрузке людей?", G=_graph([CROSS_CONFLICT]))
-    assert sub["fallback"] and sub["entities"] == []
+    assert sub["entities"] == [] and not sub["fallback"]
     assert {"d_m002_01", "d_m002_02"} <= set(sub["items"])
+
+
+def test_nothing_found_gives_empty_context_not_random_items():
+    """Раньше без сущностей в контекст шли случайные «важные» пункты; обход B честно отдаёт пустоту."""
+    sub = retrieve_subgraph("Есть ли конфликты по загрузке людей?", G=_graph())   # конфликтов в графе нет
+    assert sub["fallback"] and sub["items"] == [] and sub["context"] == ""
 
 
 def test_graph_context_quotes_pass_answer_verification():
