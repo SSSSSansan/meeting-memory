@@ -1,0 +1,199 @@
+{
+  "meetings": 14,
+  "stages": {
+    "extract": {
+      "calls": 14,
+      "tokens_in": 64032,
+      "tokens_out": 3647,
+      "usd_logged": 0.0558,
+      "usd_repriced": 0.19655,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "link": {
+      "calls": 54,
+      "tokens_in": 16214,
+      "tokens_out": 2359,
+      "usd_logged": 0.00385,
+      "usd_repriced": 0.00385,
+      "models": [
+        "gpt-4o-mini"
+      ]
+    }
+  },
+  "closes": {
+    "calls": 9,
+    "usd_estimate": 0.002,
+    "note": "оценка dry-run, платный прогон не запускали"
+  },
+  "baseline_index": {
+    "calls": 13,
+    "tokens_in": 101529,
+    "tokens_out": 0,
+    "usd_logged": 0.00203,
+    "usd_repriced": 0.00203,
+    "models": [
+      "text-embedding-3-small"
+    ]
+  },
+  "per_meeting_usd": {
+    "extract": 0.01404,
+    "link": 0.00028,
+    "closes": 0.00014,
+    "graph_total": 0.01446,
+    "baseline_index": 0.000145
+  },
+  "corpus_usd": {
+    "graph_total": 0.2024,
+    "baseline_index": 0.00203,
+    "ratio_graph_to_baseline": 100
+  },
+  "extract_per_meeting": {
+    "m_001": {
+      "calls": 1,
+      "tokens_in": 6514,
+      "tokens_out": 294,
+      "usd_logged": 0.00115,
+      "usd_repriced": 0.01922,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_002": {
+      "calls": 1,
+      "tokens_in": 4746,
+      "tokens_out": 400,
+      "usd_logged": 0.00095,
+      "usd_repriced": 0.01587,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_003": {
+      "calls": 1,
+      "tokens_in": 5873,
+      "tokens_out": 414,
+      "usd_logged": 0.00113,
+      "usd_repriced": 0.01882,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_004": {
+      "calls": 1,
+      "tokens_in": 6113,
+      "tokens_out": 361,
+      "usd_logged": 0.00113,
+      "usd_repriced": 0.01889,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_005": {
+      "calls": 1,
+      "tokens_in": 5158,
+      "tokens_out": 211,
+      "usd_logged": 0.0009,
+      "usd_repriced": 0.015,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_006": {
+      "calls": 1,
+      "tokens_in": 3815,
+      "tokens_out": 235,
+      "usd_logged": 0.00071,
+      "usd_repriced": 0.01189,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_007": {
+      "calls": 1,
+      "tokens_in": 4519,
+      "tokens_out": 137,
+      "usd_logged": 0.00076,
+      "usd_repriced": 0.01267,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_008": {
+      "calls": 1,
+      "tokens_in": 3789,
+      "tokens_out": 241,
+      "usd_logged": 0.00071,
+      "usd_repriced": 0.01188,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_009": {
+      "calls": 1,
+      "tokens_in": 4155,
+      "tokens_out": 122,
+      "usd_logged": 0.0007,
+      "usd_repriced": 0.01161,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_010": {
+      "calls": 1,
+      "tokens_in": 4766,
+      "tokens_out": 196,
+      "usd_logged": 0.00083,
+      "usd_repriced": 0.01388,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_011": {
+      "calls": 1,
+      "tokens_in": 3630,
+      "tokens_out": 125,
+      "usd_logged": 0.01033,
+      "usd_repriced": 0.01033,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_012": {
+      "calls": 1,
+      "tokens_in": 3800,
+      "tokens_out": 240,
+      "usd_logged": 0.0119,
+      "usd_repriced": 0.0119,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_013": {
+      "calls": 1,
+      "tokens_in": 3628,
+      "tokens_out": 217,
+      "usd_logged": 0.01124,
+      "usd_repriced": 0.01124,
+      "models": [
+        "gpt-4o"
+      ]
+    },
+    "m_015": {
+      "calls": 1,
+      "tokens_in": 3526,
+      "tokens_out": 454,
+      "usd_logged": 0.01336,
+      "usd_repriced": 0.01336,
+      "models": [
+        "gpt-4o"
+      ]
+    }
+  },
+  "notes": [
+    "link: среднее на встречу, у вызовов нет meeting_id (вызов = пара решений)",
+    "usd_logged для gpt-4o занижена до 11.11: цена в логе по тарифу mini; usd_repriced — по токенам",
+    "baseline-индекс: только эмбеддинги чанков, без вызовов LLM"
+  ]
+}

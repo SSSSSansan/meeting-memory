@@ -1,0 +1,331 @@
+{
+  "meta": {
+    "warm_runs": 20,
+    "statistic": "median по прогретым запускам; cold = один первый запуск",
+    "neo4j_indexes": [
+      "Node(nid)",
+      "Decision(project)",
+      "Node(type, status)"
+    ],
+    "neo4j_includes_network": "время Neo4j включает запрос по bolt (минимум около 2-4 мс); NetworkX работает в памяти",
+    "cold_caveat": "холодным по-настоящему считать только первый масштаб (×1): дальше JVM и кэш уже прогреты",
+    "neo4j_session": "новая сессия драйвера на каждый запрос"
+  },
+  "scales": {
+    "1": {
+      "nodes": 64,
+      "edges": 172,
+      "queries": {
+        "S1": {
+          "networkx": {
+            "cold_ms": 1.586,
+            "warm_median_ms": 0.019
+          },
+          "networkx_index": {
+            "cold_ms": 0.038,
+            "warm_median_ms": 0.018
+          },
+          "neo4j": {
+            "cold_ms": 359.942,
+            "warm_median_ms": 6.74
+          },
+          "agree": true,
+          "n_results": 3
+        },
+        "S2": {
+          "networkx": {
+            "cold_ms": 0.055,
+            "warm_median_ms": 0.017
+          },
+          "networkx_index": {
+            "cold_ms": 0.047,
+            "warm_median_ms": 0.013
+          },
+          "neo4j": {
+            "cold_ms": 260.801,
+            "warm_median_ms": 5.834
+          },
+          "agree": true,
+          "n_results": 4
+        },
+        "S3": {
+          "networkx": {
+            "cold_ms": 0.106,
+            "warm_median_ms": 0.064
+          },
+          "networkx_index": {
+            "cold_ms": 0.006,
+            "warm_median_ms": 0.001
+          },
+          "neo4j": {
+            "cold_ms": 55.208,
+            "warm_median_ms": 5.438
+          },
+          "agree": true,
+          "n_results": 1
+        },
+        "S4": {
+          "networkx": {
+            "cold_ms": 0.08,
+            "warm_median_ms": 0.007
+          },
+          "networkx_index": {
+            "cold_ms": 0.015,
+            "warm_median_ms": 0.002
+          },
+          "neo4j": {
+            "cold_ms": 129.414,
+            "warm_median_ms": 5.955
+          },
+          "agree": true,
+          "n_results": 4
+        }
+      },
+      "networkx_build_ms": 0.1,
+      "networkx_index_build_ms": 0.2,
+      "neo4j_load_ms": 11173.0
+    },
+    "10": {
+      "nodes": 640,
+      "edges": 1720,
+      "queries": {
+        "S1": {
+          "networkx": {
+            "cold_ms": 0.162,
+            "warm_median_ms": 0.018
+          },
+          "networkx_index": {
+            "cold_ms": 0.025,
+            "warm_median_ms": 0.018
+          },
+          "neo4j": {
+            "cold_ms": 16.064,
+            "warm_median_ms": 8.925
+          },
+          "agree": true,
+          "n_results": 3
+        },
+        "S2": {
+          "networkx": {
+            "cold_ms": 0.065,
+            "warm_median_ms": 0.017
+          },
+          "networkx_index": {
+            "cold_ms": 0.023,
+            "warm_median_ms": 0.014
+          },
+          "neo4j": {
+            "cold_ms": 11.956,
+            "warm_median_ms": 6.843
+          },
+          "agree": true,
+          "n_results": 4
+        },
+        "S3": {
+          "networkx": {
+            "cold_ms": 0.791,
+            "warm_median_ms": 0.672
+          },
+          "networkx_index": {
+            "cold_ms": 0.007,
+            "warm_median_ms": 0.002
+          },
+          "neo4j": {
+            "cold_ms": 11.928,
+            "warm_median_ms": 7.836
+          },
+          "agree": true,
+          "n_results": 10
+        },
+        "S4": {
+          "networkx": {
+            "cold_ms": 0.238,
+            "warm_median_ms": 0.059
+          },
+          "networkx_index": {
+            "cold_ms": 0.026,
+            "warm_median_ms": 0.018
+          },
+          "neo4j": {
+            "cold_ms": 13.522,
+            "warm_median_ms": 9.416
+          },
+          "agree": true,
+          "n_results": 40
+        }
+      },
+      "networkx_build_ms": 8.7,
+      "networkx_index_build_ms": 1.7,
+      "neo4j_load_ms": 1165.0
+    },
+    "100": {
+      "nodes": 6400,
+      "edges": 17200,
+      "queries": {
+        "S1": {
+          "networkx": {
+            "cold_ms": 0.091,
+            "warm_median_ms": 0.019
+          },
+          "networkx_index": {
+            "cold_ms": 0.021,
+            "warm_median_ms": 0.018
+          },
+          "neo4j": {
+            "cold_ms": 7.93,
+            "warm_median_ms": 4.686
+          },
+          "agree": true,
+          "n_results": 3
+        },
+        "S2": {
+          "networkx": {
+            "cold_ms": 0.069,
+            "warm_median_ms": 0.018
+          },
+          "networkx_index": {
+            "cold_ms": 0.019,
+            "warm_median_ms": 0.014
+          },
+          "neo4j": {
+            "cold_ms": 10.278,
+            "warm_median_ms": 12.933
+          },
+          "agree": true,
+          "n_results": 4
+        },
+        "S3": {
+          "networkx": {
+            "cold_ms": 11.678,
+            "warm_median_ms": 4.473
+          },
+          "networkx_index": {
+            "cold_ms": 0.032,
+            "warm_median_ms": 0.006
+          },
+          "neo4j": {
+            "cold_ms": 40.145,
+            "warm_median_ms": 8.9
+          },
+          "agree": true,
+          "n_results": 100
+        },
+        "S4": {
+          "networkx": {
+            "cold_ms": 2.532,
+            "warm_median_ms": 0.316
+          },
+          "networkx_index": {
+            "cold_ms": 0.13,
+            "warm_median_ms": 0.09
+          },
+          "neo4j": {
+            "cold_ms": 26.978,
+            "warm_median_ms": 12.535
+          },
+          "agree": true,
+          "n_results": 400
+        }
+      },
+      "networkx_build_ms": 62.8,
+      "networkx_index_build_ms": 6.0,
+      "neo4j_load_ms": 1947.7
+    },
+    "1000": {
+      "nodes": 64000,
+      "edges": 172000,
+      "queries": {
+        "S1": {
+          "networkx": {
+            "cold_ms": 0.292,
+            "warm_median_ms": 0.007
+          },
+          "networkx_index": {
+            "cold_ms": 0.012,
+            "warm_median_ms": 0.007
+          },
+          "neo4j": {
+            "cold_ms": 48.313,
+            "warm_median_ms": 5.544
+          },
+          "agree": true,
+          "n_results": 3
+        },
+        "S2": {
+          "networkx": {
+            "cold_ms": 0.093,
+            "warm_median_ms": 0.018
+          },
+          "networkx_index": {
+            "cold_ms": 0.062,
+            "warm_median_ms": 0.013
+          },
+          "neo4j": {
+            "cold_ms": 67.455,
+            "warm_median_ms": 4.037
+          },
+          "agree": true,
+          "n_results": 4
+        },
+        "S3": {
+          "networkx": {
+            "cold_ms": 67.406,
+            "warm_median_ms": 27.941
+          },
+          "networkx_index": {
+            "cold_ms": 0.324,
+            "warm_median_ms": 0.077
+          },
+          "neo4j": {
+            "cold_ms": 90.116,
+            "warm_median_ms": 17.158
+          },
+          "agree": true,
+          "n_results": 1000
+        },
+        "S4": {
+          "networkx": {
+            "cold_ms": 8.71,
+            "warm_median_ms": 4.208
+          },
+          "networkx_index": {
+            "cold_ms": 2.578,
+            "warm_median_ms": 1.216
+          },
+          "neo4j": {
+            "cold_ms": 132.054,
+            "warm_median_ms": 60.789
+          },
+          "agree": true,
+          "n_results": 4000
+        }
+      },
+      "networkx_build_ms": 507.4,
+      "networkx_index_build_ms": 63.0,
+      "neo4j_load_ms": 9804.8
+    }
+  },
+  "loc": {
+    "S1": {
+      "python_scan": 11,
+      "python_index": 2,
+      "cypher": 1
+    },
+    "S2": {
+      "python_scan": 6,
+      "python_index": 3,
+      "cypher": 1
+    },
+    "S3": {
+      "python_scan": 2,
+      "python_index": 2,
+      "cypher": 1
+    },
+    "S4": {
+      "python_scan": 3,
+      "python_index": 4,
+      "cypher": 1
+    }
+  },
+  "notes": "на ~60 узлах разница в миллисекундах и тонет в шуме; различает движки только кривая роста.\nPython-версий две: «перебор» (как в queries.py, без индексов) и «индекс» (словари строятся один раз, время\nпостроения меряется отдельно). Neo4j тут с индексом по `nid`, как и положено. S3 и S4 по определению возвращают\nбольше строк на больших графах (копий больше), S1 и S2 про копию 0."
+}
