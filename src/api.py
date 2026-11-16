@@ -483,7 +483,7 @@ SOURCE_METRICS = {"citation_recall": "полнота по источникам",
                   "quote_validity": "цитаты найдены в транскрипте", "retrieval_recall": "полнота поиска"}
 # Файлы для плашек над таблицами; формат описан в memory.md (2026-11-13, C5).
 EXTRACTION_QUALITY = "extraction_quality.json"   # B: {"hallucination_rate", "n_meetings"}
-INDEXING_COST = "indexing_cost.json"             # B: {"full_corpus": {"meetings", "cost_usd"}}
+INDEXING_COST = "indexing_cost.json"             # B: src/graph/indexing_cost.py, corpus_usd.graph_total
 JUDGE_AGREEMENT = "judge_agreement.json"         # A: {"accuracy", "kappa", "n"}
 JUDGE_FACTS_AGREEMENT_MD = "judge_facts_labeling/agreement.md"  # A: отчёт калибровки, если json нет
 
@@ -743,21 +743,35 @@ def judge_agreement(results_dir: Optional[Path] = None) -> dict:
             "source": f"results/{JUDGE_FACTS_AGREEMENT_MD}"}
 
 
+def indexing_cost(results_dir: Optional[Path] = None) -> dict:
+    """Стоимость индексации из results/indexing_cost.json роли B (src/graph/indexing_cost.py):
+    {"graph_usd", "baseline_usd", "ratio", "meetings"}; {} — файла нет. Понимает и ранний формат full_corpus."""
+    data = _read_json(Path(results_dir or RESULTS_DIR) / INDEXING_COST) or {}
+    corpus = data.get("corpus_usd")
+    if corpus:
+        return {"graph_usd": corpus.get("graph_total"), "baseline_usd": corpus.get("baseline_index"),
+                "ratio": corpus.get("ratio_graph_to_baseline"), "meetings": data.get("meetings")}
+    old = data.get("full_corpus") or {}
+    return {"graph_usd": old.get("cost_usd"), "meetings": old.get("meetings")} if old else {}
+
+
 def metric_cards(results_dir: Optional[Path] = None) -> list[dict]:
     """Плашки над таблицами: {title, value | None, hint}. None — файла ещё нет, в hint сказано, чей он."""
     folder = Path(results_dir or RESULTS_DIR)
     ext = _read_json(folder / EXTRACTION_QUALITY) or {}
-    cost = (_read_json(folder / INDEXING_COST) or {}).get("full_corpus") or {}
+    cost = indexing_cost(folder)
     judge = judge_agreement(folder)
-    hal, idx = ext.get("hallucination_rate"), cost.get("cost_usd")
+    hal, idx = ext.get("hallucination_rate"), cost.get("graph_usd")
     acc, kappa = judge.get("accuracy"), judge.get("kappa")
+    ratio = (f"; в {cost['ratio']:.0f} раз дороже индекса baseline (${cost['baseline_usd']:.4f})"
+             if cost.get("ratio") and cost.get("baseline_usd") is not None else "")
     return [
         {"title": "Выдуманные цитаты извлечения", "value": None if hal is None else f"{hal:.1%}",
          "hint": (f"по {ext.get('n_meetings', '?')} встречам" if hal is not None
                   else f"нет results/{EXTRACTION_QUALITY} (роль B, validate_extraction)")},
         {"title": "Индексация графа, весь корпус", "value": None if idx is None else f"${idx:.3f}",
-         "hint": (f"{cost.get('meetings', '?')} встреч: извлечение и связи" if idx is not None
-                  else f"нет results/{INDEXING_COST} (роль B, B8)")},
+         "hint": (f"{cost.get('meetings', '?')} встреч: извлечение и связи{ratio}" if idx is not None
+                  else f"нет results/{INDEXING_COST} (роль B: python -m src.graph.indexing_cost)")},
         {"title": "Судья совпадает с человеком", "value": None if acc is None else f"{acc:.0%}",
          "hint": (f"каппа {kappa:.2f}, n={judge.get('n', '?')} решений «факт есть / нет» · {judge['source']}"
                   if kappa is not None

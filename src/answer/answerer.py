@@ -60,7 +60,7 @@ class AnswerStats:
     route_reason: str = ""
     as_of: str = ""              # ISO-дата: поиск видел только встречи не позже неё ("" — без ограничения)
     retrieved_meetings: list = field(default_factory=list)  # что попало в контекст до генерации
-    context_parts: dict = field(default_factory=dict)       # hybrid: пунктов графа, чанков backfill и поиска
+    context_parts: dict = field(default_factory=dict)       # hybrid: пунктов графа, из них с репликами, чанков поиска
     attempts: int = 0
     json_failed_first: bool = False
     citations_first: int = 0
@@ -266,7 +266,7 @@ def answer(question: str, mode: str = "baseline", k: int = CONTEXT_K,
                             context_k=k)
         context = hybrid_context(h)
         retrieved = h["retrieved_meetings"]
-        parts = {"graph_items": len(h["graph_items"]), "backfill_chunks": h["n_backfill"],
+        parts = {"graph_items": len(h["graph_items"]), "graph_items_with_text": h["n_graph_text"],
                  "vector_chunks": h["n_vector"]}
     elif mode == "bm25":
         # контроль A5: те же чанки и тот же k, что у baseline, но поиск по словам, без эмбеддингов

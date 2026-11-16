@@ -209,6 +209,15 @@ def test_cards_say_whose_file_is_missing_then_show_values():
     assert [c["value"] for c in api.metric_cards()] == ["0.0%", "$0.035", "90%"]
 
 
+def test_indexing_cost_card_reads_role_b_format():
+    """Формат src/graph/indexing_cost.py роли B: corpus_usd.graph_total и отношение к индексу baseline."""
+    _write(api.RESULTS_DIR, api.INDEXING_COST, {
+        "meetings": 14, "corpus_usd": {"graph_total": 0.2031, "baseline_index": 0.0029, "ratio_graph_to_baseline": 70}})
+    card = api.metric_cards()[1]
+    assert card["value"] == "$0.203"
+    assert "14 встреч" in card["hint"] and "в 70 раз дороже индекса baseline ($0.0029)" in card["hint"]
+
+
 def _metrics_text(at: AppTest) -> str:
     return " ".join([w.value for w in at.warning] + [i.value for i in at.info] + [s.value for s in at.subheader])
 
