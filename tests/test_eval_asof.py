@@ -14,6 +14,7 @@ from src.eval import run as ev
 from src.eval.metrics import MeetingTexts
 from src.retrieval import hybrid as hybrid_mod
 from src.retrieval.baseline import CHUNK_FORMAT, CONTEXT_K
+from src.retrieval.graph_rag import retrieve_subgraph
 from src.schemas import Answer
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -129,14 +130,26 @@ def test_cli_has_no_k_and_header_uses_context_k(capsys):
 
 # ---------- hybrid ----------
 
-def test_hybrid_in_modes_and_marked_while_graph_part_is_stub(index_dir, monkeypatch):
+def _graph_part_with_subgraph(question, depth, G, as_of):
+    return retrieve_subgraph(question, depth=depth, G=G, as_of=as_of)   # временная реализация C
+
+
+def _graph_part_with_traverse(question, depth, G, as_of):
+    return {"items": []}                                                # обход B
+
+
+def test_hybrid_in_modes_and_flag_follows_graph_part(index_dir, monkeypatch):
     assert "hybrid" in systems.MODES and ev.MODES["hybrid"] == ["hybrid"] and "hybrid" in ev.MODES["all"]
     assert ev.MODES["both"] == ["baseline", "graph"]
-    system = systems.build_system("hybrid", raw_dir=RAW, index_dir=index_dir, as_of_dates=["2026-08-05"])
-    assert system.flag == systems.HYBRID_GRAPH_STUB == "graph part: stub"
-    # когда B подставит свой обход, пометка уходит сама
-    monkeypatch.setattr(hybrid_mod, "graph_part", lambda question, depth, G, as_of: {"items": []})
-    assert systems.build_system("hybrid", raw_dir=RAW, index_dir=index_dir, as_of_dates=["2026-08-05"]).flag == ""
+    assert systems.HYBRID_GRAPH_STUB == "graph part: stub"
+
+    def flag():
+        return systems.build_system("hybrid", raw_dir=RAW, index_dir=index_dir, as_of_dates=["2026-08-05"]).flag
+
+    monkeypatch.setattr(hybrid_mod, "graph_part", _graph_part_with_subgraph)
+    assert systems.hybrid_graph_part_is_stub() and flag() == systems.HYBRID_GRAPH_STUB
+    monkeypatch.setattr(hybrid_mod, "graph_part", _graph_part_with_traverse)
+    assert not systems.hybrid_graph_part_is_stub() and flag() == ""
 
 
 def test_hybrid_flag_in_summary_json_and_not_in_final_table():
@@ -244,12 +257,15 @@ def test_index_without_needed_meetings_needs_reindex(index_dir):
     assert systems.REINDEX in problem and "m_006" in problem
 
 
-def test_dry_run_prints_reindex_and_hybrid_stub(tmp_path, capsys):
+@pytest.mark.parametrize("graph_part, printed", [(_graph_part_with_subgraph, True), (_graph_part_with_traverse, False)])
+def test_dry_run_prints_reindex_and_hybrid_stub_note_by_graph_part(tmp_path, capsys, monkeypatch, graph_part, printed):
+    monkeypatch.setattr(hybrid_mod, "graph_part", graph_part)
     qfile = tmp_path / "q.json"
     qfile.write_text(json.dumps([q().model_dump()], ensure_ascii=False), encoding="utf-8")
     code = ev.main(["--mode", "all", "--split", "dev", "--questions", str(qfile), "--index-dir", str(tmp_path / "x"),
                     "--dry-run", "--judge-facts"])
     out = capsys.readouterr().out
-    assert code == 0 and "нужна переиндексация" in out and "hybrid: graph part: stub" in out
+    assert code == 0 and "нужна переиндексация" in out
+    assert ("hybrid: graph part: stub" in out) is printed
     assert f"CONTEXT_K={CONTEXT_K}" in out and "as_of_date: 2026-08-05" in out
     assert not (tmp_path / "x").exists()
