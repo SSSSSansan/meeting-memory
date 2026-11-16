@@ -1,0 +1,31 @@
+{
+  "dev": {
+    "questions": 35,
+    "answers_usd": 0.0428,
+    "judge_usd": 0.1523,
+    "total_usd": 0.1951
+  },
+  "test": {
+    "questions": 23,
+    "answers_usd": 0.0281,
+    "judge_usd": 0.1001,
+    "total_usd": 0.1282
+  },
+  "total_usd": 0.3233,
+  "balance_needed_usd_30pct": 0.4203,
+  "per_call_usd": {
+    "answer": {
+      "baseline": 0.000259,
+      "bm25": 0.000259,
+      "graph": 0.000372,
+      "hybrid": 0.000333
+    },
+    "judge": 0.001088
+  },
+  "assumptions": [
+    "цены gpt-4o-mini 0.15/0.60 за 1M, судья v2 на той же модели (JUDGE_MODEL пуст)",
+    "токены ответа и судьи — средние по calls.jsonl с 11.11; hybrid не измерялся, взято ≈ baseline + граф-часть",
+    "без повторов (repeats=1), без judge-facts и longctx",
+    "retry-доля из лога: baseline 7/18, graph 4/22, hybrid принята 25%"
+  ]
+}
