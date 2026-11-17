@@ -77,6 +77,34 @@ def test_runs_split_by_mode_get_a_combined_view_first():
     assert any(w.startswith("longctx: 5 вопросов из") for w in combined["warnings"])
 
 
+def test_test_run_opens_by_default_even_if_dev_is_newer():
+    """Отчёт и выводы — по test; сводная dev (свежее, с подобранным на dev обходом) первой не идёт."""
+    _write_split_runs()
+    test = _real_run("t", "2026-11-14T08:00:00+05:00")
+    test["config"]["split"] = "test"
+    _write(api.RESULTS_DIR, "eval_t.json", test)
+    runs = api.eval_runs()
+    assert runs[0]["run_id"] == "t" and runs[0]["final"] and "итоговый" in runs[0]["label"]
+    assert runs[1]["combined"] == "dev"
+    assert sum(r["run_id"] == "t" for r in runs) == 1
+
+
+def test_cached_answers_do_not_count_into_latency():
+    """dev 2026-11-16: baseline и bm25 целиком из кэша — средняя «27 мс» была скоростью кэша, а не режима."""
+    data = copy.deepcopy(FIXTURE)
+    rows = [r for r in data["per_question"] if r["mode"] == "graph" and r["status"] == "ok"]
+    for r in rows:
+        r["from_cache"], r["latency_ms"] = False, 1000
+    rows[0]["from_cache"], rows[0]["latency_ms"] = True, 1
+    for r in data["per_question"]:
+        if r["mode"] == "baseline":
+            r["from_cache"], r["latency_ms"] = True, 2
+    got = {r["режим"]: r for r in api.cost_latency(data)}
+    assert got["graph"]["latency_ms"] == 1000 and got["graph"]["n_latency"] == len(rows) - 1
+    assert got["graph"]["cached"] == 1 and got["graph"]["n"] == len(rows)
+    assert got["baseline"]["latency_ms"] is None and got["baseline"]["cost_usd"] is not None
+
+
 def test_combined_takes_newest_run_per_mode_and_flags_config_differences():
     _write_split_runs()
     _write(api.RESULTS_DIR, "eval_a2.json",
@@ -117,12 +145,14 @@ AGREEMENT_MD = """# Согласие ручной разметки фактов 
 def test_judge_card_reads_role_a_calibration_report_then_prefers_json():
     (api.RESULTS_DIR / "judge_facts_labeling").mkdir()
     (api.RESULTS_DIR / api.JUDGE_FACTS_AGREEMENT_MD).write_text(AGREEMENT_MD, encoding="utf-8")
-    assert api.judge_agreement() == {"accuracy": 0.95, "kappa": 0.87, "n": 121,
+    assert api.judge_agreement() == {"accuracy": 0.95, "kappa": 0.87, "n": 121, "judge_version": "judge-facts-v1",
                                      "source": f"results/{api.JUDGE_FACTS_AGREEMENT_MD}"}
     card = api.metric_cards()[2]
-    assert card["value"] == "95%" and "каппа 0.87, n=121" in card["hint"]
+    # каппа рядом с процентом, а не только в подсказке: 95% совпадения при перекосе меток мало что говорит
+    assert card["value"] == "95% · κ 0,87"
+    assert "каппа Коэна 0,87 (judge-facts-v1, 121 пара" in card["hint"]
     _write(api.RESULTS_DIR, api.JUDGE_AGREEMENT, {"accuracy": 0.8, "kappa": 0.6, "n": 30})
-    assert api.metric_cards()[2]["value"] == "80%"
+    assert api.metric_cards()[2]["value"] == "80% · κ 0,60"
 
 
 def test_tab_renders_combined_view_with_warnings():
@@ -206,7 +236,7 @@ def test_cards_say_whose_file_is_missing_then_show_values():
     _write(api.RESULTS_DIR, api.EXTRACTION_QUALITY, {"hallucination_rate": 0.0, "n_meetings": 14})
     _write(api.RESULTS_DIR, api.INDEXING_COST, {"full_corpus": {"meetings": 14, "cost_usd": 0.035}})
     _write(api.RESULTS_DIR, api.JUDGE_AGREEMENT, {"accuracy": 0.9, "kappa": 0.81, "n": 90})
-    assert [c["value"] for c in api.metric_cards()] == ["0.0%", "$0.035", "90%"]
+    assert [c["value"] for c in api.metric_cards()] == ["0.0%", "$0.035", "90% · κ 0,81"]
 
 
 def test_indexing_cost_card_reads_role_b_format():

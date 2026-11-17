@@ -120,7 +120,8 @@ ov = api.overview()
 for col, (label, value, hint) in zip(st.columns(5), [
         ("Встреч в индексе", ov["meetings_indexed"], "для поиска по репликам (baseline)"),
         ("Решений в графе", ov["decisions"], f"граф по {ov['graph_meetings']} встречам"),
-        ("Открытых задач", ov["open_tasks"], f"всего задач: {ov['tasks']}"),
+        ("Открытых задач", ov["open_tasks"],
+         f"всего задач: {ov['tasks']}, закрыто: {ov['closed_tasks']} (связей закрытия CLOSES в графе: {ov['closes']})"),
         ("Конфликтов", ov["conflicts"], "решения, которые противоречат друг другу"),
         ("Замен решений", ov["replacements"], "решения, изменённые на поздних встречах")]):
     col.metric(label, value, help=hint, border=True)
@@ -334,9 +335,12 @@ with tab_metrics:
             st.warning("Фикстура роли A: числа выдуманы, это не результат системы. "
                        "Вкладка покажет настоящий прогон, как только в results/ появится eval_*.json.",
                        icon=":material/science:")
+        if cfg.get("split") == "test":
+            st.success("Split test — итоговый прогон: таблицы отчёта и выводы по нему.", icon=":material/verified:")
         if cfg.get("split") == "dev":
-            st.info("Split dev: разбивка по типам разведочная — на каждый тип по несколько вопросов. "
-                    "Итоговые утверждения — по прогону на test.", icon=":material/info:")
+            st.info("Split dev — разведочный: обход графа подбирали на нём (здесь hybrid лучше graph, на test нет), "
+                    "на каждый тип по несколько вопросов. Итоговые утверждения — по прогону на test.",
+                    icon=":material/info:")
 
         for col, card in zip(st.columns(3), api.metric_cards()):
             col.metric(card["title"], card["value"] or "—", help=card["hint"], border=True)
@@ -369,12 +373,25 @@ with tab_metrics:
         left.markdown("**$ за ответ**")
         left.bar_chart({r["режим"]: r["cost_usd"] or 0 for r in cl}, horizontal=True, height=160)
         mid.markdown("**Задержка, мс**")
-        mid.bar_chart({r["режим"]: r["latency_ms"] or 0 for r in cl}, horizontal=True, height=160)
+        # режим без измерений (все ответы из кэша) не рисуем нулём: «0 мс» читалось бы как «мгновенно»
+        mid.bar_chart({r["режим"]: r["latency_ms"] for r in cl if r["latency_ms"] is not None},
+                      horizontal=True, height=160)
         right.markdown("**Токены промпта**")
         right.bar_chart({r["режим"]: r["context_tokens"] or 0 for r in cl}, horizontal=True, height=160)
         st.caption("Средние по ответам со статусом ok"
                    + ", n = " + ", ".join(f"{r['режим']}: {r['n']}" for r in cl)
+                   + ". Задержка — только по ответам не из кэша (ответ из кэша приходит за миллисекунды)"
+                   + ", n = " + ", ".join(f"{r['режим']}: {r.get('n_latency', r['n'])}" for r in cl)
                    + ". Токены промпта — контекст, системный промпт и вопрос вместе.")
+        no_lat = [r for r in cl if r["latency_ms"] is None and r.get("cached")]
+        part = [r for r in cl if r["latency_ms"] is not None and r.get("cached")]
+        if no_lat or part:
+            st.warning("Ответы из кэша: "
+                       + "; ".join(f"{r['режим']} — {r['cached']} из {r['n']}"
+                                   + (", задержка не измерена" if r["latency_ms"] is None else "")
+                                   for r in no_lat + part)
+                       + ". Сравнивать задержку режимов — по прогону без кэша (test 2026-11-16).",
+                       icon=":material/cached:")
 
         with st.expander("Срез по языку вопроса"):
             st.dataframe(api.lang_table(result, metric), hide_index=True, width="stretch")

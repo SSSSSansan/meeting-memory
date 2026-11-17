@@ -257,6 +257,19 @@ def test_overview_counts_on_sample_graph():
     assert (ov["conflicts"], ov["replacements"], ov["meetings_indexed"]) == (0, 1, 0)
 
 
+def test_open_tasks_count_closures_on_role_b_graph():
+    """«Открытых задач» учитывает CLOSES: в data/graph 6 закрытий, открытыми остаются 4 из 10 (было 9 по
+    графу без закрытий). Граф с закрытиями — выбор UI по умолчанию."""
+    if not api.GRAPH_PATH.exists():
+        pytest.skip("нет data/graph/graph.json")
+    assert [g["path"] for g in api.available_graphs()][0] == api.GRAPH_PATH
+    api.use_graph(api.GRAPH_PATH)
+    ov = api.overview()
+    assert ov["closes"] > 0 and ov["open_tasks"] + ov["closed_tasks"] == ov["tasks"]
+    assert ov["closed_tasks"] > 1          # без CLOSES закрыта только одна (done в извлечении)
+    api.use_graph(None)
+
+
 def test_readable_ids_replace_internal_ids():
     text = "Согласно решению d_m001_01 и задаче t_m001_01, а d_m099_01 в графе нет."
     out = api.readable_ids(text)
