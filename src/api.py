@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Iterator, Optional
 
 from src.answer.answerer import answer
+from src.graph.status import task_state
 from src.ingest.scribal_adapter import convert
 from src.ingest.speakers import apply_speakers
 from src.retrieval.baseline import CONTEXT_K, DEFAULT_INDEX_DIR, ROOT, BaselineIndex
@@ -257,8 +258,10 @@ def context_subgraph(question: str, mode: str = "graph", depth: int = 2, as_of: 
 # ---------- Демо-UI (C7): выбор графа, конфликты и замены, источник цитаты, рисунок ----------
 
 # Назначение файла; какие в нём встречи — считается из самого графа, а не пишется руками (подпись устаревала).
-GRAPH_LABELS = {B_GRAPH_PATH: "полный граф B (data/graph_raw)",
-                GRAPH_PATH: "граф для eval (data/graph)",
+# Порядок — порядок выбора по умолчанию: data/graph первым — тот же граф B, что в data/graph_raw, плюс связи CLOSES
+# (closes --apply); без них в демо не видно закрытых задач, и «Открытых задач» было 9 вместо 4.
+GRAPH_LABELS = {GRAPH_PATH: "граф B с закрытиями, им отвечал eval (data/graph)",
+                B_GRAPH_PATH: "граф B без закрытий CLOSES (data/graph_raw)",
                 SAMPLE_GRAPH_PATH: "заглушка: старый сюжет Атлас/Горизонт (data/sample)"}
 
 
@@ -276,7 +279,7 @@ def _meetings_label(meetings: list[str]) -> str:
 
 
 def available_graphs() -> list[dict]:
-    """Графы, которые есть на диске, — для выбора в UI. Полный граф B первым: для демо он нужнее."""
+    """Графы, которые есть на диске, — для выбора в UI, в порядке GRAPH_LABELS (первый — выбор по умолчанию)."""
     out = []
     for path in (p for p in GRAPH_LABELS if p.exists()):
         G = _load_graph(path)
@@ -287,7 +290,7 @@ def available_graphs() -> list[dict]:
 
 
 def demo_default_graph() -> Optional[Path]:
-    """Граф, выбранный в UI по умолчанию: MEETING_GRAPH, если задана, иначе самый полный из available_graphs()."""
+    """Граф, выбранный в UI по умолчанию: MEETING_GRAPH, если задана, иначе первый из available_graphs()."""
     env = os.environ.get("MEETING_GRAPH")
     if env:
         return default_graph_path()
@@ -322,10 +325,14 @@ def overview() -> dict:
     G = _load_graph()
     kinds = [d.get("type") for _, d in G.nodes(data=True)]
     changes = get_changes()
-    open_tasks = sum(1 for _, d in G.nodes(data=True) if d.get("type") == "Task" and d.get("status") == "open")
+    # Статус — как в ответах на T5 (src/graph/status.py роли B): закрыта, если есть входящее CLOSES или извлечение
+    # отметило done/cancelled. Поле status одно не годится: в графе без closes --apply оно у всех «open».
+    states = [task_state(G, n)["state"] for n, d in G.nodes(data=True) if d.get("type") == "Task"]
+    open_tasks = sum(1 for st in states if st != "closed")
     return {"meetings_indexed": len(indexed_meetings()), "graph_meetings": kinds.count("Meeting"),
             "projects": kinds.count("Project"), "decisions": kinds.count("Decision"), "tasks": kinds.count("Task"),
-            "open_tasks": open_tasks,
+            "open_tasks": open_tasks, "closed_tasks": len(states) - open_tasks,
+            "closes": sum(1 for *_, e in G.edges(data=True) if e.get("type") == "CLOSES"),
             "open_questions": kinds.count("OpenQuestion"),
             "conflicts": len(changes["conflicts"]), "replacements": len(changes["replacements"])}
 
@@ -553,7 +560,21 @@ def eval_runs(results_dir: Optional[Path] = None) -> list[dict]:
         data = _read_json(EVAL_FIXTURE)
         if data:
             runs.append(_run_info(EVAL_FIXTURE, data))
-    return combined + runs
+    return _final_first(combined + runs)
+
+
+def _final_first(runs: list[dict]) -> list[dict]:
+    """Итоговый прогон — самый свежий файл split=test — первым, его вкладка открывает по умолчанию.
+
+    Отчёт и выводы — по test; dev разведочный, обход графа подбирали на нём (там hybrid лучше graph, на test нет),
+    поэтому сводная dev, даже если она свежее, первой не идёт.
+    """
+    i = next((i for i, r in enumerate(runs) if r.get("split") == "test" and r.get("path") and not r.get("fixture")),
+             None)
+    if i is None:
+        return runs
+    final = {**runs[i], "final": True, "label": runs[i]["label"] + " · итоговый, по нему отчёт"}
+    return [final] + runs[:i] + runs[i + 1:]
 
 
 def load_eval(path: str | Path) -> dict:
@@ -681,6 +702,11 @@ def cost_latency(result: dict) -> list[dict]:
     Если харнес положил aggregate.cost_latency[mode] = {cost_usd, latency_ms} (ячейки с mean) — берём его.
     Иначе простое среднее по ответам со статусом ok: это арифметика над записанными числами, не оценка качества,
     интервал к ней не заявляется. Токены промпта — aggregate.by_mode_type[mode]["all"]["context_tokens"].
+
+    Задержка — только по ответам не из кэша (from_cache): ответ из кэша возвращается за миллисекунды, и среднее
+    показывало бы скорость кэша, а не режима (на dev 2026-11-16 baseline и bm25 целиком из кэша, bm25 «27 мс»).
+    Все ответы режима из кэша — задержка None («не измерена»), а не ноль. Стоимость в кэше записана от исходного
+    вызова, её среднее по всем ответам честное.
     """
     agg = result["aggregate"]
     by = agg.get("by_mode_type") or {}
@@ -691,15 +717,18 @@ def cost_latency(result: dict) -> list[dict]:
             cost = (given[m].get("cost_usd") or {}).get("mean")
             lat = (given[m].get("latency_ms") or {}).get("mean")
             n = (given[m].get("cost_usd") or {}).get("n")
+            n_lat, cached = (given[m].get("latency_ms") or {}).get("n", n), None
         else:
             rows = [r for r in result.get("per_question") or [] if r.get("mode") == m and r.get("status") == "ok"]
             costs = [r["usage"]["cost_usd"] for r in rows if (r.get("usage") or {}).get("cost_usd") is not None]
-            lats = [r["latency_ms"] for r in rows if r.get("latency_ms") is not None]
+            lats = [r["latency_ms"] for r in rows if r.get("latency_ms") is not None and not r.get("from_cache")]
             cost = sum(costs) / len(costs) if costs else None
             lat = sum(lats) / len(lats) if lats else None
             n = len(rows)
+            n_lat, cached = len(lats), sum(1 for r in rows if r.get("from_cache"))
         ctx = ((by.get(m) or {}).get("all") or {}).get("context_tokens") or {}
-        out.append({"режим": m, "cost_usd": cost, "latency_ms": lat, "context_tokens": ctx.get("mean"), "n": n})
+        out.append({"режим": m, "cost_usd": cost, "latency_ms": lat, "context_tokens": ctx.get("mean"), "n": n,
+                    "n_latency": n_lat, "cached": cached})
     return out
 
 
@@ -722,6 +751,8 @@ def abstention_table(result: dict) -> list[dict]:
 # строка таблицы: | **в целом** | строк | совпало | % совпадения | kappa |
 _AGREEMENT_TOTAL = re.compile(r"\|\s*\*\*в целом\*\*\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|"
                               r"\s*([\d.,]+)\s*%\s*\|\s*(-?[\d.,]+)\s*\|")
+# заголовок отчёта: «# Согласие ручной разметки фактов с судьёй judge-facts-v1»
+_AGREEMENT_VERSION = re.compile(r"судь[её]й\s+(judge-[\w.-]+)")
 
 
 def judge_agreement(results_dir: Optional[Path] = None) -> dict:
@@ -733,14 +764,17 @@ def judge_agreement(results_dir: Optional[Path] = None) -> dict:
         return {**data, "source": f"results/{JUDGE_AGREEMENT}"}
     md = folder / JUDGE_FACTS_AGREEMENT_MD
     try:
-        m = _AGREEMENT_TOTAL.search(md.read_text(encoding="utf-8"))
+        text = md.read_text(encoding="utf-8")
     except OSError:
         return {}
+    m = _AGREEMENT_TOTAL.search(text)
     if not m:
         return {}
     n, _, pct, kappa = m.groups()
-    return {"accuracy": float(pct.replace(",", ".")) / 100, "kappa": float(kappa.replace(",", ".")), "n": int(n),
-            "source": f"results/{JUDGE_FACTS_AGREEMENT_MD}"}
+    out = {"accuracy": float(pct.replace(",", ".")) / 100, "kappa": float(kappa.replace(",", ".")), "n": int(n),
+           "source": f"results/{JUDGE_FACTS_AGREEMENT_MD}"}
+    version = _AGREEMENT_VERSION.search(text)
+    return {**out, "judge_version": version.group(1)} if version else out
 
 
 def indexing_cost(results_dir: Optional[Path] = None) -> dict:
@@ -753,6 +787,11 @@ def indexing_cost(results_dir: Optional[Path] = None) -> dict:
                 "ratio": corpus.get("ratio_graph_to_baseline"), "meetings": data.get("meetings")}
     old = data.get("full_corpus") or {}
     return {"graph_usd": old.get("cost_usd"), "meetings": old.get("meetings")} if old else {}
+
+
+def _ru_num(x: float, spec: str = ".2f") -> str:
+    """0.87 → «0,87»: в карточках UI и в отчёте десятичная запятая."""
+    return format(x, spec).replace(".", ",")
 
 
 def metric_cards(results_dir: Optional[Path] = None) -> list[dict]:
@@ -772,8 +811,11 @@ def metric_cards(results_dir: Optional[Path] = None) -> list[dict]:
         {"title": "Индексация графа, весь корпус", "value": None if idx is None else f"${idx:.3f}",
          "hint": (f"{cost.get('meetings', '?')} встреч: извлечение и связи{ratio}" if idx is not None
                   else f"нет results/{INDEXING_COST} (роль B: python -m src.graph.indexing_cost)")},
-        {"title": "Судья совпадает с человеком", "value": None if acc is None else f"{acc:.0%}",
-         "hint": (f"каппа {kappa:.2f}, n={judge.get('n', '?')} решений «факт есть / нет» · {judge['source']}"
+        {"title": "Судья совпадает с человеком",
+         "value": None if acc is None else f"{acc:.0%}" + ("" if kappa is None else f" · κ {_ru_num(kappa)}"),
+         "hint": (f"каппа Коэна {_ru_num(kappa)} ({judge.get('judge_version') or 'judge-facts'}, "
+                  f"{plural(judge['n'], 'пара', 'пары', 'пар') if isinstance(judge.get('n'), int) else 'n=?'} "
+                  f"«человек — судья» по фактам) · {judge['source']}"
                   if kappa is not None
                   else f"нет results/{JUDGE_AGREEMENT} и results/{JUDGE_FACTS_AGREEMENT_MD} (роль A, A8)")},
     ]
