@@ -182,9 +182,9 @@ Neo4j не обогнал NetworkX с индексом, результаты в�
 
 | Роль | Кто | Зона |
 |---|---|---|
-| A. Данные и оценка | _имя_ | `data/raw`, `data/noisy`, `data/gold`, `src/eval`, скрипты данных и судьи, `REPORT.md` |
+| A. Данные и оценка | Dana | `data/raw`, `data/noisy`, `data/gold`, `src/eval`, скрипты данных и судьи, `REPORT.md` |
 | B. Извлечение и граф | Saniya | `src/extract`, `src/resolve`, `src/graph`, `src/ingest`, `scripts/build_graph.py`, `scripts/validate_extraction.py` |
-| C. Поиск, ответы, приложение | _имя_ | `src/retrieval`, `src/answer`, `app`, `src/api.py`, `src/llm_client.py`, `scripts/cost_guard.py`, CI, README |
+| C. Поиск, ответы, приложение | Rishat | `src/retrieval`, `src/answer`, `app`, `src/api.py`, `src/llm_client.py`, `scripts/cost_guard.py`, CI, README |
 
 Общий контракт — `src/schemas.py`, меняется только добавлением полей и по согласованию всех. Статус каждой задачи —
 [`TEAM.md`](TEAM.md), решения и известные проблемы — [`memory.md`](memory.md).
